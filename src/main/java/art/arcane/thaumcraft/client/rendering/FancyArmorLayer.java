@@ -13,9 +13,12 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -42,15 +45,13 @@ public class FancyArmorLayer<S extends HumanoidRenderState, M extends HumanoidMo
 	@Override
 	public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, S state, float yRot, float xRot) {
 		updateArmorState(state);
-		models.values().forEach(model -> submitArmor(model, poseStack, submitNodeCollector, lightCoords));
+		models.values().forEach(model -> submitArmor(model, state, poseStack, submitNodeCollector, lightCoords));
 	}
 
-	private void submitArmor(FancyArmorModel<S> armor, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords) {
+	private void submitArmor(FancyArmorModel<S> armor, S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords) {
 		poseStack.pushPose();
 		Identifier texture = armor.getTexture();
-		submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.armorCutoutNoCull(texture), (pose, buffer) -> {
-			armor.render(poseStack, buffer, lightCoords, OverlayTexture.NO_OVERLAY);
-		});
+		submitNodeCollector.submitModel(armor, state, poseStack, RenderTypes.armorCutoutNoCull(texture), lightCoords, OverlayTexture.NO_OVERLAY, -1, (TextureAtlasSprite)null, 0, (ModelFeatureRenderer.CrumblingOverlay)null);
 		if(armor.isHasOverlay()) {
 			Identifier textureOverlay = armor.getOverlay();
 			submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.armorCutoutNoCull(textureOverlay), (pose, buffer) -> {
