@@ -1,8 +1,6 @@
 package art.arcane.thaumcraft.registries;
 
 import art.arcane.thaumcraft.blocks.entities.ArcaneWorkbenchBlockEntity;
-import art.arcane.thaumcraft.blocks.entities.GolemBuilderBlockEntity;
-import art.arcane.thaumcraft.blocks.entities.GolemBuilderComponentBlockEntity;
 import art.arcane.thaumcraft.blocks.entities.NitorBlockEntity;
 import art.arcane.thaumcraft.blocks.entities.CreativeAspectSourceBlockEntity;
 import art.arcane.thaumcraft.blocks.entities.CrucibleBlockEntity;
@@ -23,7 +21,7 @@ import art.arcane.thaumcraft.blocks.entities.TubeRestrictBlockEntity;
 import art.arcane.thaumcraft.blocks.entities.TubeValveBlockEntity;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -120,14 +118,6 @@ public final class ConfigBlockEntities {
             NitorBlockEntity::new,
             ConfigBlocks.NITOR);
 
-    public static final BlockEntityObject<GolemBuilderBlockEntity> GOLEM_BUILDER = register(BlockEntities.GOLEM_BUILDER,
-            GolemBuilderBlockEntity::new,
-            ConfigBlocks.GOLEM_BUILDER);
-
-    public static final BlockEntityObject<GolemBuilderComponentBlockEntity> GOLEM_BUILDER_COMPONENT = registerDeferredBlock(BlockEntities.GOLEM_BUILDER_COMPONENT,
-            GolemBuilderComponentBlockEntity::new,
-            ConfigBlocks.GOLEM_BUILDER_COMPONENT);
-
     /* -------------------------------------------------------------------------------------------------------------- */
 
     public static void init(IEventBus bus) {
@@ -135,7 +125,7 @@ public final class ConfigBlockEntities {
     }
 
     @SafeVarargs
-    private static <E extends BlockEntity> BlockEntityObject<E> register(ResourceLocation id, BlockEntityType.BlockEntitySupplier<E> supplier, ConfigBlocks.BlockObject<? extends Block>... validBlocks) {
+    private static <E extends BlockEntity> BlockEntityObject<E> register(Identifier id, BlockEntityType.BlockEntitySupplier<E> supplier, ConfigBlocks.BlockObject<? extends Block>... validBlocks) {
         return new BlockEntityObject<>(REGISTRY_BLOCK_ENTITIES.register(id.getPath(), () -> {
             Block[] blocks = Arrays.stream(validBlocks).map(ConfigBlocks.BlockObject::block).toArray(Block[]::new);
             return new BlockEntityType<>(supplier, blocks);
@@ -143,14 +133,14 @@ public final class ConfigBlockEntities {
     }
 
     @SafeVarargs
-    private static <E extends BlockEntity> BlockEntityObject<E> registerDeferredBlock(ResourceLocation id, BlockEntityType.BlockEntitySupplier<E> supplier, DeferredBlock<? extends Block>... validBlocks) {
+    private static <E extends BlockEntity> BlockEntityObject<E> registerDeferredBlock(Identifier id, BlockEntityType.BlockEntitySupplier<E> supplier, DeferredBlock<? extends Block>... validBlocks) {
         return new BlockEntityObject<>(REGISTRY_BLOCK_ENTITIES.register(id.getPath(), () -> {
             Block[] blocks = Arrays.stream(validBlocks).map(DeferredBlock::value).toArray(Block[]::new);
             return new BlockEntityType<>(supplier, blocks);
         }));
     }
 
-    private static <E extends BlockEntity, K extends Enum<K>, B extends Block> BlockEntityObject<E> registerEnumBlocks(ResourceLocation id, BlockEntityType.BlockEntitySupplier<E> supplier, Map<K, ConfigBlocks.BlockObject<B>> validBlocks) {
+    private static <E extends BlockEntity, K extends Enum<K>, B extends Block> BlockEntityObject<E> registerEnumBlocks(Identifier id, BlockEntityType.BlockEntitySupplier<E> supplier, Map<K, ConfigBlocks.BlockObject<B>> validBlocks) {
         return new BlockEntityObject<>(REGISTRY_BLOCK_ENTITIES.register(id.getPath(), () -> {
             Block[] blocks = validBlocks.values().stream().map(ConfigBlocks.BlockObject::block).toArray(Block[]::new);
             return new BlockEntityType<>(supplier, blocks);

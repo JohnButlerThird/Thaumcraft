@@ -3,7 +3,7 @@ package art.arcane.thaumcraft.integrations.jei.aspect;
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.subtypes.UidContext;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import art.arcane.thaumcraft.data.aspects.AspectList;
 import art.arcane.thaumcraft.integrations.jei.ThaumcraftJEIPlugin;
@@ -17,17 +17,17 @@ public class AspectIngredientHelper implements IIngredientHelper<AspectList> {
 
     @Override
     public String getDisplayName(AspectList ingredient) {
-        return ingredient.aspectsPresent().get(0).location().toLanguageKey();
+        return ingredient.aspectsPresent().get(0).identifier().toLanguageKey();
     }
 
     @Override
     public Object getUid(AspectList ingredient, UidContext context) {
-        return ingredient.aspectsPresent().get(0).location().toString();
+        return ingredient.aspectsPresent().get(0).identifier().toString();
     }
 
     @Override
-    public ResourceLocation getResourceLocation(AspectList ingredient) {
-        return ingredient.aspectsPresent().get(0).location();
+    public Identifier getIdentifier(AspectList ingredient) {
+        return ingredient.aspectsPresent().get(0).identifier();
     }
 
     @Override

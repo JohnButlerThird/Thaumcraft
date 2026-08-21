@@ -18,12 +18,12 @@ public final class AuraHelper {
     public static final float VIS_REGEN_RATE = 0.1F;
 
     public static Optional<AuraAttachment> getAura(Level level, BlockPos pos) {
-        return getAura(level, new ChunkPos(pos));
+        return getAura(level, ChunkPos.containing(pos));
     }
 
     public static Optional<AuraAttachment> getAura(Level level, ChunkPos chunkPos) {
-        if (level.hasChunk(chunkPos.x, chunkPos.z)) {
-            LevelChunk chunk = level.getChunk(chunkPos.x, chunkPos.z);
+        if (level.hasChunk(chunkPos.x(), chunkPos.z())) {
+            LevelChunk chunk = level.getChunk(chunkPos.x(), chunkPos.z());
             if (chunk.hasData(ConfigDataAttachments.CHUNK_AURA.get())) {
                 return Optional.of(chunk.getData(ConfigDataAttachments.CHUNK_AURA.get()));
             }

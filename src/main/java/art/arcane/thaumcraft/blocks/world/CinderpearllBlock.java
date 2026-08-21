@@ -29,7 +29,7 @@ public class CinderpearllBlock extends BushBlock {
     public CinderpearllBlock(BlockBehaviour.Properties properties) {
         super(properties
                 .mapColor(MapColor.COLOR_ORANGE)
-                .noCollission()
+                .noCollision()
                 .instabreak()
                 .sound(SoundType.GRASS)
                 .lightLevel(state -> 8)
@@ -37,12 +37,7 @@ public class CinderpearllBlock extends BushBlock {
                 .offsetType(BlockBehaviour.OffsetType.XZ));
     }
 
-    @Override
-    public MapCodec<? extends BushBlock> codec() {
-        return CODEC;
-    }
-
-    @Override
+	@Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Vec3 offset = state.getOffset(pos);
         return SHAPE.move(offset.x, offset.y, offset.z);
@@ -56,7 +51,6 @@ public class CinderpearllBlock extends BushBlock {
                state.is(BlockTags.TERRACOTTA);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (random.nextBoolean()) {

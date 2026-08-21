@@ -101,7 +101,7 @@ public class AuraBiomeProvider extends SimpleDataProvider<AuraBiomeInfo> {
 
     private void biome(ResourceKey<Biome> biome, float aura, ResourceKey<Aspect> aspect) {
         Holder<Aspect> holder = context.lookup(ThaumcraftData.Registries.ASPECT).getOrThrow(aspect);
-        context.register(ResourceKey.create(ThaumcraftData.Registries.AURA_BIOME_INFO, biome.location()), new AuraBiomeInfo(aura, holder));
+        context.register(ResourceKey.create(ThaumcraftData.Registries.AURA_BIOME_INFO, biome.identifier()), new AuraBiomeInfo(aura, holder));
     }
 
     private void unknown() {

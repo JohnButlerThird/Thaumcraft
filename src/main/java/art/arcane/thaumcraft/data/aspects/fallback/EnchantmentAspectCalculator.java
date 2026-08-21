@@ -9,7 +9,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -38,8 +38,8 @@ public final class EnchantmentAspectCalculator {
     }
 
     private static void addVanillaEnchantmentAspects(AspectList list, Holder<Enchantment> holder, int level) {
-        ResourceLocation id = holder.unwrapKey()
-                .map(ResourceKey::location)
+        Identifier id = holder.unwrapKey()
+                .map(ResourceKey::identifier)
                 .orElse(null);
         if (id == null) return;
 

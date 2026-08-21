@@ -11,14 +11,14 @@ public final class ItemUtils {
     }
 
     public static boolean consumeItem(Player player, Item item) {
-        for(int i = 0; i < player.getInventory().items.size(); i++) {
-            ItemStack stack = player.getInventory().items.get(i);
+        for(int i = 0; i < player.getInventory().getNonEquipmentItems().size(); i++) {
+            ItemStack stack = player.getInventory().getItem(i);
             if(stack.getItem() == item) {
                 int count = stack.getCount();
                 if(count - 1 > 0) {
                     stack.shrink(1);
                 } else {
-                    player.getInventory().items.set(i, ItemStack.EMPTY);
+                    player.getInventory().getNonEquipmentItems().set(i, ItemStack.EMPTY);
                 }
                 return true;
             }

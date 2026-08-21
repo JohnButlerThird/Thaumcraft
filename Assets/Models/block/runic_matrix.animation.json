@@ -1,0 +1,28 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"startup": {
+			"loop": "hold_on_last_frame",
+			"bones": {
+				"root": {
+					"rotation": {
+						"vector": ["-45 * query.thaumcraft.runic_matrix.startup", 0, "35 * query.thaumcraft.runic_matrix.startup"]
+					}
+				}
+			}
+		},
+		"idle": {
+			"loop": true,
+			"bones": {
+				"root": {
+					"relative_to": {
+						"rotation": "entity"
+					},
+					"rotation": {
+						"vector": [0, "-query.anim_time * 360 / 18 * query.thaumcraft.runic_matrix.startup", 0]
+					}
+				}
+			}
+		}
+	}
+}

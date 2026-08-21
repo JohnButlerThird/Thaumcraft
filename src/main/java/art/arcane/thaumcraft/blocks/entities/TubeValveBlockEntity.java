@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class TubeValveBlockEntity extends TubeBlockEntity {
 
@@ -37,17 +39,17 @@ public class TubeValveBlockEntity extends TubeBlockEntity {
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        super.readNbt(nbt, pRegistries);
-        this.allowFlow = !nbt.contains("flow_allowed") || nbt.getBoolean("flow_allowed");
-        this.wasPoweredLastTick = nbt.getBoolean("flow_powered");
+    protected void loadData(ValueInput input) {
+        super.loadData(input);
+        this.allowFlow = input.getBooleanOr("flow_allowed", true);
+        this.wasPoweredLastTick = input.getBooleanOr("flow_powered", false);
     }
 
     @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        super.writeNbt(nbt, pRegistries);
-        nbt.putBoolean("flow_allowed", this.allowFlow);
-        nbt.putBoolean("flow_powered", this.wasPoweredLastTick);
+    protected void saveData(ValueOutput output) {
+        super.saveData(output);
+        output.putBoolean("flow_allowed", this.allowFlow);
+        output.putBoolean("flow_powered", this.wasPoweredLastTick);
     }
 
     @Override

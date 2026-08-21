@@ -3,45 +3,50 @@ package art.arcane.thaumcraft.items.tools;
 import art.arcane.thaumcraft.registries.ConfigItemComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.component.TooltipDisplay;
 import art.arcane.thaumcraft.api.ThaumcraftMaterials;
+import org.jspecify.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
-public class VoidSwordItem extends SwordItem {
+public class VoidSwordItem extends Item {
 
     private static final String COMPONENT_LESSER_SAP = "enchantment.thaumcraft.special.sapless";
 
     public VoidSwordItem(Properties props) {
-        super(ThaumcraftMaterials.Tools.VOID, ThaumcraftMaterials.Tools.VOID.attackDamageBonus(), ThaumcraftMaterials.Tools.VOID.speed(), props.component(ConfigItemComponents.WARPING.value(), 1));
+        super(props
+				.sword(ThaumcraftMaterials.Tools.VOID, ThaumcraftMaterials.Tools.VOID.attackDamageBonus(), ThaumcraftMaterials.Tools.VOID.speed())
+				.component(ConfigItemComponents.WARPING.value(), 1));
     }
 
-    @Override
-    public void inventoryTick(ItemStack pStack, Level pLevel, Entity pEntity, int pSlotId, boolean pIsSelected) {
-        if(pEntity instanceof LivingEntity && pStack.isDamaged() && pEntity.tickCount % 20 == 0)
-            pStack.setDamageValue(pStack.getDamageValue() - 1);
-    }
+	@Override
+	public void inventoryTick(ItemStack pStack, ServerLevel level, Entity pEntity, @Nullable EquipmentSlot slot) {
+		if(pEntity instanceof LivingEntity && pStack.isDamaged() && pEntity.tickCount % 20 == 0)
+			pStack.setDamageValue(pStack.getDamageValue() - 1);
+	}
 
-    @Override
+	@Override
     public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
         if(!player.level().isClientSide()) {
-            if(entity instanceof Player p && player.level().getServer().isPvpAllowed()) {
+            if(entity instanceof Player p && player.level().getServer().overworld().isPvpAllowed()) {
                 p.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 60), player);
             }
         }
         return super.onLeftClickEntity(stack, player, entity);
     }
 
-    @Override
-    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
-        pTooltipComponents.add(Component.translatable(COMPONENT_LESSER_SAP).withStyle(ChatFormatting.GOLD));
-    }
+	@Override
+	public void appendHoverText(ItemStack itemStack, TooltipContext context, TooltipDisplay display, Consumer<Component> builder, TooltipFlag tooltipFlag) {
+		builder.accept(Component.translatable(COMPONENT_LESSER_SAP).withStyle(ChatFormatting.GOLD));
+	}
 }

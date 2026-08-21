@@ -90,7 +90,7 @@ public class CrystalBlock extends DirectionalBlock {
 
         @Override
         public String getSerializedName() {
-            return id.location().getPath();
+            return id.identifier().getPath();
         }
     }
 }

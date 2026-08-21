@@ -7,9 +7,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.Objects;
 
@@ -73,25 +75,23 @@ public class TubeFilterBlockEntity extends TubeBlockEntity {
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        super.readNbt(nbt, pRegistries);
-        if (nbt.contains("filter_aspect")) {
-            ResourceLocation location = ResourceLocation.tryParse(nbt.getString("filter_aspect"));
-            if (location != null) {
-                this.filterAspect = ResourceKey.create(ThaumcraftData.Registries.ASPECT, location);
-            } else {
-                this.filterAspect = null;
-            }
-        } else {
-            this.filterAspect = null;
-        }
+    protected void loadData(ValueInput input) {
+        super.loadData(input);
+		input.getString("filterAspect").ifPresent(aspect -> {
+			Identifier location = Identifier.tryParse(aspect);
+			if (location != null) {
+				this.filterAspect = ResourceKey.create(ThaumcraftData.Registries.ASPECT, location);
+			} else {
+				this.filterAspect = null;
+			}
+		});
     }
 
     @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        super.writeNbt(nbt, pRegistries);
+    protected void saveData(ValueOutput output) {
+        super.saveData(output);
         if (this.filterAspect != null) {
-            nbt.putString("filter_aspect", this.filterAspect.location().toString());
+            output.putString("filter_aspect", this.filterAspect.identifier().toString());
         }
     }
 }

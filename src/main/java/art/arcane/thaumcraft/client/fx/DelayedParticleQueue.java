@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+/*@EventBusSubscriber(modid = Thaumcraft.MOD_ID, value = Dist.CLIENT)
 public final class DelayedParticleQueue {
 
     private static final List<DelayedParticle> queue = new ArrayList<>();
@@ -60,4 +60,4 @@ public final class DelayedParticleQueue {
             this.ticksRemaining = ticksRemaining;
         }
     }
-}
+}*/

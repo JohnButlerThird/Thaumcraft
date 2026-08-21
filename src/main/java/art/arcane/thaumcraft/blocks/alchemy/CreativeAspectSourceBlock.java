@@ -1,5 +1,7 @@
 package art.arcane.thaumcraft.blocks.alchemy;
 
+import art.arcane.thaumcraft.Thaumcraft;
+import art.arcane.thaumcraft.api.ThaumcraftData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
@@ -43,6 +45,8 @@ public class CreativeAspectSourceBlock extends SimpleEntityBlock<CreativeAspectS
             return InteractionResult.FAIL;
         if(pLevel.isClientSide())
             return InteractionResult.SUCCESS;
+        if(pStack.isEmpty())
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
 
         if(pStack.getItem() instanceof AspectContainerItem i) {
             Optional<ResourceKey<Aspect>> aspect = i.getAspects(pStack).getAspects().stream().findFirst();
@@ -57,14 +61,17 @@ public class CreativeAspectSourceBlock extends SimpleEntityBlock<CreativeAspectS
         return InteractionResult.FAIL;
     }
 
-    @Override
-    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
-        if(pLevel.isClientSide())
-            return InteractionResult.SUCCESS;
 
+    @Override //TODO: Clearing the aspect doesn't work?!
+    protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
+        Thaumcraft.info("Zero!");
+        if(pLevel.isClientSide())
+            return InteractionResult.PASS;
+        Thaumcraft.info("One!");
         CreativeAspectSourceBlockEntity be = getEntity(pLevel, pPos);
         if(pPlayer.isCrouching() && be.getAspect() != null) {
-            be.setAspect(null);
+            Thaumcraft.info("Two!");
+            be.setAspect(ThaumcraftData.Aspects.UNKNOWN);
             be.sync();
             pLevel.setBlock(pPos, pState.setValue(HAS_ASPECT, false), 2);
             return InteractionResult.SUCCESS;

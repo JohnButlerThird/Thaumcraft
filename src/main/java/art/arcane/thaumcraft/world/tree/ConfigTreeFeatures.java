@@ -1,8 +1,8 @@
 package art.arcane.thaumcraft.world.tree;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
@@ -28,7 +28,7 @@ public final class ConfigTreeFeatures {
 
     public static final ResourceKey<ConfiguredFeature<?, ?>> SILVERWOOD_TREE = ResourceKey.create(
             Registries.CONFIGURED_FEATURE,
-            ResourceLocation.fromNamespaceAndPath(Thaumcraft.MOD_ID, "silverwood_tree"));
+            Identifier.fromNamespaceAndPath(Thaumcraft.MOD_ID, "silverwood_tree"));
 
     public static final Supplier<TrunkPlacerType<GreatwoodTrunkPlacer>> GREATWOOD_TRUNK_PLACER =
             TRUNK_PLACERS.register("greatwood_trunk_placer", () -> new TrunkPlacerType<>(GreatwoodTrunkPlacer.CODEC));
@@ -38,7 +38,7 @@ public final class ConfigTreeFeatures {
 
     public static final ResourceKey<ConfiguredFeature<?, ?>> GREATWOOD_TREE = ResourceKey.create(
             Registries.CONFIGURED_FEATURE,
-            ResourceLocation.fromNamespaceAndPath(Thaumcraft.MOD_ID, "greatwood_tree"));
+            Identifier.fromNamespaceAndPath(Thaumcraft.MOD_ID, "greatwood_tree"));
 
     public static void init(IEventBus modEventBus) {
         TRUNK_PLACERS.register(modEventBus);

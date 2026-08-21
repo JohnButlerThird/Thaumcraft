@@ -65,4 +65,7 @@ public class Colour {
 
     public static final Codec<Colour> CODEC = Codec.STRING.xmap(Colour::fromHex, Colour::hex);
     public static final StreamCodec<ByteBuf, Colour> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(Colour::fromHex, Colour::hex);
+
+    public static final Colour BLACK = Colour.fromARGB(1.0F, 0F, 0F, 0F);
+    public static final Colour WHITE = Colour.fromARGB(1.0F, 1.0F, 1.0F, 1.0F);
 }

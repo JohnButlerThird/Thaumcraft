@@ -1,6 +1,9 @@
 package art.arcane.thaumcraft.blocks.world;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -12,7 +15,7 @@ public class GreatwoodLeavesBlock extends LeavesBlock {
     public static final MapCodec<GreatwoodLeavesBlock> CODEC = simpleCodec(GreatwoodLeavesBlock::new);
 
     public GreatwoodLeavesBlock(BlockBehaviour.Properties properties) {
-        super(properties
+        super(0F, properties
                 .mapColor(MapColor.PLANT)
                 .strength(0.2F)
                 .randomTicks()
@@ -30,4 +33,7 @@ public class GreatwoodLeavesBlock extends LeavesBlock {
     public MapCodec<? extends LeavesBlock> codec() {
         return CODEC;
     }
+
+	@Override
+	protected void spawnFallingLeavesParticle(Level level, BlockPos pos, RandomSource random) { }
 }

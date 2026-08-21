@@ -1,38 +1,41 @@
 package art.arcane.thaumcraft.util.simple;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Either;
 import lombok.AllArgsConstructor;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollection;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.joml.Matrix4f;
+import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 @AllArgsConstructor
-public abstract class SimpleBER<T extends BlockEntity> implements BlockEntityRenderer<T> {
+public abstract class SimpleBER<T extends BlockEntity, S extends BlockEntityRenderState> implements BlockEntityRenderer<T, S> {
 
-    protected final BlockEntityRendererProvider.Context context;
+	private final Supplier<S> stateFactory;
 
-    protected void renderNametag(PoseStack stack, MultiBufferSource source, float y, Component text, int light) {
-        stack.pushPose();
-		stack.translate(.5D, .5D + y, .5D);
-		stack.mulPose(context.getEntityRenderer().cameraOrientation());
-		stack.scale(.025F, -.025F, .025F);
+	@Override
+	public S createRenderState() {
+		return this.stateFactory.get();
+	}
 
-		int bgColor = (int)(Minecraft.getInstance().options.getBackgroundOpacity(0.25F) * 255.0F) << 24;
-		Matrix4f matrix4f = stack.last().pose();
-		Font font = context.getFont();
-		float centerOffset = (float)(-font.width(text) / 2);
-		font.drawInBatch(text, centerOffset, 0, 553648127, false, matrix4f, source, Font.DisplayMode.SEE_THROUGH, bgColor, light);
-		font.drawInBatch(text, centerOffset, 0, -1, false, matrix4f, source, Font.DisplayMode.NORMAL, 0, light);
+	@Override
+	public void extractRenderState(T blockEntity, S state, float partialTicks, Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+		BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
+		extractRenderState(blockEntity, state, partialTicks, cameraPosition);
+	}
 
-        stack.popPose();
-    }
+	protected abstract void extractRenderState(T blockEntity, S state, float partialTicks, Vec3 cameraPosition);
 
-    protected void renderNametag(PoseStack stack, MultiBufferSource source, float y, String text, int light) {
-        renderNametag(stack, source, y, Component.literal(text), light);
-    }
+	protected void submitNametag(PoseStack stack, SubmitNodeCollector nodeCollection, S state, CameraRenderState camera, Component text, float distance) {
+		nodeCollection.submitNameTag(stack, Vec3.ZERO, 0, text, true, state.lightCoords, distance, camera);
+	}
 }

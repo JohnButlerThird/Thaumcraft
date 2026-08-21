@@ -2,18 +2,13 @@ package art.arcane.thaumcraft.client.rendering.entity.models;
 
 import art.arcane.thaumcraft.Thaumcraft;
 import art.arcane.thaumcraft.api.ThaumcraftMaterials;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
 
-public class ArmorCrimsonPlate<S extends HumanoidRenderState> extends HumanoidModel<S> {
+public class ArmorCrimsonPlate<S extends HumanoidRenderState> extends FancyArmorModel<S> {
 
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Thaumcraft.id("armor_crimson_plate"), "main");
 
@@ -21,15 +16,13 @@ public class ArmorCrimsonPlate<S extends HumanoidRenderState> extends HumanoidMo
 	private final ModelPart cloak;
 	private final ModelPart shoulderpad_l;
 	private final ModelPart shoulderpad_r;
-	private final ModelPart leggings;
 
 	public ArmorCrimsonPlate(ModelPart root) {
-		super(root);
+		super(root, ThaumcraftMaterials.Armor.CRIMSON_PLATE, false);
 		this.cloth = this.body.getChild("cloth");
 		this.cloak = this.body.getChild("cloak");
 		this.shoulderpad_l = this.leftArm.getChild("shoulderpad_l");
 		this.shoulderpad_r = this.rightArm.getChild("shoulderpad_r");
-		this.leggings = root.getChild("leggings");
 	}
 
 	public static LayerDefinition createBodyLayer() {
@@ -103,36 +96,5 @@ public class ArmorCrimsonPlate<S extends HumanoidRenderState> extends HumanoidMo
 				.texOffs(116, 13).addBox(-3.0F, 2.5F, -2.51F, 1.0F, 4.0F, 5.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.1396F));
 
 		return LayerDefinition.create(meshdefinition, 128, 64);
-	}
-
-	public void render(PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
-		ResourceLocation assetId = ThaumcraftMaterials.Armor.CRIMSON_PLATE.assetId().location();
-		ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(assetId.getNamespace(), "textures/entity/equipment/humanoid/" + assetId.getPath() + ".png");
-		renderToBuffer(stack, buffer.getBuffer(renderType(texture)), packedLight, packedOverlay);
-	}
-
-	@Override
-	public void setAllVisible(boolean visible) {
-		super.setAllVisible(visible);
-		this.leggings.visible = visible;
-	}
-
-	public void setVisible(EquipmentSlot slot) {
-		switch(slot) {
-			case HEAD -> {
-				this.head.visible = true;
-				this.hat.visible = true;
-			}
-			case CHEST -> {
-				this.body.visible = true;
-				this.leftArm.visible = true;
-				this.rightArm.visible = true;
-			}
-			case LEGS -> {
-				this.leftLeg.visible = true;
-				this.rightLeg.visible = true;
-				this.leggings.visible = true;
-			}
-		}
 	}
 }

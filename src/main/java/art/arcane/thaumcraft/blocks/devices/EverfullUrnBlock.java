@@ -52,7 +52,7 @@ public class EverfullUrnBlock extends SimpleEntityBlock<EverfullUrnBlockEntity> 
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
@@ -73,7 +73,7 @@ public class EverfullUrnBlock extends SimpleEntityBlock<EverfullUrnBlockEntity> 
                     serverPlayer.containerMenu.broadcastChanges();
                 }
                 level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.33F,
-                        1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.3F);
+                        1.0F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.3F);
                 return InteractionResult.CONSUME;
             }
         } else if (stack.is(Items.GLASS_BOTTLE)) {
@@ -91,7 +91,7 @@ public class EverfullUrnBlock extends SimpleEntityBlock<EverfullUrnBlockEntity> 
                     serverPlayer.containerMenu.broadcastChanges();
                 }
                 level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 0.33F,
-                        1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.3F);
+                        1.0F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.3F);
                 return InteractionResult.CONSUME;
             }
         }
@@ -119,7 +119,7 @@ public class EverfullUrnBlock extends SimpleEntityBlock<EverfullUrnBlockEntity> 
     @Nullable
     @Override
     public <E extends BlockEntity> BlockEntityTicker<E> getTicker(Level level, BlockState state, BlockEntityType<E> beType) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return null;
         }
         return (l, p, s, be) -> {

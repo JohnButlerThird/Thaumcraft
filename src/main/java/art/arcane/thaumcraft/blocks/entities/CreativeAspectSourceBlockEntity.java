@@ -6,14 +6,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import art.arcane.thaumcraft.api.ThaumcraftData;
 import art.arcane.thaumcraft.api.aspects.Aspect;
 import art.arcane.thaumcraft.api.capabilities.IEssentiaCapability;
 import art.arcane.thaumcraft.registries.ConfigBlockEntities;
 import art.arcane.thaumcraft.util.simple.SimpleBlockEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class CreativeAspectSourceBlockEntity extends SimpleBlockEntity implements IEssentiaCapability {
 
@@ -21,23 +23,24 @@ public class CreativeAspectSourceBlockEntity extends SimpleBlockEntity implement
 
     @Getter
     @Setter
-    private ResourceKey<Aspect> aspect;
+    private ResourceKey<Aspect> aspect = ThaumcraftData.Aspects.UNKNOWN;
 
     public CreativeAspectSourceBlockEntity(BlockPos pPos, BlockState pBlockState) {
         super(ConfigBlockEntities.CREATIVE_ASPECT_SOURCE.entityType(), pPos, pBlockState);
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        if(nbt.contains("aspect")) {
-            this.aspect = ResourceKey.create(ThaumcraftData.Registries.ASPECT, ResourceLocation.tryParse(nbt.getString("aspect")));
-        }
+    protected void loadData(ValueInput input) {
+		input.getString("aspect").ifPresent(aspect -> {
+			Identifier id = Identifier.tryParse(aspect);
+			this.aspect = ResourceKey.create(ThaumcraftData.Registries.ASPECT, id != null ? id : ThaumcraftData.Aspects.UNKNOWN.identifier());
+		});
     }
 
     @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
+    protected void saveData(ValueOutput output) {
         if(aspect != null) {
-            nbt.putString("aspect", aspect.location().toString());
+            output.putString("aspect", aspect.identifier().toString());
         }
     }
 

@@ -9,9 +9,9 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import art.arcane.thaumcraft.api.ThaumcraftData;
 import art.arcane.thaumcraft.util.IconTexture;
 
@@ -23,7 +23,7 @@ public record ResearchCategory(IconTexture icon, List<ResourceKey<ResearchEntry>
 
     public static final ResearchCategory UNKNOWN = new ResearchCategory(new IconTexture(ThaumcraftData.Textures.UNKNOWN), Collections.emptyList());
 
-    public static Component getName(ResourceLocation loc) {
+    public static Component getName(Identifier loc) {
         return Component.translatable("research." + loc.getNamespace() + ".category." + loc.getPath() + ".name");
     }
 

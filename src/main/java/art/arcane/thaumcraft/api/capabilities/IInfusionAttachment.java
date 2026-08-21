@@ -1,18 +1,18 @@
 package art.arcane.thaumcraft.api.capabilities;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Map;
 
 public interface IInfusionAttachment {
 
-    boolean hasEnchantment(ResourceLocation id);
+    boolean hasEnchantment(Identifier id);
 
-    int getEnchantmentLevel(ResourceLocation id);
+    int getEnchantmentLevel(Identifier id);
 
-    Map<ResourceLocation, Integer> getEnchantments();
+    Map<Identifier, Integer> enchantments();
 
-    IInfusionAttachment addEnchantment(ResourceLocation id, int level);
+    IInfusionAttachment addEnchantment(Identifier id, int level);
 
-    boolean removeEnchantment(ResourceLocation id);
+    boolean removeEnchantment(Identifier id);
 }

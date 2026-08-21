@@ -5,10 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.state.BlockState;
 import art.arcane.thaumcraft.api.ThaumcraftData;
@@ -20,6 +18,8 @@ import art.arcane.thaumcraft.registries.ConfigCapabilities;
 import art.arcane.thaumcraft.registries.ConfigSounds;
 import art.arcane.thaumcraft.util.simple.SimpleBlockEntity;
 import art.arcane.thaumcraft.util.simple.TickableBlockEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.Objects;
 
@@ -49,56 +49,40 @@ public class JarBlockEntity extends SimpleBlockEntity implements IEssentiaCapabi
         if (key == null || key.isBlank()) {
             return null;
         }
-        ResourceLocation location = ResourceLocation.tryParse(key);
+        Identifier location = Identifier.tryParse(key);
         return location == null ? null : ResourceKey.create(ThaumcraftData.Registries.ASPECT, location);
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        if (nbt.contains("content")) {
-            CompoundTag content = nbt.getCompound("content");
-            this.currentAspect = parseAspectKey(content.getString("aspect"));
-            this.amount = Math.max(0, content.getInt("amount"));
-            if (this.currentAspect == null || this.amount <= 0) {
-                this.currentAspect = null;
-                this.amount = 0;
-            }
-        } else {
-            this.currentAspect = null;
-            this.amount = 0;
-        }
+    protected void loadData(ValueInput input) {
+		boolean empty = true;
+		input.child("content").ifPresentOrElse(content -> {
+			this.currentAspect = parseAspectKey(content.getStringOr("aspect", ThaumcraftData.Aspects.UNKNOWN.identifier().toString()));
+			this.amount = Math.max(0, content.getIntOr("amount", 0));
+		}, () -> {
+			this.currentAspect = null;
+			this.amount = 0;
+		});
 
-        if (nbt.contains("label")) {
-            this.label = parseAspectKey(nbt.getString("label"));
-            this.labelDirection = Direction.byName(nbt.getString("label_dir"));
-            if (this.label == null || this.labelDirection == null) {
-                this.label = null;
-                this.labelDirection = null;
-            }
-        } else {
-            this.label = null;
-            this.labelDirection = null;
-        }
-
-        if (nbt.contains("empty")) {
-            this.currentAspect = null;
-            this.amount = 0;
-            this.label = null;
-            this.labelDirection = null;
-        }
+		input.getString("label").ifPresentOrElse(label -> {
+			this.label = parseAspectKey(label);
+			this.labelDirection = Direction.byName(input.getStringOr("label_dir", Direction.NORTH.name()));
+		}, () -> {
+			this.label = null;
+			this.labelDirection = null;
+		});
     }
 
     @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
+    protected void saveData(ValueOutput output) {
         if (currentAspect != null && amount > 0) {
-            CompoundTag content = new CompoundTag();
-            content.putString("aspect", this.currentAspect.location().toString());
+            ValueOutput content = output.child("content");
+            content.putString("aspect", this.currentAspect.identifier().toString());
             content.putInt("amount", this.amount);
-            nbt.put("content", content);
         }
         if (labelDirection != null && label != null) {
-            nbt.putString("label", this.label.location().toString());
-            nbt.putString("label_dir", this.labelDirection.getSerializedName());
+            output.putString("label", this.label.identifier().toString());
+            output.putString("label_dir", this.labelDirection.getSerializedName());
         }
     }
 
@@ -314,7 +298,7 @@ public class JarBlockEntity extends SimpleBlockEntity implements IEssentiaCapabi
         }
         int accepted = fillAspect(targetAspect, drained, Direction.UP);
         if (accepted > 0) {
-            this.level.playSound(null, this.worldPosition, ConfigSounds.BUBBLE.value(), SoundSource.BLOCKS, 0.08F, 1.2F + this.level.random.nextFloat() * 0.2F);
+            this.level.playSound(null, this.worldPosition, ConfigSounds.BUBBLE.value(), SoundSource.BLOCKS, 0.08F, 1.2F + this.level.getRandom().nextFloat() * 0.2F);
         }
         if (accepted < drained) {
             cap.fillAspect(targetAspect, drained - accepted, Direction.DOWN);

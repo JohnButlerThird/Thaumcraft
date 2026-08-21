@@ -10,7 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class FXGenericParticle extends Particle {
+/*public class FXGenericParticle extends Particle {
 
     private final int gridSize;
     private final int startParticle;
@@ -47,6 +47,7 @@ public class FXGenericParticle extends Particle {
         this.yd = vy;
         this.zd = vz;
         this.lifetime = maxAge;
+        this.r
         this.rCol = r;
         this.gCol = g;
         this.bCol = b;
@@ -123,9 +124,9 @@ public class FXGenericParticle extends Particle {
         this.xd *= slowDown;
         this.yd *= slowDown;
         this.zd *= slowDown;
-        this.xd += level.random.nextGaussian() * randomX;
-        this.yd += level.random.nextGaussian() * randomY;
-        this.zd += level.random.nextGaussian() * randomZ;
+        this.xd += level.getRandom().nextGaussian() * randomX;
+        this.yd += level.getRandom().nextGaussian() * randomY;
+        this.zd += level.getRandom().nextGaussian() * randomZ;
         this.xd += windX;
         this.zd += windZ;
 
@@ -179,7 +180,7 @@ public class FXGenericParticle extends Particle {
             vertex.add(fx, fy, fz);
         }
 
-        int light = getLightColor(partialTick);
+        int light = getLightCoords(partialTick);
         buffer.addVertex(vertices[0].x(), vertices[0].y(), vertices[0].z())
                 .setUv(tx1, ty2).setColor(pr, pg, pb, currentAlpha).setLight(light);
         buffer.addVertex(vertices[1].x(), vertices[1].y(), vertices[1].z())
@@ -191,12 +192,12 @@ public class FXGenericParticle extends Particle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
+    public ParticleRenderType getGroup() {
         return ThaumcraftParticleRenderType.THAUMCRAFT_PARTICLES;
     }
 
     @Override
-    public int getLightColor(float partialTick) {
+    protected int getLightCoords(float a) {
         return 0xF000F0;
     }
-}
+}*/

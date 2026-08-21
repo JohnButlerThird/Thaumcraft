@@ -54,7 +54,17 @@ public record SalisMundusRecipe(
     }
 
     @Override
-    public ItemStack assemble(Input input, HolderLookup.Provider registries) {
+    public boolean showNotification() {
+        return false;
+    }
+
+    @Override
+    public String group() {
+        return "";
+    }
+
+    @Override
+    public ItemStack assemble(Input input) {
         return ItemStack.EMPTY;
     }
 

@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -24,13 +25,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.FluidUtil;
 import art.arcane.thaumcraft.Thaumcraft;
 import art.arcane.thaumcraft.blocks.entities.CrucibleBlockEntity;
 import art.arcane.thaumcraft.registries.ConfigBlockEntities;
 import art.arcane.thaumcraft.util.FluidHelper;
 import art.arcane.thaumcraft.util.simple.SimpleBlockMaterials;
 import art.arcane.thaumcraft.util.simple.TickableEntityBlock;
+import net.neoforged.neoforge.transfer.fluid.FluidUtil;
 
 import java.util.Optional;
 
@@ -63,44 +64,40 @@ public class CrucibleBlock extends TickableEntityBlock<CrucibleBlockEntity> {
         return INSIDE;
     }
 
-    public void entityInside(BlockState pState, Level pLevel, BlockPos pPos, Entity pEntity) {
-        if (!pLevel.isClientSide()) {
-            CrucibleBlockEntity be = getEntity(pLevel, pPos);
-            if (!FluidHelper.isTankEmpty(be) && be.isCooking()) {
-                if (pEntity instanceof ItemEntity e) {
-                    ItemStack stack = e.getItem().copy();
+	@Override
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+		if (!level.isClientSide()) {
+			CrucibleBlockEntity be = getEntity(level, pos);
+			if (!FluidHelper.isTankEmpty(be) && be.isCooking()) {
+				if (entity instanceof ItemEntity e) {
+					ItemStack stack = e.getItem().copy();
 
-                    if (be.processInput(stack, e.getOwner() instanceof Player p ? p : null, pLevel.registryAccess(), false)) {
-                        if (stack.isEmpty()) {
-                            e.kill((ServerLevel) pLevel);
-                        } else {
-                            e.setItem(stack);
-                        }
-                    }
-                } else if (pEntity instanceof LivingEntity e && !e.isInvulnerable() && (e instanceof Player p && !p.isCreative())) {
-                    e.hurt(e.damageSources().inFire(), 1.0F);
-                    pLevel.playSound(null, pPos, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.4F, 2.0F + pLevel.getRandom().nextFloat() * 0.4F);
-                }
-            }
-        }
-        super.entityInside(pState, pLevel, pPos, pEntity);
-    }
-
-    @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        getEntity(pLevel, pPos).emptyCrucible();
-        super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
-    }
+					if (be.processInput(stack, e.getOwner() instanceof Player p ? p : null, level.registryAccess(), false)) {
+						if (stack.isEmpty()) {
+							e.kill((ServerLevel) level);
+						} else {
+							e.setItem(stack);
+						}
+					}
+				} else if (entity instanceof LivingEntity e && !e.isInvulnerable() && (e instanceof Player p && !p.isCreative())) {
+					e.hurt(e.damageSources().inFire(), 1.0F);
+					level.playSound(null, pos, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.4F, 2.0F + level.getRandom().nextFloat() * 0.4F);
+				}
+			}
+		}
+	}
 
     @Override
     protected InteractionResult useItemOn(ItemStack pStack, BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHitResult) {
-        if (pLevel.isClientSide)
+        if (pLevel.isClientSide())
             return InteractionResult.SUCCESS;
+		if(pStack.isEmpty())
+			return InteractionResult.TRY_WITH_EMPTY_HAND;
 
         CrucibleBlockEntity be = getEntity(pLevel, pPos);
-        Optional<FluidStack> stack = FluidUtil.getFluidContained(pStack);
-        if (stack.isPresent() && FluidStack.matches(stack.get(), new FluidStack(Fluids.WATER, 1000))) {
-            if (!FluidHelper.isTankFull(be) && FluidUtil.interactWithFluidHandler(pPlayer, pHand, be)) {
+        FluidStack stack = FluidUtil.getFirstStackContained(pStack);
+        if (stack != FluidStack.EMPTY && FluidStack.matches(stack, new FluidStack(Fluids.WATER, 1000))) {
+            if (!FluidHelper.isTankFull(be) && FluidUtil.interactWithFluidHandler(pPlayer, pHand, pLevel, pPos, pHitResult.getDirection())) {
                 float randomPitch = 1.0F + (pLevel.getRandom().nextFloat() - pLevel.getRandom().nextFloat()) * .3F;
                 pLevel.playSound(null, pPos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, .33F, randomPitch);
                 be.sync();
@@ -116,7 +113,7 @@ public class CrucibleBlock extends TickableEntityBlock<CrucibleBlockEntity> {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, BlockHitResult pHitResult) {
-        if (pLevel.isClientSide)
+        if (pLevel.isClientSide())
             return InteractionResult.SUCCESS;
 
         CrucibleBlockEntity be = getEntity(pLevel, pPos);
@@ -124,7 +121,7 @@ public class CrucibleBlock extends TickableEntityBlock<CrucibleBlockEntity> {
             getEntity(pLevel, pPos).emptyCrucible();
             return InteractionResult.SUCCESS;
         } else {
-            Thaumcraft.debug("Aspect List: " + be.getAspects());
+            Thaumcraft.info("Aspect List: " + be.getAspects());
         }
         return super.useWithoutItem(pState, pLevel, pPos, pPlayer, pHitResult);
     }

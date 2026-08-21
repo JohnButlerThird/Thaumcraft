@@ -29,17 +29,12 @@ public class ShimmerleafBlock extends BushBlock {
     public ShimmerleafBlock(BlockBehaviour.Properties properties) {
         super(properties
                 .mapColor(MapColor.PLANT)
-                .noCollission()
+                .noCollision()
                 .instabreak()
                 .sound(SoundType.GRASS)
                 .lightLevel(state -> 6)
                 .pushReaction(PushReaction.DESTROY)
                 .offsetType(BlockBehaviour.OffsetType.XZ));
-    }
-
-    @Override
-    public MapCodec<? extends BushBlock> codec() {
-        return CODEC;
     }
 
     @Override
@@ -53,7 +48,6 @@ public class ShimmerleafBlock extends BushBlock {
         return state.is(Blocks.GRASS_BLOCK) || state.is(BlockTags.DIRT);
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (random.nextInt(3) == 0) {

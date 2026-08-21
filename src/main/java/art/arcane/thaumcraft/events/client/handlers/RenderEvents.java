@@ -13,7 +13,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -35,17 +36,10 @@ import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import org.joml.Matrix4fStack;
 import art.arcane.thaumcraft.Thaumcraft;
 import art.arcane.thaumcraft.api.aspects.Aspect;
-import art.arcane.thaumcraft.client.fx.ArchitectBlockRenderer;
-import art.arcane.thaumcraft.client.fx.OreScanRenderer;
 import art.arcane.thaumcraft.api.aspects.AspectContainerItem;
-import art.arcane.thaumcraft.client.ThaumcraftClient;
-import art.arcane.thaumcraft.client.rendering.SealClientData;
-import art.arcane.thaumcraft.client.rendering.SealWorldRenderer;
 import art.arcane.thaumcraft.client.rendering.ui.AspectTooltip;
 import art.arcane.thaumcraft.data.aspects.AspectList;
 import art.arcane.thaumcraft.items.AbstractAspectItem;
-import art.arcane.thaumcraft.items.golemancy.GolemBellItem;
-import art.arcane.thaumcraft.items.golemancy.SealPlacerItem;
 import art.arcane.thaumcraft.registries.ConfigDataRegistries;
 import art.arcane.thaumcraft.registries.ConfigItemComponents;
 import art.arcane.thaumcraft.util.RegistryUtils;
@@ -54,7 +48,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Thaumcraft.MOD_ID, value = Dist.CLIENT)
 public class RenderEvents {
 
     private static final String KEY_ROMAN_NUMERAL = "enchantment.level.";
@@ -116,49 +110,20 @@ public class RenderEvents {
         }
     }
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void onLevelRender(RenderLevelStageEvent e) {
-        if(e.getStage() == RenderLevelStageEvent.Stage.AFTER_LEVEL) {
-            Matrix4fStack matrix4fstack = RenderSystem.getModelViewStack();
-            matrix4fstack.pushMatrix();
-            matrix4fstack.mul(e.getModelViewMatrix());
-            e.getPoseStack().pushPose();
-            if (ThaumcraftClient.TUBE_DEBUG_RENDERER != null && ThaumcraftClient.TUBE_DEBUG_RENDERER.active) {
-                ThaumcraftClient.TUBE_DEBUG_RENDERER.render(
-                        e.getPoseStack(),
-                        Minecraft.getInstance().renderBuffers().bufferSource(),
-                        e.getCamera().getPosition().x,
-                        e.getCamera().getPosition().y,
-                        e.getCamera().getPosition().z);
-            }
-            e.getPoseStack().popPose();
-            matrix4fstack.popMatrix();
-        }
 
         if (e.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
             MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-            OreScanRenderer.render(e.getPoseStack(), e.getCamera(), bufferSource, e.getPartialTick().getGameTimeDeltaPartialTick(true));
-            ArchitectBlockRenderer.render(e.getPoseStack(), e.getCamera(), bufferSource);
-            if (isHoldingSealDisplayer(Minecraft.getInstance().player)) {
-                SealWorldRenderer.render(e.getPoseStack(), e.getCamera(), bufferSource);
-            }
+
             if (ThaumcraftUtils.playerHasGoggleSight(Minecraft.getInstance().player) && Minecraft.getInstance().hitResult instanceof BlockHitResult hit) {
                 dispatchGoggleSight(bufferSource, e.getPoseStack(), e.getCamera(), e.getLevel(), hit, e.getPartialTick());
             }
             bufferSource.endBatch();
         }
-    }
+    }*/
 
-    private static boolean isHoldingSealDisplayer(Player player) {
-        if (player == null) return false;
-        return isSealDisplayer(player.getMainHandItem()) || isSealDisplayer(player.getOffhandItem());
-    }
-
-    private static boolean isSealDisplayer(ItemStack stack) {
-        return stack.getItem() instanceof GolemBellItem || stack.getItem() instanceof SealPlacerItem;
-    }
-
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post e) {
         OreScanRenderer.tick();
     }
@@ -166,7 +131,7 @@ public class RenderEvents {
     @SubscribeEvent
     public static void onClientDisconnect(ClientPlayerNetworkEvent.LoggingOut e) {
         SealClientData.clear();
-    }
+    }*/
 
     private static final int HIGHER_FONT = 15;
 
@@ -176,23 +141,21 @@ public class RenderEvents {
             Font font = Minecraft.getInstance().font;
             stack.pushPose();
 
-            stack.translate(Vec3.atLowerCornerOf(hit.getBlockPos()).subtract(camera.getPosition()));
+            stack.translate(Vec3.atLowerCornerOf(hit.getBlockPos()).subtract(camera.position()));
             renderCap.render(stack, bufferSource, delta);
 
             stack.translate(.5F, .5F, .5F);
             stack.mulPose(camera.rotation());
             stack.scale(.0125F, -.0125F, .0125F);
 
-            RenderSystem.disableDepthTest();
             int lineCount = renderCap.textDisplay().size();
             float yOffset = lineCount * HIGHER_FONT / 2F;
             for (int i = 0; i < lineCount; i++) {
                 Component component = renderCap.textDisplay().get(i);
                 float centerOffset = (float) (-font.width(component) / 2);
-                font.drawInBatch(component, centerOffset, -yOffset + (i * HIGHER_FONT), -1, true, stack.last().pose(), bufferSource, Font.DisplayMode.SEE_THROUGH, 0, LightTexture.FULL_BRIGHT);
+                font.drawInBatch(component, centerOffset, -yOffset + (i * HIGHER_FONT), -1, true, stack.last().pose(), bufferSource, Font.DisplayMode.SEE_THROUGH, 0, 0xFFFFFFFF);
             }
             bufferSource.endLastBatch();
-            RenderSystem.enableDepthTest();
 
             stack.popPose();
         }

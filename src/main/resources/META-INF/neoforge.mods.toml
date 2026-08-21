@@ -33,16 +33,9 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
-modId = "multiblock"
-type = "required"
-versionRange = "0.1"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.${mod_id}]]
 modId = "baubles"
 type = "required"
-versionRange = "0.6"
+versionRange = "1.0"
 ordering = "NONE"
 side = "BOTH"
 

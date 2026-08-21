@@ -1,20 +1,21 @@
 package art.arcane.thaumcraft.util;
 
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 
 public final class FluidHelper {
 
-    public static boolean isTankFull(IFluidHandler handler) {
-        return handler.getFluidInTank(0).getAmount() >= handler.getTankCapacity(0);
+    public static boolean isTankFull(ResourceHandler<FluidResource> handler) {
+        return handler.getAmountAsInt(0) >= handler.getCapacityAsInt(0, FluidResource.EMPTY);
     }
 
-    public static boolean isTankEmpty(IFluidHandler handler) {
-        return handler.getFluidInTank(0).isEmpty();
+    public static boolean isTankEmpty(ResourceHandler<FluidResource> handler) {
+        return handler.getAmountAsInt(0) <= 0;
     }
 
-    public static String serializeTankStatus(IFluidHandler tank) {
-        return String.format("%d/%d [%s]", tank.getFluidInTank(0).getAmount(), tank.getTankCapacity(0), tank.getFluidInTank(0).getFluid().getFluidType().getDescription().getString());
+    public static String serializeTankStatus(ResourceHandler<FluidResource> tank) {
+        return String.format("%d/%d [%s]", tank.getAmountAsInt(0), tank.getCapacityAsInt(0, FluidResource.EMPTY), tank.getResource(0).getFluid().getFluidType().getDescription().getString());
     }
 
     public static String serializeFluidStack(FluidStack stack) {

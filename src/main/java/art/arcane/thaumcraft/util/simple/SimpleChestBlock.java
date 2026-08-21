@@ -5,13 +5,13 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.*;
-import net.minecraft.world.entity.animal.Cat;
+import net.minecraft.world.entity.animal.feline.Cat;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -96,12 +96,6 @@ public class SimpleChestBlock<B extends BaseContainerBlockEntity & BetterLidBloc
 	}
 
 	@Override
-	protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		Containers.dropContentsOnDestroy(state, newState, level, pos);
-		super.onRemove(state, level, pos, newState, isMoving);
-	}
-
-	@Override
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult blockHitResult) {
 		if (level instanceof ServerLevel serverlevel) {
 			if(isChestBlockedAt(serverlevel, pos.above()))
@@ -116,7 +110,7 @@ public class SimpleChestBlock<B extends BaseContainerBlockEntity & BetterLidBloc
 		return InteractionResult.SUCCESS;
 	}
 
-	protected Stat<ResourceLocation> getOpenChestStat() {
+	protected Stat<Identifier> getOpenChestStat() {
 		return Stats.CUSTOM.get(Stats.OPEN_CHEST);
 	}
 
@@ -143,7 +137,7 @@ public class SimpleChestBlock<B extends BaseContainerBlockEntity & BetterLidBloc
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-		if(!level.isClientSide || !blockEntityType.equals(this.blockEntityType()))
+		if(!level.isClientSide() || !blockEntityType.equals(this.blockEntityType()))
 			return null;
 		return (l, pos, st, be) -> getEntity(l, pos).lidAnimateTick(l, pos, st);
 	}
@@ -186,7 +180,7 @@ public class SimpleChestBlock<B extends BaseContainerBlockEntity & BetterLidBloc
 	}
 
 	@Override
-	protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos pos) {
+	protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
 		return AbstractContainerMenu.getRedstoneSignalFromContainer(getEntity(level, pos));
 	}
 

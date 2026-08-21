@@ -1,13 +1,11 @@
 package art.arcane.thaumcraft.client.screens;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.phys.Vec2;
 import art.arcane.thaumcraft.Thaumcraft;
@@ -19,7 +17,7 @@ import java.util.List;
 
 public class ArcaneWorkbenchScreen extends AbstractContainerScreen<ArcaneWorkbenchMenu> {
 
-    private static final ResourceLocation TEXTURE = Thaumcraft.id("textures/ui/arcane_workbench.png");
+    private static final Identifier TEXTURE = Thaumcraft.id("textures/ui/arcane_workbench.png");
 
     private static final List<Vec2> RADIAL_POS = List.of(
             new Vec2(65, 89), new Vec2(113, 9), new Vec2(113, 67),
@@ -35,42 +33,35 @@ public class ArcaneWorkbenchScreen extends AbstractContainerScreen<ArcaneWorkben
     }
 
     @Override
-    public void render(GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
-        renderBackground(graphics, pMouseX, pMouseY, pPartialTick);
-        RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
-        PoseStack pPoseStack = graphics.pose();
-       BitPacker.readFlags(menu.getData().get(ArcaneWorkbenchMenu.DATA_ACTIVE_CRYSTALS), Aspect.Primal.class, BitPacker.Length.BYTE).forEach(p -> {
-            pPoseStack.pushPose();
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        extractBackground(graphics, mouseX, mouseY, a);
+        var pPoseStack = graphics.pose();
+        BitPacker.readFlags(menu.getData().get(ArcaneWorkbenchMenu.DATA_ACTIVE_CRYSTALS), Aspect.Primal.class, BitPacker.Length.BYTE).forEach(p -> {
+            pPoseStack.pushMatrix();
             Vec2 pos = RADIAL_POS.get(p.ordinal());
-            pPoseStack.scale(.5F, .5F, 1);
-            graphics.blit(RenderType::guiTextured, TEXTURE, (int)pos.x, (int)pos.y, 256 - 64, 0, 64, 64, 256, 256);
-            pPoseStack.popPose();
+            pPoseStack.scale(.5F, .5F);
+            graphics.blit(RenderPipelines.GUI, TEXTURE, (int)pos.x, (int)pos.y, 256 - 64, 0, 64, 64, 256, 256);
+            pPoseStack.popMatrix();
         });
-        RenderSystem.disableBlend();
 
         int requiredVis = menu.getData().get(ArcaneWorkbenchMenu.DATA_REQUIRED_VIS);
         if(requiredVis > -1) {
-            pPoseStack.pushPose();
+            pPoseStack.pushMatrix();
             int xBase = (this.width - 190) / 2 + 168;
             int yBase = (this.height - 234) / 2 + 46;
-            pPoseStack.translate(xBase, yBase, 400);
-            pPoseStack.scale(.5F, .5F, 0);
-            graphics.drawCenteredString(font, "145 available", 0, 0, TextColor.fromRgb(0x6E6EEE).getValue());
-            pPoseStack.popPose();
+            pPoseStack.translate(xBase, yBase);
+            pPoseStack.scale(.5F, .5F);
+            graphics.centeredText(font, "145 available", 0, 0, TextColor.fromRgb(0x6E6EEE).getValue());
+            pPoseStack.popMatrix();
         }
-        super.render(graphics, pMouseX, pMouseY, pPartialTick);
+        super.extractRenderState(graphics, mouseX, mouseY, a);
     }
 
     @Override
-    protected void renderLabels(GuiGraphics p_281635_, int p_282681_, int p_283686_) { }
+    protected void extractLabels(GuiGraphicsExtractor graphics, int xm, int ym) { }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float mouseX, int mouseY, int delta) {
-        RenderSystem.enableBlend();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        graphics.blit(RenderType::guiTextured, TEXTURE, width / 2 - 95, height / 2 - 117, 0, 0, 192, 256, 256, 256);
-        RenderSystem.disableBlend();
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        graphics.blit(RenderPipelines.GUI, TEXTURE, width / 2 - 95, height / 2 - 117, 0, 0, 192, 256, 256, 256);
     }
 }

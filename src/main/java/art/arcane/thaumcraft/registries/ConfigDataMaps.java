@@ -3,8 +3,8 @@ package art.arcane.thaumcraft.registries;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -15,7 +15,7 @@ import art.arcane.thaumcraft.api.ThaumcraftData;
 import art.arcane.thaumcraft.data.DataMapEntries;
 import art.arcane.thaumcraft.util.ReflectionUtils;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Thaumcraft.MOD_ID)
 public final class ConfigDataMaps {
 
     /* -------------------------------------------------------------------------------------------------------------- */
@@ -29,7 +29,7 @@ public final class ConfigDataMaps {
         ReflectionUtils.getAllStaticsOfType(ConfigDataMaps.class, DataMapType.class).forEach(event::register);
     }
 
-    private static <T, D> DataMapType<T, D> register(ResourceLocation key, ResourceKey<Registry<T>> registry, Codec<D> dataCodec) {
+    private static <T, D> DataMapType<T, D> register(Identifier key, ResourceKey<Registry<T>> registry, Codec<D> dataCodec) {
         return DataMapType.builder(key, registry, dataCodec).build();
     }
 }

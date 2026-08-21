@@ -7,13 +7,14 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import art.arcane.thaumcraft.blocks.LevitatorBlock;
-import art.arcane.thaumcraft.client.fx.ThaumcraftFX;
 import art.arcane.thaumcraft.config.ThaumcraftConfig;
 import art.arcane.thaumcraft.data.aura.AuraHelper;
 import art.arcane.thaumcraft.registries.ConfigBlockEntities;
@@ -89,19 +90,19 @@ public class LevitatorBlockEntity extends SimpleBlockEntity implements TickableB
 
         Direction facing = getBlockState().getValue(LevitatorBlock.FACING);
 
-        if (level.random.nextFloat() < 0.1F) {
+        if (level.getRandom().nextFloat() < 0.1F) {
             spawnBlockParticle(facing);
         }
     }
 
     private void spawnBlockParticle(Direction facing) {
-        double x = getBlockPos().getX() + 0.25 + level.random.nextFloat() * 0.5;
-        double y = getBlockPos().getY() + 0.25 + level.random.nextFloat() * 0.5;
-        double z = getBlockPos().getZ() + 0.25 + level.random.nextFloat() * 0.5;
+        double x = getBlockPos().getX() + 0.25 + level.getRandom().nextFloat() * 0.5;
+        double y = getBlockPos().getY() + 0.25 + level.getRandom().nextFloat() * 0.5;
+        double z = getBlockPos().getZ() + 0.25 + level.getRandom().nextFloat() * 0.5;
         double vx = facing.getStepX() / 50.0;
         double vy = facing.getStepY() / 50.0;
         double vz = facing.getStepZ() / 50.0;
-        ThaumcraftFX.drawLevitatorParticle(x, y, z, vx, vy, vz);
+        //ThaumcraftFX.drawLevitatorParticle(x, y, z, vx, vy, vz); TODO: Rendering - Particles
     }
 
     private void updateRangeActual(Direction facing) {
@@ -230,19 +231,19 @@ public class LevitatorBlockEntity extends SimpleBlockEntity implements TickableB
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider registries) {
-        rangeIndex = nbt.getByte("rangeIndex");
+    protected void loadData(ValueInput input) {
+        rangeIndex = input.getByteOr("rangeIndex", (byte)0);
         if (rangeIndex < 0 || rangeIndex >= getRanges().length) {
             rangeIndex = 0;
         }
-        vis = nbt.getFloat("vis");
-        rangeActual = nbt.getInt("rangeActual");
+        vis = input.getFloatOr("vis", 0F);
+        rangeActual = input.getIntOr("rangeActual", 0);
     }
 
     @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider registries) {
-        nbt.putByte("rangeIndex", (byte) rangeIndex);
-        nbt.putFloat("vis", vis);
-        nbt.putInt("rangeActual", rangeActual);
+    protected void saveData(ValueOutput output) {
+        output.putByte("rangeIndex", (byte) rangeIndex);
+        output.putFloat("vis", vis);
+        output.putInt("rangeActual", rangeActual);
     }
 }

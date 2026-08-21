@@ -6,6 +6,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface ContainerOpenersCounterExt {
 
-	void backgroundIncrementOpener(Level level, BlockPos pos, BlockState state, boolean skipEvents);
-	void backgroundDecrementOpener(Level level, BlockPos pos, BlockState state, boolean skipEvents);
+	void thaumcraft$backgroundIncrementOpener(Level level, BlockPos pos, BlockState state, boolean skipEvents);
+	void thaumcraft$backgroundDecrementOpener(Level level, BlockPos pos, BlockState state, boolean skipEvents);
 }

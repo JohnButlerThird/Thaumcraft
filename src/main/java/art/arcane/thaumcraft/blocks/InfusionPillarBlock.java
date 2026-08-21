@@ -3,7 +3,8 @@ package art.arcane.thaumcraft.blocks;
 import com.mojang.serialization.MapCodec;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.minecraft.client.data.models.blockstates.VariantProperties;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.renderer.block.dispatch.VariantMutator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
@@ -52,13 +53,13 @@ public class InfusionPillarBlock extends Block {
     @Getter
     @AllArgsConstructor
     public enum PillarDirection implements StringRepresentable {
-        SOUTH_EAST("south_east", VariantProperties.Rotation.R0),
-        NORTH_EAST("north_east", VariantProperties.Rotation.R90),
-        NORTH_WEST("north_west", VariantProperties.Rotation.R180),
-        SOUTH_WEST("south_west", VariantProperties.Rotation.R270);
+        SOUTH_EAST("south_east", BlockModelGenerators.NOP),
+        NORTH_EAST("north_east", BlockModelGenerators.Y_ROT_90),
+        NORTH_WEST("north_west", BlockModelGenerators.Y_ROT_180),
+        SOUTH_WEST("south_west", BlockModelGenerators.Y_ROT_270);
 
         private final String id;
-        private final VariantProperties.Rotation blockRotation;
+        private final VariantMutator mutator;
 
         @Override
         public String getSerializedName() {

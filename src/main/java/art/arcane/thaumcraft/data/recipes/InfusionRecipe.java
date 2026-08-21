@@ -11,6 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import art.arcane.thaumcraft.api.ThaumcraftData;
@@ -26,7 +27,7 @@ public record InfusionRecipe(
         ResourceKey<ResearchEntry> requiredResearch,
         Ingredient catalyst,
         NonNullList<Ingredient> components,
-        ItemStack result,
+        ItemStackTemplate result,
         AspectList aspects,
         int instability
 ) implements Recipe<InfusionRecipe.Input> {
@@ -43,8 +44,18 @@ public record InfusionRecipe(
     }
 
     @Override
-    public ItemStack assemble(Input input, HolderLookup.Provider registries) {
-        return result.copy();
+    public ItemStack assemble(Input input) {
+        return result.create();
+    }
+
+    @Override
+    public boolean showNotification() {
+        return false;
+    }
+
+    @Override
+    public String group() {
+        return "";
     }
 
     @Override
@@ -71,7 +82,7 @@ public record InfusionRecipe(
             ResourceKey.codec(ThaumcraftData.Registries.RESEARCH_ENTRY).optionalFieldOf("requiredResearch").forGetter(obj -> Optional.ofNullable(obj.requiredResearch)),
             Ingredient.CODEC.fieldOf("catalyst").forGetter(InfusionRecipe::catalyst),
             NonNullList.codecOf(Ingredient.CODEC).fieldOf("components").forGetter(InfusionRecipe::components),
-            ItemStack.CODEC.fieldOf("result").forGetter(InfusionRecipe::result),
+            ItemStackTemplate.CODEC.fieldOf("result").forGetter(InfusionRecipe::result),
             AspectList.CODEC.fieldOf("essentia").forGetter(InfusionRecipe::aspects),
             Codec.INT.fieldOf("instability").forGetter(InfusionRecipe::instability)
     ).apply(i, (research, catalyst, components, results, aspects, instability) -> new InfusionRecipe(research.orElse(null), catalyst, components, results, aspects, instability)));
@@ -80,7 +91,7 @@ public record InfusionRecipe(
             ByteBufCodecs.optional(ResourceKey.streamCodec(ThaumcraftData.Registries.RESEARCH_ENTRY)), o -> Optional.ofNullable(o.requiredResearch),
             Ingredient.CONTENTS_STREAM_CODEC, InfusionRecipe::catalyst,
             Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list()), InfusionRecipe::components,
-            ItemStack.STREAM_CODEC, InfusionRecipe::result,
+            ItemStackTemplate.STREAM_CODEC, InfusionRecipe::result,
             AspectList.STREAM_CODEC, InfusionRecipe::aspects,
             ByteBufCodecs.INT, InfusionRecipe::instability,
             (research, catalyst, components, result, aspects, instability) -> new InfusionRecipe(research.orElse(null), catalyst, NonNullList.copyOf(components), result, aspects, instability));
@@ -109,7 +120,7 @@ public record InfusionRecipe(
 
     public static class Builder {
 
-        private final ItemStack result;
+        private final ItemStackTemplate result;
         private final Ingredient catalyst;
 
         private AspectList aspects = new AspectList();
@@ -117,7 +128,7 @@ public record InfusionRecipe(
         private NonNullList<Ingredient> components = NonNullList.create();
         private ResourceKey<ResearchEntry> requiredResearch = null;
 
-        public Builder(ItemStack result, Item catalyst) {
+        public Builder(ItemStackTemplate result, Item catalyst) {
             this.result = result;
             this.catalyst = Ingredient.of(catalyst);
         }

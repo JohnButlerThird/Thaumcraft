@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -87,7 +88,7 @@ public class LevitatorBlock extends TickableEntityBlock<LevitatorBlockEntity> {
             entity.cycleRange();
             int range = entity.getCurrentRange();
             float cost = entity.getVisCost();
-            player.displayClientMessage(Component.translatable("tc.levitator", range, String.format("%.2f", cost)), true);
+            player.sendOverlayMessage(Component.translatable("tc.levitator", range, String.format("%.2f", cost)));
             level.playSound(null, pos, ThaumcraftData.Sounds.KNOB_TWISTING, net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 1.0F);
         }
         return InteractionResult.SUCCESS;
@@ -109,10 +110,10 @@ public class LevitatorBlock extends TickableEntityBlock<LevitatorBlockEntity> {
         return true;
     }
 
-    @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        LevitatorBlockEntity entity = getEntity(level, pos);
-        float maxVis = ThaumcraftConfig.LEVITATOR_MAX_VIS.get().floatValue();
-        return Math.min(15, (int) (entity.getVis() / maxVis * 15F));
-    }
+	@Override
+	protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+		LevitatorBlockEntity entity = getEntity(level, pos);
+		float maxVis = ThaumcraftConfig.LEVITATOR_MAX_VIS.get().floatValue();
+		return Math.min(15, (int) (entity.getVis() / maxVis * 15F));
+	}
 }

@@ -5,21 +5,23 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import art.arcane.thaumcraft.data.aura.AuraHelper;
 import art.arcane.thaumcraft.integrations.botania.BotaniaCompat;
 import art.arcane.thaumcraft.registries.ConfigBlockEntities;
 import art.arcane.thaumcraft.util.simple.SimpleBlockEntity;
 import art.arcane.thaumcraft.util.simple.TickableBlockEntity;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 @Getter
 public class EverfullUrnBlockEntity extends SimpleBlockEntity implements TickableBlockEntity {
@@ -110,7 +112,7 @@ public class EverfullUrnBlockEntity extends SimpleBlockEntity implements Tickabl
         if (blockEntity == null) return false;
 
         for (Direction dir : Direction.values()) {
-            IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, state, blockEntity, dir);
+            ResourceHandler<FluidResource> handler = level.getCapability(Capabilities.Fluid.BLOCK, pos, state, blockEntity, dir);
             if (handler != null) return true;
         }
 
@@ -127,16 +129,15 @@ public class EverfullUrnBlockEntity extends SimpleBlockEntity implements Tickabl
 
         BlockState state = blockEntity.getBlockState();
         for (Direction dir : Direction.values()) {
-            IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, pos, state, blockEntity, dir);
+			ResourceHandler<FluidResource> handler = level.getCapability(Capabilities.Fluid.BLOCK, pos, state, blockEntity, dir);
             if (handler == null) continue;
 
-            FluidStack water = new FluidStack(net.minecraft.world.level.material.Fluids.WATER, Math.min(waterAmount, FLUID_TRANSFER_AMOUNT));
-            int filled = handler.fill(water, IFluidHandler.FluidAction.SIMULATE);
-            if (filled > 0) {
-                handler.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, filled), IFluidHandler.FluidAction.EXECUTE);
-                consumeWater(filled);
-                return true;
-            }
+			try(Transaction transaction = Transaction.openRoot()) {
+				if (handler.insert(FluidResource.of(Fluids.WATER), waterAmount, transaction) > 0) {
+					transaction.commit();
+					return true;
+				}
+			}
         }
         return false;
     }
@@ -209,12 +210,12 @@ public class EverfullUrnBlockEntity extends SimpleBlockEntity implements Tickabl
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        this.waterAmount = nbt.getInt("water");
+    protected void loadData(ValueInput input) {
+        this.waterAmount = input.getIntOr("water", 0);
     }
 
     @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        nbt.putInt("water", this.waterAmount);
+    protected void saveData(ValueOutput output) {
+        output.putInt("water", this.waterAmount);
     }
 }

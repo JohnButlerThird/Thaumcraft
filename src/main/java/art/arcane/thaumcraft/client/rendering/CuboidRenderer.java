@@ -1,6 +1,6 @@
 package art.arcane.thaumcraft.client.rendering;
 
-import art.arcane.thaumcraft.Thaumcraft;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CuboidRenderer {
-
-
 
 	private final float width, height, depth;
     private final int texSizeWidth, texSizeHeight;
@@ -79,7 +77,7 @@ public class CuboidRenderer {
         return this;
     }
 
-	public void draw(VertexConsumer consumer, Matrix4f modelMatrix, int colour, boolean applyLight, int light, boolean applyOverlay, int overlay) {
+	public void draw(VertexConsumer consumer, PoseStack.Pose modelMatrix, int colour, boolean applyLight, int light, boolean applyOverlay, int overlay) {
 		RenderHelper.drawFace(Direction.NORTH, consumer, modelMatrix, bfl, tfr, colour, uvs.get(Direction.NORTH), applyLight, light, applyOverlay, overlay);
 		RenderHelper.drawFace(Direction.SOUTH, consumer, modelMatrix, bbl, tbr, colour, uvs.get(Direction.SOUTH), applyLight, light, applyOverlay, overlay);
 		RenderHelper.drawFace(Direction.EAST, consumer, modelMatrix, bfr, tbr, colour, uvs.get(Direction.EAST), applyLight, light, applyOverlay, overlay);

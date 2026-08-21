@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -34,7 +35,7 @@ public class RefiningModifier extends LootModifier {
         if (!context.hasParameter(LootContextParams.THIS_ENTITY)) return generatedLoot;
         if (!(context.getParameter(LootContextParams.THIS_ENTITY) instanceof Player)) return generatedLoot;
 
-        ItemStack tool = context.getParameter(LootContextParams.TOOL);
+        ItemInstance tool = context.getParameter(LootContextParams.TOOL);
         InfusionEnchantmentComponent comp = tool.get(ConfigItemComponents.INFUSION_ENCHANTMENT.value());
         if (comp == null || !comp.enchantments().containsKey(InfusionEnchantments.REFINING))
             return generatedLoot;
@@ -55,7 +56,7 @@ public class RefiningModifier extends LootModifier {
                 .findFirst();
 
             if (recipe.isPresent()) {
-                ItemStack result = recipe.get().value().assemble(input, context.getLevel().registryAccess()).copy();
+                ItemStack result = recipe.get().value().assemble(input).copy();
                 result.setCount(drop.getCount());
                 generatedLoot.set(i, result);
                 didRefine = true;

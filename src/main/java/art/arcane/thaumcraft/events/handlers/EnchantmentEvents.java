@@ -39,7 +39,7 @@ import art.arcane.thaumcraft.registries.ConfigItemComponents;
 import art.arcane.thaumcraft.registries.ConfigSounds;
 import art.arcane.thaumcraft.util.BlockUtils;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Thaumcraft.MOD_ID)
 public class EnchantmentEvents {
 
     private static final Map<Integer, Direction> lastFaceClicked = new HashMap<>();
@@ -171,7 +171,7 @@ public class EnchantmentEvents {
     public static void onEntitySpawnEvent(EntityJoinLevelEvent e) {
         if(e.getEntity() instanceof ItemEntity entity && entity.getItem().has(ConfigItemComponents.COLLECTOR_MARKER.value())) {
             e.setCanceled(true);
-            Entity target = ((ServerLevel)e.getLevel()).getEntity(entity.getItem().get(ConfigItemComponents.COLLECTOR_MARKER.value()));
+            LivingEntity target = (LivingEntity) e.getLevel().getEntity(entity.getItem().get(ConfigItemComponents.COLLECTOR_MARKER.value()));
             entity.getItem().remove(ConfigItemComponents.COLLECTOR_MARKER.value());
             MovingItemEntity movingEntity = new MovingItemEntity(entity, target);
             entity.kill((ServerLevel)e.getLevel());

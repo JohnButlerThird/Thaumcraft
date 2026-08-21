@@ -1,18 +1,19 @@
 package art.arcane.thaumcraft.data.attachments;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import art.arcane.thaumcraft.api.capabilities.IResearchCapability;
 import art.arcane.thaumcraft.data.research.ResearchEntry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public record ResearchAttachment(Map<Holder<ResearchEntry>, ResearchState> stateMap, List<ResourceLocation> tags) implements IResearchCapability {
+public record ResearchAttachment(Map<Holder<ResearchEntry>, ResearchState> stateMap, List<Identifier> tags) implements IResearchCapability {
 
 	private static final ResearchState DUMMY_STATE = new ResearchState(ResearchCompletion.UNKNOWN, (byte) 0, new boolean[8]);
 
@@ -107,12 +108,12 @@ public record ResearchAttachment(Map<Holder<ResearchEntry>, ResearchState> state
 	}
 
 	@Override
-	public boolean hasResearchTag(ResourceLocation tag) {
+	public boolean hasResearchTag(Identifier tag) {
 		return this.tags.contains(tag);
 	}
 
 	@Override
-	public boolean grantResearchTag(ResourceLocation tag) {
+	public boolean grantResearchTag(Identifier tag) {
 		if (hasResearchTag(tag))
 			return false;
 		this.tags.add(tag);
@@ -120,12 +121,12 @@ public record ResearchAttachment(Map<Holder<ResearchEntry>, ResearchState> state
 	}
 
 	@Override
-	public boolean removeResearchTag(ResourceLocation tag) {
+	public boolean removeResearchTag(Identifier tag) {
 		return this.tags.remove(tag);
 	}
 
-	public static final Codec<ResearchAttachment> CODEC = RecordCodecBuilder.create(i -> i.group(
+	public static final MapCodec<ResearchAttachment> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
 			Codec.unboundedMap(ResearchEntry.REGISTRY_CODEC, ResearchState.CODEC).fieldOf("entries").forGetter(o -> o.stateMap),
-			ResourceLocation.CODEC.listOf().fieldOf("tags").forGetter(o -> o.tags)
+			Identifier.CODEC.listOf().fieldOf("tags").forGetter(o -> o.tags)
 	).apply(i, (entries, tags) -> new ResearchAttachment(new HashMap<>(entries), new ArrayList<>(tags))));
 }

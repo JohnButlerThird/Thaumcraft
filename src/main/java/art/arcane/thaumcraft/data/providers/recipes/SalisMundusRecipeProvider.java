@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.Blocks;
 import art.arcane.thaumcraft.api.ThaumcraftData;
 import art.arcane.thaumcraft.data.recipes.SalisMundusRecipe;
 import art.arcane.thaumcraft.registries.ConfigBlocks;
-import art.arcane.thaumcraft.util.codec.data.CodecDataProvider;
+import art.arcane.thaumcraft.util.codec.CodecDataProvider;
 
 public class SalisMundusRecipeProvider extends CodecDataProvider<SalisMundusRecipe> {
 
@@ -17,19 +17,19 @@ public class SalisMundusRecipeProvider extends CodecDataProvider<SalisMundusReci
 
     @Override
     protected void createEntries(HolderLookup.Provider registries) {
-        register(ThaumcraftData.Recipes.SalisMundus.ARCANE_WORKBENCH.location(),
+        register(ThaumcraftData.Recipes.SalisMundus.ARCANE_WORKBENCH.identifier(),
                 new SalisMundusRecipe.Builder(Blocks.CRAFTING_TABLE, ConfigBlocks.ARCANE_WORKBENCH.block())
                         .requiresResearch(ThaumcraftData.ResearchEntries.UNLOCK_ARTIFICE)
                         .build());
 
-        register(ThaumcraftData.Recipes.SalisMundus.CRUCIBLE.location(),
+        register(ThaumcraftData.Recipes.SalisMundus.CRUCIBLE.identifier(),
                 new SalisMundusRecipe.Builder(Blocks.CAULDRON, ConfigBlocks.CRUCIBLE.block())
                         .build());
     }
 
     @Override
     protected void processJson(JsonElement element) {
-        element.getAsJsonObject().addProperty("type", ThaumcraftData.Recipes.Types.SALIS_MUNDUS.location().toString());
+        element.getAsJsonObject().addProperty("type", ThaumcraftData.Recipes.Types.SALIS_MUNDUS.identifier().toString());
         super.processJson(element);
     }
 }

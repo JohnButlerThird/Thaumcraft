@@ -9,7 +9,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.common.Tags;
 
-@OnlyIn(Dist.CLIENT)
+/*@OnlyIn(Dist.CLIENT)
 public class OreScanHandler {
 
     private static final int MARKER_DURATION_TICKS = 120;
@@ -53,4 +53,4 @@ public class OreScanHandler {
         if (state.is(Tags.Blocks.ORES_NETHERITE_SCRAP)) return 0x654321;
         return 0xC0C0C0;
     }
-}
+}*/

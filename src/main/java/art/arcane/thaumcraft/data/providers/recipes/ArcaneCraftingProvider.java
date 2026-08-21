@@ -1,16 +1,18 @@
 package art.arcane.thaumcraft.data.providers.recipes;
 
+import art.arcane.thaumcraft.registries.ConfigItems;
 import com.google.gson.JsonElement;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import art.arcane.thaumcraft.api.ThaumcraftData;
 import art.arcane.thaumcraft.api.aspects.Aspect;
 import art.arcane.thaumcraft.data.recipes.ArcaneCraftingRecipe;
 import art.arcane.thaumcraft.registries.ConfigBlocks;
-import art.arcane.thaumcraft.util.codec.data.CodecDataProvider;
+import art.arcane.thaumcraft.util.codec.CodecDataProvider;
 
 import java.util.Map;
 
@@ -22,7 +24,7 @@ public class ArcaneCraftingProvider extends CodecDataProvider<ArcaneCraftingReci
 
     @Override
     protected void createEntries(HolderLookup.Provider registries) {
-        register(ThaumcraftData.Recipes.ArcaneCrafting.DEBUG.location(), new ArcaneCraftingRecipe.Builder(new ItemStack(Items.DIAMOND, 2))
+        register(ThaumcraftData.Recipes.ArcaneCrafting.DEBUG.identifier(), new ArcaneCraftingRecipe.Builder(new ItemStackTemplate(Items.DIAMOND, 2))
                 .setPattern(
                         "#+#",
                         "+ +",
@@ -31,7 +33,7 @@ public class ArcaneCraftingProvider extends CodecDataProvider<ArcaneCraftingReci
                 .setCrystalCost(Map.of(Aspect.Primal.AIR, 1))
                 .setVisCost(20).build());
 
-        register(ThaumcraftData.Recipes.ArcaneCrafting.TUBE.location(), new ArcaneCraftingRecipe.Builder(new ItemStack(ConfigBlocks.TUBE.item(), 4))
+        register(ThaumcraftData.Recipes.ArcaneCrafting.TUBE.identifier(), new ArcaneCraftingRecipe.Builder(new ItemStackTemplate(ConfigBlocks.TUBE.item(), 4))
                 .setPattern(
                         "###",
                         "+++",
@@ -43,7 +45,7 @@ public class ArcaneCraftingProvider extends CodecDataProvider<ArcaneCraftingReci
 
     @Override
     protected void processJson(JsonElement element) {
-        element.getAsJsonObject().addProperty("type", ThaumcraftData.Recipes.Types.ARCANE_CRAFTING.location().toString());
+        element.getAsJsonObject().addProperty("type", ThaumcraftData.Recipes.Types.ARCANE_CRAFTING.identifier().toString());
         super.processJson(element);
     }
 }

@@ -1,7 +1,7 @@
 package art.arcane.thaumcraft.util;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
@@ -76,6 +76,6 @@ public final class UncommonTags {
     public static final TagKey<Item> TRIM_TEMPLATES = item("minecraft", "trim_templates");
 
     private static TagKey<Item> item(String namespace, String id) {
-        return TagKey.create(Registries.ITEM, ResourceLocation.tryBuild(namespace, id));
+        return TagKey.create(Registries.ITEM, Identifier.tryBuild(namespace, id));
     }
 }

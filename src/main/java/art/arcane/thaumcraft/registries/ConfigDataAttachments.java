@@ -1,7 +1,7 @@
 package art.arcane.thaumcraft.registries;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -32,7 +32,7 @@ public final class ConfigDataAttachments {
         REGISTRY.register(bus);
     }
 
-    private static <T> Supplier<AttachmentType<T>> register(ResourceLocation id, Supplier<T> defaultValue, Codec<T> codec) {
+    private static <T> Supplier<AttachmentType<T>> register(Identifier id, Supplier<T> defaultValue, MapCodec<T> codec) {
         return REGISTRY.register(id.getPath(), () -> AttachmentType.builder(defaultValue).serialize(codec).build());
     }
 }

@@ -1,7 +1,11 @@
 package art.arcane.thaumcraft.registries;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -15,7 +19,6 @@ import art.arcane.thaumcraft.data.recipes.ArcaneCraftingRecipe;
 import art.arcane.thaumcraft.data.recipes.InfusionRecipe;
 import art.arcane.thaumcraft.data.recipes.SalisMundusMultiblockRecipe;
 import art.arcane.thaumcraft.data.recipes.SalisMundusRecipe;
-import art.arcane.thaumcraft.util.codec.recipes.CodecRecipeSerializer;
 
 import java.util.function.Supplier;
 
@@ -26,11 +29,11 @@ public final class ConfigRecipeTypes {
 
     /* -------------------------------------------------------------------------------------------------------------- */
 
-    public static final RecipeObject<AlchemyRecipe> ALCHEMY = register(ThaumcraftData.Recipes.Types.ALCHEMY, () -> new CodecRecipeSerializer<>(AlchemyRecipe.CODEC, AlchemyRecipe.STREAM_CODEC));
-    public static final RecipeObject<ArcaneCraftingRecipe> ARCANE_CRAFTING = register(ThaumcraftData.Recipes.Types.ARCANE_CRAFTING, () -> new CodecRecipeSerializer<>(ArcaneCraftingRecipe.CODEC, ArcaneCraftingRecipe.STREAM_CODEC));
-    public static final RecipeObject<InfusionRecipe> INFUSION = register(ThaumcraftData.Recipes.Types.INFUSION, () -> new CodecRecipeSerializer<>(InfusionRecipe.CODEC, InfusionRecipe.STREAM_CODEC));
-    public static final RecipeObject<SalisMundusRecipe> SALIS_MUNDUS = register(ThaumcraftData.Recipes.Types.SALIS_MUNDUS, () -> new CodecRecipeSerializer<>(SalisMundusRecipe.CODEC, SalisMundusRecipe.STREAM_CODEC));
-    public static final RecipeObject<SalisMundusMultiblockRecipe> SALIS_MUNDUS_MULTIBLOCK = register(ThaumcraftData.Recipes.Types.SALIS_MUNDUS_MULTIBLOCK, () -> new CodecRecipeSerializer<>(SalisMundusMultiblockRecipe.CODEC, SalisMundusMultiblockRecipe.STREAM_CODEC));
+    public static final RecipeObject<AlchemyRecipe> ALCHEMY = register(ThaumcraftData.Recipes.Types.ALCHEMY, AlchemyRecipe.CODEC, AlchemyRecipe.STREAM_CODEC);
+    public static final RecipeObject<ArcaneCraftingRecipe> ARCANE_CRAFTING = register(ThaumcraftData.Recipes.Types.ARCANE_CRAFTING, ArcaneCraftingRecipe.CODEC, ArcaneCraftingRecipe.STREAM_CODEC);
+    public static final RecipeObject<InfusionRecipe> INFUSION = register(ThaumcraftData.Recipes.Types.INFUSION, InfusionRecipe.CODEC, InfusionRecipe.STREAM_CODEC);
+    public static final RecipeObject<SalisMundusRecipe> SALIS_MUNDUS = register(ThaumcraftData.Recipes.Types.SALIS_MUNDUS, SalisMundusRecipe.CODEC, SalisMundusRecipe.STREAM_CODEC);
+    public static final RecipeObject<SalisMundusMultiblockRecipe> SALIS_MUNDUS_MULTIBLOCK = register(ThaumcraftData.Recipes.Types.SALIS_MUNDUS_MULTIBLOCK, SalisMundusMultiblockRecipe.CODEC, SalisMundusMultiblockRecipe.STREAM_CODEC);
 
     /* -------------------------------------------------------------------------------------------------------------- */
 
@@ -39,9 +42,9 @@ public final class ConfigRecipeTypes {
         REGISTRY_SERIALIZER.register(bus);
     }
 
-    private static <T extends Recipe<?>> RecipeObject<T> register(ResourceKey<RecipeType<?>> key, Supplier<RecipeSerializer<T>> serializer) {
-        Supplier<RecipeType<T>> type = REGISTRY_TYPE.register(key.location().getPath(), () -> RecipeType.simple(key.location()));
-        Supplier<RecipeSerializer<T>> serial = REGISTRY_SERIALIZER.register(key.location().getPath(), serializer);
+    private static <T extends Recipe<?>> RecipeObject<T> register(ResourceKey<RecipeType<?>> key, MapCodec<T> codec, StreamCodec<RegistryFriendlyByteBuf, T> streamCodec) {
+        Supplier<RecipeType<T>> type = REGISTRY_TYPE.register(key.identifier().getPath(), () -> RecipeType.simple(key.identifier()));
+        Supplier<RecipeSerializer<T>> serial = REGISTRY_SERIALIZER.register(key.identifier().getPath(), () -> new RecipeSerializer<>(codec, streamCodec));
         return new RecipeObject<>(type, serial);
     }
 

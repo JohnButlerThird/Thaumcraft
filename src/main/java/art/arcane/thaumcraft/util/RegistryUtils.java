@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.util.thread.EffectiveSide;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
@@ -16,7 +16,7 @@ public final class RegistryUtils {
     }
 
     public static HolderLookup.Provider access() {
-        if(FMLEnvironment.dist.isClient() && EffectiveSide.get().isClient()) {
+        if(FMLEnvironment.getDist().isClient() && EffectiveSide.get().isClient()) {
             Minecraft client = Minecraft.getInstance();
             return client.level != null ? client.level.registryAccess() : null;
         } else {
@@ -24,34 +24,34 @@ public final class RegistryUtils {
         }
     }
 
-    public static ResourceLocation getBlockLocation(Holder<?> holder, String... subfolder) {
-        ResourceLocation id = holder.getKey().location();
+    public static Identifier getBlockLocation(Holder<?> holder, String... subfolder) {
+        Identifier id = holder.getKey().identifier();
         if(subfolder.length == 0) {
             return id.withPath(s -> String.format("block/%s", s));
         }
         return id.withPath(s -> String.format("block/%s/%s", String.join("/", subfolder), s));
     }
 
-	public static ResourceLocation getBlockLocation(ResourceLocation id, String... subfolder) {
+	public static Identifier getBlockLocation(Identifier id, String... subfolder) {
 		if(subfolder.length == 0) {
 			return id.withPath(s -> String.format("block/%s", s));
 		}
 		return id.withPath(s -> String.format("block/%s/%s", String.join("/", subfolder), s));
 	}
 
-    public static ResourceLocation getObjLocation(Holder<?> holder, String... subfolder) {
+    public static Identifier getObjLocation(Holder<?> holder, String... subfolder) {
         return getBlockLocation(holder, subfolder).withPrefix("models/").withSuffix(".obj");
     }
 
-    public static ResourceLocation getItemLocation(Holder<?> holder, String... subfolder) {
-        ResourceLocation id = holder.getKey().location();
+    public static Identifier getItemLocation(Holder<?> holder, String... subfolder) {
+        Identifier id = holder.getKey().identifier();
         if(subfolder.length == 0) {
             return id.withPath(s -> String.format("item/%s", s));
         }
         return id.withPath(s -> String.format("item/%s/%s", String.join("/", subfolder), s));
     }
 
-    public static ResourceLocation getBlockItemLocation(Holder<?> holder) {
+    public static Identifier getBlockItemLocation(Holder<?> holder) {
         return getItemLocation(holder, "block");
     }
 }

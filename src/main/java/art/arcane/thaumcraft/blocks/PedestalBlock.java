@@ -1,10 +1,7 @@
 package art.arcane.thaumcraft.blocks;
 
-import art.arcane.thaumcraft.api.capabilities.IInfusionStabilizerCapability;
 import art.arcane.thaumcraft.registries.ConfigBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;

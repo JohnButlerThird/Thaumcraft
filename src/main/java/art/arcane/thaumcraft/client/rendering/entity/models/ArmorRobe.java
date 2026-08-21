@@ -5,31 +5,25 @@ import art.arcane.thaumcraft.api.ThaumcraftMaterials;
 import art.arcane.thaumcraft.util.Colour;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.DyedItemColor;
 
-public class ArmorRobe<S extends HumanoidRenderState> extends HumanoidModel<S> {
+public class ArmorRobe<S extends HumanoidRenderState> extends FancyArmorModel<S> {
 
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Thaumcraft.id("armor_robe"), "main");
 
 	public static final int VOID_DEFAULT_COLOUR = Colour.fromHex("#6A3880").argb32(true);
-
-	private final boolean isVoid;
 
 	private final ModelPart shoulderplate_r;
 	private final ModelPart shoulderplate_l;
 	private final ModelPart cloth_front_l;
 	private final ModelPart cloth_side_l;
 	private final ModelPart cloth_back_l;
-	private final ModelPart leggings;
 	private final ModelPart legplate_l;
 	private final ModelPart cloth_front_r;
 	private final ModelPart cloth_side_r;
@@ -39,9 +33,7 @@ public class ArmorRobe<S extends HumanoidRenderState> extends HumanoidModel<S> {
 	private int headColour, chestColour, legsColour;
 
 	public ArmorRobe(ModelPart root, boolean isVoid) {
-		super(root);
-		this.isVoid = isVoid;
-		this.leggings = root.getChild("leggings");
+		super(root, isVoid ? ThaumcraftMaterials.Armor.VOID_ROBE : ThaumcraftMaterials.Armor.CRIMSON_ROBE, isVoid);
 		this.shoulderplate_r = this.leftArm.getChild("shoulderplate_r");
 		this.shoulderplate_l = this.rightArm.getChild("shoulderplate_l");
 		this.cloth_front_l = this.leftLeg.getChild("cloth_front_l");
@@ -171,55 +163,40 @@ public class ArmorRobe<S extends HumanoidRenderState> extends HumanoidModel<S> {
 		return LayerDefinition.create(meshdefinition, 128, 64);
 	}
 
-	public void render(PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
-		ResourceLocation assetId = isVoid ? ThaumcraftMaterials.Armor.VOID_ROBE.assetId().location() : ThaumcraftMaterials.Armor.CRIMSON_ROBE.assetId().location();
-		ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(assetId.getNamespace(), "textures/entity/equipment/humanoid/" + assetId.getPath() + ".png");
-		renderToBuffer(stack, buffer.getBuffer(renderType(texture)), packedLight, packedOverlay);
-		if(isVoid) {
-			ResourceLocation overlay = ResourceLocation.fromNamespaceAndPath(assetId.getNamespace(), "textures/entity/equipment/humanoid/" + assetId.getPath() + "_overlay.png");
-			VertexConsumer consumer = buffer.getBuffer(renderType(overlay));
-			// Head
-			this.head.render(stack, consumer, packedLight, packedOverlay, headColour);
-			// Chest
-			this.body.render(stack, consumer, packedLight, packedOverlay, chestColour);
-			this.leftArm.render(stack, consumer, packedLight, packedOverlay, chestColour);
-			this.rightArm.render(stack, consumer, packedLight, packedOverlay, chestColour);
-			// Legs
-			this.leggings.render(stack, consumer, packedLight, packedOverlay, legsColour);
-			this.leftLeg.render(stack, consumer, packedLight, packedOverlay, legsColour);
-			this.rightLeg.render(stack, consumer, packedLight, packedOverlay, legsColour);
-		}
+	@Override
+	public void renderOverlay(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay) {
+		this.head.render(poseStack, buffer, packedLight, packedOverlay, headColour);
+		// Chest
+		this.body.render(poseStack, buffer, packedLight, packedOverlay, chestColour);
+		this.leftArm.render(poseStack, buffer, packedLight, packedOverlay, chestColour);
+		this.rightArm.render(poseStack, buffer, packedLight, packedOverlay, chestColour);
+		// Legs
+		this.leggings.render(poseStack, buffer, packedLight, packedOverlay, legsColour);
+		this.leftLeg.render(poseStack, buffer, packedLight, packedOverlay, legsColour);
+		this.rightLeg.render(poseStack, buffer, packedLight, packedOverlay, legsColour);
 	}
 
 	@Override
-	public void setAllVisible(boolean visible) {
-		super.setAllVisible(visible);
-		this.leggings.visible = visible;
+	protected void enableHead(S state) {
+		if(state.headEquipment.has(DataComponents.DYED_COLOR))
+			this.headColour = state.headEquipment.get(DataComponents.DYED_COLOR).rgb();
+		else
+			this.headColour = ArmorRobe.VOID_DEFAULT_COLOUR;
 	}
 
-	public void setVisible(EquipmentSlot slot) {
-		setVisible(slot, new DyedItemColor(VOID_DEFAULT_COLOUR, false));
+	@Override
+	protected void enableChest(S state) {
+		if(state.chestEquipment.has(DataComponents.DYED_COLOR))
+			this.chestColour = state.chestEquipment.get(DataComponents.DYED_COLOR).rgb();
+		else
+			this.chestColour = ArmorRobe.VOID_DEFAULT_COLOUR;
 	}
 
-	public void setVisible(EquipmentSlot slot, DyedItemColor colour) {
-		switch(slot) {
-			case HEAD -> {
-				this.head.visible = true;
-				this.hat.visible = true;
-				this.headColour = colour.rgb();
-			}
-			case CHEST -> {
-				this.body.visible = true;
-				this.leftArm.visible = true;
-				this.rightArm.visible = true;
-				this.chestColour = colour.rgb();
-			}
-			case LEGS -> {
-				this.leftLeg.visible = true;
-				this.rightLeg.visible = true;
-				this.leggings.visible = true;
-				this.legsColour = colour.rgb();
-			}
-		}
+	@Override
+	protected void enableLegs(S state) {
+		if(state.legsEquipment.has(DataComponents.DYED_COLOR))
+			this.legsColour = state.legsEquipment.get(DataComponents.DYED_COLOR).rgb();
+		else
+			this.legsColour = ArmorRobe.VOID_DEFAULT_COLOUR;
 	}
 }

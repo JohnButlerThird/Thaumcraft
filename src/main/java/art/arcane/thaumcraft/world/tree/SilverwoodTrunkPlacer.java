@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelSimulatedReader;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
@@ -29,20 +30,15 @@ public class SilverwoodTrunkPlacer extends TrunkPlacer {
     }
 
     @Override
-    public List<FoliagePlacer.FoliageAttachment> placeTrunk(
-            LevelSimulatedReader level,
-            BiConsumer<BlockPos, BlockState> blockSetter,
-            RandomSource random,
-            int freeTreeHeight,
-            BlockPos startPos,
-            TreeConfiguration config) {
-
+    public List<FoliagePlacer.FoliageAttachment> placeTrunk(WorldGenLevel level, BiConsumer<BlockPos, BlockState> blockSetter, RandomSource random, int treeHeight, BlockPos startPos, TreeConfiguration config) {
         int height = this.getTreeHeight(random);
         int x = startPos.getX();
         int y = startPos.getY();
         int z = startPos.getZ();
 
-        setDirtAt(level, blockSetter, random, startPos.below(), config);
+
+
+        placeBelowTrunkBlock(level, blockSetter, random, startPos.below(), config);
 
         for (int yOffset = 0; yOffset < height; yOffset++) {
             BlockPos centerPos = new BlockPos(x, y + yOffset, z);

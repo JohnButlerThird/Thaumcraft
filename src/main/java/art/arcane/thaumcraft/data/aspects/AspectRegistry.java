@@ -10,13 +10,15 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -26,8 +28,9 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-public class AspectRegistry extends SimpleJsonResourceReloadListener<AspectList> {
+public class       AspectRegistry extends SimpleJsonResourceReloadListener<AspectList> {
 
 	private static final List<String> VALID_TYPES = ImmutableList.of("items", "blocks", "entities");
 	private static final java.util.Set<String> SKIP_ITEMS = java.util.Set.of(
@@ -132,38 +135,33 @@ public class AspectRegistry extends SimpleJsonResourceReloadListener<AspectList>
 		AspectList aspects = getAspects(entity.getType()).clone();
 
 		if (includeInventory) {
-			if (entity instanceof Player player) {
-				for (ItemStack stack : player.getInventory().items) {
-					if (!stack.isEmpty()) {
-						AspectList itemAspects = getAspects(stack);
-						aspects.merge(itemAspects.modify(stack.getCount()));
-					}
-				}
-				for (ItemStack stack : player.getInventory().armor) {
+			if(entity instanceof LivingEntity living) {
+				for (ItemStack stack : getEquipment(living)) {
 					if (!stack.isEmpty()) {
 						aspects.merge(getAspects(stack));
 					}
 				}
-				for (ItemStack stack : player.getInventory().offhand) {
-					if (!stack.isEmpty()) {
-						aspects.merge(getAspects(stack));
-					}
-				}
-			} else if (entity instanceof LivingEntity living) {
-				for (ItemStack stack : living.getHandSlots()) {
-					if (!stack.isEmpty()) {
-						aspects.merge(getAspects(stack));
-					}
-				}
-				for (ItemStack stack : living.getArmorSlots()) {
-					if (!stack.isEmpty()) {
-						aspects.merge(getAspects(stack));
+				if(entity instanceof Player player) {
+					for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
+						if (!stack.isEmpty()) {
+							AspectList itemAspects = getAspects(stack);
+							aspects.merge(itemAspects.modify(stack.getCount()));
+						}
 					}
 				}
 			}
 		}
 
 		return aspects;
+	}
+
+	private Set<ItemStack> getEquipment(LivingEntity entity) {
+		return Set.of(
+				entity.getItemBySlot(EquipmentSlot.HEAD),
+				entity.getItemBySlot(EquipmentSlot.CHEST),
+				entity.getItemBySlot(EquipmentSlot.LEGS),
+				entity.getItemBySlot(EquipmentSlot.FEET),
+				entity.getItemBySlot(EquipmentSlot.OFFHAND));
 	}
 
 	public boolean hasAspects(ItemStack stack) {
@@ -195,13 +193,13 @@ public class AspectRegistry extends SimpleJsonResourceReloadListener<AspectList>
 	}
 
 	@Override
-	protected void apply(Map<ResourceLocation, AspectList> resourceLocationAspectMap, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+	protected void apply(Map<Identifier, AspectList> preparations, ResourceManager manager, ProfilerFiller profiler) {
 		clearMaps();
-		for (ResourceLocation id : resourceLocationAspectMap.keySet()) {
+		for (Identifier id : preparations.keySet()) {
 			String[] idParts = id.toString().split("/");
 			if (idParts.length > 3 && VALID_TYPES.stream().noneMatch(t -> t.equals(idParts[0])))
 				continue;
-			assignList(id, resourceLocationAspectMap.get(id));
+			assignList(id, preparations.get(id));
 		}
 		printStats();
 	}
@@ -218,29 +216,29 @@ public class AspectRegistry extends SimpleJsonResourceReloadListener<AspectList>
 		entityCache.clear();
 	}
 
-	private void assignList(ResourceLocation rl, AspectList list) {
+	private void assignList(Identifier rl, AspectList list) {
 		if (rl.getPath().startsWith("items/")) {
 			if (rl.getPath().startsWith("items/tags/")) {
-				ResourceLocation tag = ResourceLocation.tryBuild(rl.getNamespace(), rl.getPath().replace("items/tags/", ""));
+				Identifier tag = Identifier.tryBuild(rl.getNamespace(), rl.getPath().replace("items/tags/", ""));
 				itemTags.put(TagKey.create(Registries.ITEM, tag), list);
 			} else {
-				ResourceLocation tag = ResourceLocation.tryBuild(rl.getNamespace(), rl.getPath().replace("items/", ""));
+				Identifier tag = Identifier.tryBuild(rl.getNamespace(), rl.getPath().replace("items/", ""));
 				items.put(BuiltInRegistries.ITEM.getValue(tag), list);
 			}
 		} else if (rl.getPath().startsWith("blocks/")) {
 			if (rl.getPath().startsWith("blocks/tags/")) {
-				ResourceLocation tag = ResourceLocation.tryBuild(rl.getNamespace(), rl.getPath().replace("blocks/tags/", ""));
+				Identifier tag = Identifier.tryBuild(rl.getNamespace(), rl.getPath().replace("blocks/tags/", ""));
 				blockTags.put(TagKey.create(Registries.BLOCK, tag), list);
 			} else {
-				ResourceLocation tag = ResourceLocation.tryBuild(rl.getNamespace(), rl.getPath().replace("blocks/", ""));
+				Identifier tag = Identifier.tryBuild(rl.getNamespace(), rl.getPath().replace("blocks/", ""));
 				blocks.put(BuiltInRegistries.BLOCK.getValue(tag), list);
 			}
 		} else if (rl.getPath().startsWith("entities/")) {
 			if (rl.getPath().startsWith("entities/tags/")) {
-				ResourceLocation tag = ResourceLocation.tryBuild(rl.getNamespace(), rl.getPath().replace("entities/tags/", ""));
+				Identifier tag = Identifier.tryBuild(rl.getNamespace(), rl.getPath().replace("entities/tags/", ""));
 				entityTags.put(TagKey.create(Registries.ENTITY_TYPE, tag), list);
 			} else {
-				ResourceLocation tag = ResourceLocation.tryBuild(rl.getNamespace(), rl.getPath().replace("entities/", ""));
+				Identifier tag = Identifier.tryBuild(rl.getNamespace(), rl.getPath().replace("entities/", ""));
 				entities.put(BuiltInRegistries.ENTITY_TYPE.getValue(tag), list);
 			}
 		}

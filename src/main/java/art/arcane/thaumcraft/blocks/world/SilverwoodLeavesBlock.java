@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -18,7 +19,7 @@ public class SilverwoodLeavesBlock extends LeavesBlock {
     private static final float VIS_REGEN_AMOUNT = 0.01F;
 
     public SilverwoodLeavesBlock(BlockBehaviour.Properties properties) {
-        super(properties
+        super(0.0F, properties
                 .mapColor(MapColor.COLOR_LIGHT_BLUE)
                 .strength(0.2F)
                 .randomTicks()
@@ -45,7 +46,10 @@ public class SilverwoodLeavesBlock extends LeavesBlock {
         }
     }
 
-    @Override
+	@Override
+	protected void spawnFallingLeavesParticle(Level level, BlockPos pos, RandomSource random) { }
+
+	@Override
     protected boolean isRandomlyTicking(BlockState state) {
         return true;
     }

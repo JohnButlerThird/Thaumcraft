@@ -12,7 +12,7 @@ import art.arcane.thaumcraft.Thaumcraft;
 
 import static art.arcane.thaumcraft.api.ThaumcraftData.Capabilities;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Thaumcraft.MOD_ID)
 public class ConfigCapabilities {
 
     public static final BlockCapability<IEssentiaCapability, Direction> ESSENTIA = BlockCapability.createSided(Capabilities.ESSENTIA, IEssentiaCapability.class);
@@ -47,6 +47,6 @@ public class ConfigCapabilities {
 		e.registerBlockEntity(GOGGLE_RENDERER, ConfigBlockEntities.JAR.entityType(), (be, side) -> be);
 		e.registerBlockEntity(GOGGLE_RENDERER, ConfigBlockEntities.RUNIC_MATRIX.entityType(), (be, side) -> be);
 
-        e.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, ConfigBlockEntities.CRUCIBLE.entityType(), (be, side) -> side == Direction.UP ? be : null);
+        e.registerBlockEntity(net.neoforged.neoforge.capabilities.Capabilities.Fluid.BLOCK, ConfigBlockEntities.CRUCIBLE.entityType(), (be, side) -> side == Direction.UP ? be : null);
     }
 }

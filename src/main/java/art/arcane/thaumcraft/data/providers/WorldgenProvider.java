@@ -8,6 +8,7 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -15,7 +16,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.WeightedPlacedFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.featuresize.TwoLayersFeatureSize;
@@ -39,7 +39,6 @@ import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.placement.HeightmapPlacement;
 import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
-import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.level.block.state.BlockState;
 import art.arcane.thaumcraft.world.tree.SilverwoodTrunkPlacer;
 import art.arcane.thaumcraft.world.tree.SilverwoodFoliagePlacer;
@@ -101,15 +100,15 @@ public final class WorldgenProvider {
                     BlockStateProvider.simple(Blocks.OAK_LEAVES),
                     new FancyFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0), 4),
                     new TwoLayersFeatureSize(0, 0, 0, java.util.OptionalInt.of(4))
-                ).ignoreVines().dirt(BlockStateProvider.simple(Blocks.DIRT)).build()
+                ).ignoreVines().belowTrunkProvider(BlockStateProvider.simple(Blocks.DIRT)).build()
             ));
 
-            context.register(MAGICAL_GRASS, new ConfiguredFeature<>(Feature.RANDOM_PATCH,
-                new RandomPatchConfiguration(32, 7, 3,
+            /*context.register(MAGICAL_GRASS, new ConfiguredFeature<>(Feature.SIMPLE_BLOCK,
+                new SimpleBlockConfiguration(32, 7, 3,
                     PlacementUtils.filtered(
                         Feature.SIMPLE_BLOCK,
                         new SimpleBlockConfiguration(new WeightedStateProvider(
-                            SimpleWeightedRandomList.<BlockState>builder()
+                            WeightedList.<BlockState>builder()
                                 .add(Blocks.SHORT_GRASS.defaultBlockState(), 3)
                                 .add(Blocks.FERN.defaultBlockState(), 1)
                                 .build()
@@ -119,8 +118,8 @@ public final class WorldgenProvider {
                 )
             ));
 
-            context.register(MAGIC_FOREST_VISHROOM, new ConfiguredFeature<>(Feature.RANDOM_PATCH,
-                new RandomPatchConfiguration(8, 4, 2,
+            context.register(MAGIC_FOREST_VISHROOM, new ConfiguredFeature<>(Feature.SIMPLE_BLOCK,
+                new Random(8, 4, 2,
                     PlacementUtils.onlyWhenEmpty(
                         Feature.SIMPLE_BLOCK,
                         new SimpleBlockConfiguration(BlockStateProvider.simple(ConfigBlocks.VISHROOM.block()))
@@ -128,7 +127,7 @@ public final class WorldgenProvider {
                 )
             ));
 
-            context.register(CINDERPEARL, new ConfiguredFeature<>(Feature.RANDOM_PATCH,
+            context.register(CINDERPEARL, new ConfiguredFeature<>(Feature.SIMPLE_BLOCK,
                 new RandomPatchConfiguration(6, 4, 2,
                     PlacementUtils.onlyWhenEmpty(
                         Feature.SIMPLE_BLOCK,
@@ -137,7 +136,7 @@ public final class WorldgenProvider {
                 )
             ));
 
-            context.register(SHIMMERLEAF, new ConfiguredFeature<>(Feature.RANDOM_PATCH,
+            context.register(SHIMMERLEAF, new ConfiguredFeature<>(Feature.SIMPLE_BLOCK,
                 new RandomPatchConfiguration(6, 4, 2,
                     PlacementUtils.onlyWhenEmpty(
                         Feature.SIMPLE_BLOCK,
@@ -146,7 +145,7 @@ public final class WorldgenProvider {
                 )
             ));
 
-            context.register(MAGICAL_FOREST_LILY_PAD, new ConfiguredFeature<>(Feature.RANDOM_PATCH,
+            context.register(MAGICAL_FOREST_LILY_PAD, new ConfiguredFeature<>(Feature.SIMPLE_BLOCK,
                 new RandomPatchConfiguration(10, 7, 3,
                     PlacementUtils.onlyWhenEmpty(Feature.SIMPLE_BLOCK,
                         new SimpleBlockConfiguration(BlockStateProvider.simple(Blocks.LILY_PAD))
@@ -156,7 +155,7 @@ public final class WorldgenProvider {
 
             context.register(MAGICAL_FOREST_MOSSY_ROCK, new ConfiguredFeature<>(Feature.FOREST_ROCK,
                 new BlockStateConfiguration(Blocks.MOSSY_COBBLESTONE.defaultBlockState())
-            ));
+            ));*/
 
             context.register(SILVERWOOD_TREE, new ConfiguredFeature<>(Feature.TREE,
                 new TreeConfiguration.TreeConfigurationBuilder(
@@ -165,7 +164,7 @@ public final class WorldgenProvider {
                     BlockStateProvider.simple(ConfigBlocks.SILVERWOOD_LEAVES.block()),
                     new SilverwoodFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0)),
                     new TwoLayersFeatureSize(1, 0, 6)
-                ).ignoreVines().dirt(BlockStateProvider.simple(Blocks.DIRT)).build()
+                ).ignoreVines().belowTrunkProvider(BlockStateProvider.simple(Blocks.DIRT)).build()
             ));
 
             context.register(GREATWOOD_TREE, new ConfiguredFeature<>(Feature.TREE,
@@ -175,7 +174,7 @@ public final class WorldgenProvider {
                     BlockStateProvider.simple(ConfigBlocks.GREATWOOD_LEAVES.block()),
                     new GreatwoodFoliagePlacer(ConstantInt.of(2), ConstantInt.of(0)),
                     new TwoLayersFeatureSize(1, 0, 2)
-                ).ignoreVines().dirt(BlockStateProvider.simple(Blocks.DIRT)).build()
+                ).ignoreVines().belowTrunkProvider(BlockStateProvider.simple(Blocks.DIRT)).build()
             ));
 
             context.register(MAGICAL_FOREST_TREES, new ConfiguredFeature<>(Feature.RANDOM_SELECTOR,
@@ -198,7 +197,7 @@ public final class WorldgenProvider {
                 )
             ));
 
-            context.register(MAGICAL_FOREST_FLOWERS, new ConfiguredFeature<>(Feature.FLOWER,
+            /*context.register(MAGICAL_FOREST_FLOWERS, new ConfiguredFeature<>(Feature.FLOWER,
                 new RandomPatchConfiguration(16, 7, 3,
                     PlacementUtils.filtered(
                         Feature.SIMPLE_BLOCK,
@@ -220,7 +219,7 @@ public final class WorldgenProvider {
                         BlockPredicate.matchesBlocks(Blocks.AIR)
                     )
                 )
-            ));
+            ));*/
         }
     }
 
@@ -292,7 +291,7 @@ public final class WorldgenProvider {
             ));
 
 
-            context.register(MAGICAL_FOREST_MOSSY_ROCK, new PlacedFeature(
+            /*context.register(MAGICAL_FOREST_MOSSY_ROCK, new PlacedFeature(
                 configuredFeatures.getOrThrow(ConfiguredFeatures.MAGICAL_FOREST_MOSSY_ROCK),
                 List.of(
                     CountPlacement.of(2),
@@ -300,7 +299,7 @@ public final class WorldgenProvider {
                     HeightmapPlacement.onHeightmap(Heightmap.Types.MOTION_BLOCKING),
                     BiomeFilter.biome()
                 )
-            ));
+            ));*/
 
             context.register(MAGICAL_FOREST_TREES, new PlacedFeature(
                 configuredFeatures.getOrThrow(ConfiguredFeatures.MAGICAL_FOREST_TREES),

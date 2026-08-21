@@ -1,7 +1,7 @@
 package art.arcane.thaumcraft.data.providers;
 
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.common.data.SoundDefinition;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
@@ -42,7 +42,7 @@ public class SoundProvider extends SoundDefinitionsProvider {
         SoundDefinition definition = SoundDefinition.definition();
         //definition.subtitle(String.format("sound.%s.%s", event.location().getNamespace(), event.location().getPath().replace("/", ".")));
         for(int i = 1; i <= variants; i++) {
-            ResourceLocation id = ResourceLocation.fromNamespaceAndPath(event.location().getNamespace(), event.location().getPath() + "/" + i);
+            Identifier id = Identifier.fromNamespaceAndPath(event.location().getNamespace(), event.location().getPath() + "/" + i);
             definition.with(SoundDefinition.Sound.sound(id, SoundDefinition.SoundType.SOUND));
         }
         add(event, definition);

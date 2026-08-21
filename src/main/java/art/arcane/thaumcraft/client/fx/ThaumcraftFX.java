@@ -11,8 +11,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import art.arcane.thaumcraft.client.fx.particles.FXGenericParticle;
-import art.arcane.thaumcraft.client.fx.particles.FXVentParticle;
 import art.arcane.thaumcraft.networking.packets.ClientboundBamfEffectPacket;
 import art.arcane.thaumcraft.networking.packets.ClientboundEssentiaTrailPacket;
 import art.arcane.thaumcraft.networking.packets.ClientboundSalisMundusEffectPacket;
@@ -20,7 +18,7 @@ import art.arcane.thaumcraft.registries.ConfigSounds;
 
 import java.util.List;
 
-public final class ThaumcraftFX {
+/*public final class ThaumcraftFX {
 
     public static void drawSalisMundusSparkles(ClientboundSalisMundusEffectPacket data) {
         Minecraft mc = Minecraft.getInstance();
@@ -29,7 +27,7 @@ public final class ThaumcraftFX {
             return;
         }
 
-        RandomSource random = level.random;
+        RandomSource random = level.getRandom();
         Vec3 handPos = data.handPos();
         BlockPos target = data.target();
         Vec3 targetCenter = Vec3.atCenterOf(target);
@@ -103,7 +101,7 @@ public final class ThaumcraftFX {
             return;
         }
 
-        RandomSource random = level.random;
+        RandomSource random = level.getRandom();
         BlockState state = level.getBlockState(pos);
         AABB bs = state.getShape(level, pos).bounds();
         int num = (int) (getAverageEdgeLength(bs) * 20.0);
@@ -207,7 +205,7 @@ public final class ThaumcraftFX {
             return;
         }
 
-        RandomSource random = level.random;
+        RandomSource random = level.getRandom();
         Vec3 pos = data.pos();
         double x = pos.x();
         double y = pos.y();
@@ -302,7 +300,7 @@ public final class ThaumcraftFX {
             return;
         }
 
-        RandomSource random = level.random;
+        RandomSource random = level.getRandom();
         float r = 0.25f + random.nextFloat() * 0.75f;
         float g = 0.25f + random.nextFloat() * 0.75f;
         float b = 0.25f + random.nextFloat() * 0.75f;
@@ -336,7 +334,7 @@ public final class ThaumcraftFX {
             return;
         }
 
-        RandomSource random = level.random;
+        RandomSource random = level.getRandom();
 
         vx += (0.0025f + random.nextFloat() * 0.005f) * (random.nextBoolean() ? -1 : 1);
         vy += (0.0025f + random.nextFloat() * 0.005f) * (random.nextBoolean() ? -1 : 1);
@@ -388,7 +386,7 @@ public final class ThaumcraftFX {
             return;
         }
 
-        RandomSource random = level.random;
+        RandomSource random = level.getRandom();
         Vec3 normal = delta.scale(1.0 / length);
         int count = Math.max(4, (int) (length * 18.0) + Math.max(0, data.ext()));
 
@@ -453,7 +451,7 @@ public final class ThaumcraftFX {
         ClientLevel level = mc.level;
         if (level == null) return;
 
-        RandomSource random = level.random;
+        RandomSource random = level.getRandom();
         int age = 100 + random.nextInt(50);
         float[] alphaKeys = new float[]{0.3f, 0.0f};
         float[] scaleKeys = new float[]{2.0f, 5.0f};
@@ -481,7 +479,7 @@ public final class ThaumcraftFX {
         ClientLevel level = mc.level;
         if (level == null) return;
 
-        RandomSource random = level.random;
+        RandomSource random = level.getRandom();
         float r = ((color >> 16) & 0xFF) / 255.0f;
         float g = ((color >> 8) & 0xFF) / 255.0f;
         float b = (color & 0xFF) / 255.0f;
@@ -536,12 +534,12 @@ public final class ThaumcraftFX {
     public record Wind(float x, float z) {}
 
     private static Wind getWind(ClientLevel level, double windFactor) {
-        int m = level.getMoonPhase();
-        float angle = m * (40 + level.random.nextInt(10)) / 180.0f * (float) Math.PI;
+        int m = level.moon();
+        float angle = m * (40 + level.getRandom().nextInt(10)) / 180.0f * (float) Math.PI;
         float cos = Mth.cos(angle);
         float sin = Mth.sin(angle);
         float windX = (float) (0.1 * cos * windFactor);
         float windZ = (float) (-0.1 * sin * windFactor);
         return new Wind(windX, windZ);
     }
-}
+}*/

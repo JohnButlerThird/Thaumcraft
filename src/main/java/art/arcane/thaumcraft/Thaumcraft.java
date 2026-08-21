@@ -1,12 +1,11 @@
 package art.arcane.thaumcraft;
 
 import art.arcane.thaumcraft.config.ThaumcraftConfig;
-import art.arcane.thaumcraft.data.golemancy.seals.SealBehaviorInit;
 import art.arcane.thaumcraft.registries.*;
 import art.arcane.thaumcraft.world.ThaumcraftBiomes;
 import art.arcane.thaumcraft.world.tree.ConfigTreeFeatures;
 import com.mojang.logging.LogUtils;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -20,8 +19,8 @@ public final class Thaumcraft {
     public static final String MOD_ID = "thaumcraft";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static ResourceLocation id(String value) {
-        return ResourceLocation.tryBuild(MOD_ID, value);
+    public static Identifier id(String value) {
+        return Identifier.tryBuild(MOD_ID, value);
     }
 
     public Thaumcraft(IEventBus modEventBus, ModContainer modContainer) {
@@ -40,15 +39,13 @@ public final class Thaumcraft {
         ConfigParticles.init(modEventBus);
 
         ConfigLoot.init(modEventBus);
-        ConfigTreeFeatures.init(modEventBus);
+        //ConfigTreeFeatures.init(modEventBus);
 
-        ThaumcraftBiomes.init(modEventBus);
-
-        SealBehaviorInit.init();
+        //ThaumcraftBiomes.init(modEventBus);
     }
 
     public static boolean isDev() {
-        return !FMLLoader.isProduction();
+        return !FMLLoader.getCurrentOrNull().isProduction();
     }
 
     public static void info(String format, Object... args) {

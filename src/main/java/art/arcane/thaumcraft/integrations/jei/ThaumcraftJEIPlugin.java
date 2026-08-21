@@ -7,7 +7,7 @@ import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.registration.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import art.arcane.thaumcraft.Thaumcraft;
@@ -32,13 +32,13 @@ import java.util.List;
 @JeiPlugin
 public class ThaumcraftJEIPlugin implements IModPlugin {
     public static final IIngredientType<AspectList> ASPECT_LIST = () -> AspectList.class;
-    public static final IRecipeType<AspectFromItemStack> ASPECT_FROM_ITEM_STACK_RECIPE = IRecipeType.create(ResourceLocation.fromNamespaceAndPath("thaumcraft", "aspect_from_item_stack"), AspectFromItemStack.class);
-    public static final IRecipeType<ArcaneCraftingRecipe> ARCANE_RECIPE = IRecipeType.create(ThaumcraftData.Recipes.Types.ARCANE_CRAFTING.location(), ArcaneCraftingRecipe.class);
+    public static final IRecipeType<AspectFromItemStack> ASPECT_FROM_ITEM_STACK_RECIPE = IRecipeType.create(Thaumcraft.id("aspect_from_item_stack"), AspectFromItemStack.class);
+    public static final IRecipeType<ArcaneCraftingRecipe> ARCANE_RECIPE = IRecipeType.create(ThaumcraftData.Recipes.Types.ARCANE_CRAFTING.identifier(), ArcaneCraftingRecipe.class);
 
 
     @Override
-    public ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath(Thaumcraft.MOD_ID, "jei");
+    public Identifier getPluginUid() {
+        return Thaumcraft.id("jei");
     }
 
     @Override
@@ -57,8 +57,6 @@ public class ThaumcraftJEIPlugin implements IModPlugin {
     public void registerItemSubtypes(ISubtypeRegistration registration) {
         registration.registerFromDataComponentTypes(ConfigItems.VIS_CRYSTAL.value(), ConfigItemComponents.ASPECT_HOLDER.value());
         registration.registerFromDataComponentTypes(ConfigItems.PHIAL.value(), ConfigItemComponents.ASPECT_HOLDER.value());
-        registration.registerFromDataComponentTypes(ConfigItems.SEAL_PLACER.value(), ConfigItemComponents.SEAL_TYPE.value());
-        registration.registerFromDataComponentTypes(ConfigItems.GOLEM_PLACER.value(), ConfigItemComponents.GOLEM_CONFIG.value());
         registration.registerFromDataComponentTypes(ConfigBlocks.NITOR.item(), ConfigItemComponents.DYE_COLOR.value());
     }
 

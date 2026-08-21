@@ -44,7 +44,7 @@ public class ArcaneCraftingResultSlot extends Slot {
     //TODO Better crafting event
     protected void checkTakeAchievements(ItemStack pStack) {
         if(this.removeCount > 0) {
-            pStack.onCraftedBy(this.player.level(), this.player, this.removeCount);
+            pStack.onCraftedBy(this.player, this.removeCount);
             //CRaftingEv.firePlayerCraftingEvent(this.player, pStack, this.craftSlots);
         }
 

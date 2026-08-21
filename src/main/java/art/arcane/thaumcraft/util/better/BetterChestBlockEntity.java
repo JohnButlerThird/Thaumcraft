@@ -3,9 +3,7 @@ package art.arcane.thaumcraft.util.better;
 import art.arcane.thaumcraft.extensions.ContainerOpenersCounterExt;
 import art.arcane.thaumcraft.util.simple.SimpleChestBlock;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -13,6 +11,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.CompoundContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -23,6 +22,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class BetterChestBlockEntity extends RandomizableContainerBlockEntity implements BetterLidBlockEntity {
 
@@ -45,7 +46,7 @@ public class BetterChestBlockEntity extends RandomizableContainerBlockEntity imp
 		}
 
 		@Override
-		protected boolean isOwnContainer(Player p_155355_) {
+		public boolean isOwnContainer(Player p_155355_) {
 			if (!(p_155355_.containerMenu instanceof ChestMenu)) {
 				return false;
 			} else {
@@ -73,19 +74,19 @@ public class BetterChestBlockEntity extends RandomizableContainerBlockEntity imp
 	}
 
 	@Override
-	protected void loadAdditional(CompoundTag p_155349_, HolderLookup.Provider p_324564_) {
-		super.loadAdditional(p_155349_, p_324564_);
+	protected void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
 		this.items = NonNullList.withSize(this.getContainerSize(), ItemStack.EMPTY);
-		if (!this.tryLoadLootTable(p_155349_)) {
-			ContainerHelper.loadAllItems(p_155349_, this.items, p_324564_);
+		if (!this.tryLoadLootTable(input)) {
+			ContainerHelper.loadAllItems(input, this.items);
 		}
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag p_187489_, HolderLookup.Provider p_324448_) {
-		super.saveAdditional(p_187489_, p_324448_);
-		if (!this.trySaveLootTable(p_187489_)) {
-			ContainerHelper.saveAllItems(p_187489_, this.items, p_324448_);
+	protected void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
+		if (!this.trySaveLootTable(output)) {
+			ContainerHelper.saveAllItems(output, this.items);
 		}
 	}
 
@@ -95,7 +96,7 @@ public class BetterChestBlockEntity extends RandomizableContainerBlockEntity imp
 	}
 
 	public static void playSound(Level level, BlockPos pos, BlockState state, SoundEvent sound) {
-		level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, sound, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+		level.playSound(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, sound, SoundSource.BLOCKS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
 	}
 
 	@Override
@@ -109,28 +110,28 @@ public class BetterChestBlockEntity extends RandomizableContainerBlockEntity imp
 	}
 
 	@Override
-	public void startOpen(Player player) {
-		if (!this.remove && !player.isSpectator()) {
-			this.openersCounter.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
+	public void startOpen(ContainerUser containerUser) {
+		if (!this.remove && !containerUser.getLivingEntity().isSpectator()) {
+			this.openersCounter.incrementOpeners(containerUser.getLivingEntity(), this.getLevel(), this.getBlockPos(), this.getBlockState(), containerUser.getContainerInteractionRange());
 		}
 	}
 
 	@Override
-	public void stopOpen(Player player) {
-		if (!this.remove && !player.isSpectator()) {
-			this.openersCounter.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
+	public void stopOpen(ContainerUser containerUser) {
+		if (!this.remove && !containerUser.getLivingEntity().isSpectator()) {
+			this.openersCounter.decrementOpeners(containerUser.getLivingEntity(), this.getLevel(), this.getBlockPos(), this.getBlockState());
 		}
 	}
 
 	public void forceOpen(boolean skipSounds) {
 		if (!this.remove) {
-			((ContainerOpenersCounterExt)this.openersCounter).backgroundIncrementOpener(this.getLevel(), this.getBlockPos(), this.getBlockState(), skipSounds);
+			((ContainerOpenersCounterExt)this.openersCounter).thaumcraft$backgroundIncrementOpener(this.getLevel(), this.getBlockPos(), this.getBlockState(), skipSounds);
 		}
 	}
 
 	public void forceClose(boolean skipSounds) {
 		if (!this.remove) {
-			((ContainerOpenersCounterExt)this.openersCounter).backgroundDecrementOpener(this.getLevel(), this.getBlockPos(), this.getBlockState(), skipSounds);
+			((ContainerOpenersCounterExt)this.openersCounter).thaumcraft$backgroundDecrementOpener(this.getLevel(), this.getBlockPos(), this.getBlockState(), skipSounds);
 		}
 	}
 

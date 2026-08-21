@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.LevelSimulatedReader;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
@@ -27,17 +28,7 @@ public class GreatwoodFoliagePlacer extends FoliagePlacer {
     }
 
     @Override
-    protected void createFoliage(
-            LevelSimulatedReader level,
-            FoliageSetter blockSetter,
-            RandomSource random,
-            TreeConfiguration config,
-            int maxFreeTreeHeight,
-            FoliageAttachment attachment,
-            int foliageHeight,
-            int foliageRadius,
-            int offset) {
-
+    protected void createFoliage(WorldGenLevel level, FoliageSetter blockSetter, RandomSource random, TreeConfiguration config, int treeHeight, FoliageAttachment attachment, int foliageHeight, int leafRadius, int offset) {
         BlockPos center = attachment.pos();
         int x = center.getX();
         int y = center.getY();
@@ -58,7 +49,7 @@ public class GreatwoodFoliagePlacer extends FoliagePlacer {
         return (layer != 0 && layer != LEAF_DISTANCE_LIMIT - 1) ? 3.0f : 2.0f;
     }
 
-    private void generateLeafLayer(LevelSimulatedReader level, FoliageSetter blockSetter,
+    private void generateLeafLayer(WorldGenLevel level, FoliageSetter blockSetter,
                                    RandomSource random, TreeConfiguration config,
                                    int centerX, int y, int centerZ, float radius) {
         int intRadius = (int) (radius + 0.618);

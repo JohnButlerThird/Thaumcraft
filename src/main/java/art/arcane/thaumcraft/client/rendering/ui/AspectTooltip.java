@@ -1,7 +1,7 @@
 package art.arcane.thaumcraft.client.rendering.ui;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import art.arcane.thaumcraft.client.rendering.AspectRenderer;
@@ -30,12 +30,14 @@ public class AspectTooltip implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, int width, int height, GuiGraphics guiGraphics) {
+    public void extractImage(Font font, int x, int y, int w, int h, GuiGraphicsExtractor graphics) {
         aspects.indexedForEach((aspect, amount, index) -> {
             int offset = index * (SIZE + SPACING);
-            AspectRenderer.renderAspectOverlay(guiGraphics, aspect, x + offset, y + 1, SIZE, amount, false);
+            AspectRenderer.renderAspectGui(graphics, aspect, x + offset, y + 1, SIZE, amount, false);
         });
     }
+
+
 
     public record Data(AspectList aspects) implements TooltipComponent { }
 }

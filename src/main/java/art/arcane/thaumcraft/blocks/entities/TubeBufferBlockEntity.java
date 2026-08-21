@@ -5,23 +5,25 @@ import art.arcane.thaumcraft.api.capabilities.IEssentiaCapability;
 import art.arcane.thaumcraft.data.aspects.AspectList;
 import art.arcane.thaumcraft.registries.ConfigBlockEntities;
 import art.arcane.thaumcraft.registries.ConfigCapabilities;
+import art.arcane.thaumcraft.util.BitPacker;
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.apache.commons.lang3.ArrayUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class TubeBufferBlockEntity extends TubeBlockEntity {
 
     public static final int MAX_AMOUNT = 10;
 
-    private final AspectList aspects = new AspectList();
+    private AspectList aspects = new AspectList();
     private byte[] chokedSides = new byte[]{0, 0, 0, 0, 0, 0};
 
     public TubeBufferBlockEntity(BlockPos pPos, BlockState pBlockState) {
@@ -61,25 +63,23 @@ public class TubeBufferBlockEntity extends TubeBlockEntity {
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        super.readNbt(nbt, pRegistries);
+    protected void loadData(ValueInput input) {
+        super.loadData(input);
         this.aspects.clear();
-        if (nbt.contains("aspects")) {
-            this.aspects.deserializeNBT(pRegistries, nbt.getCompound("aspects"));
-        }
-        byte[] loaded = nbt.getByteArray("choke");
+		input.read("aspects", AspectList.CODEC.codec()).ifPresent(aspect -> this.aspects = aspect);
+        Byte[] loaded = input.read("choke", Codec.BYTE.listOf()).get().toArray(new Byte[0]);
         if (loaded.length == 6) {
-            this.chokedSides = loaded;
+            this.chokedSides = ArrayUtils.toPrimitive(loaded);
         } else {
             this.chokedSides = new byte[]{0, 0, 0, 0, 0, 0};
         }
     }
 
     @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        super.writeNbt(nbt, pRegistries);
-        nbt.put("aspects", this.aspects.serializeNBT(pRegistries));
-        nbt.putByteArray("choke", this.chokedSides);
+    protected void saveData(ValueOutput output) {
+        super.saveData(output);
+        output.store("aspects", AspectList.CODEC.codec(),  this.aspects);
+        output.store("choke", Codec.BYTE.listOf(), List.of(ArrayUtils.toObject(chokedSides)));
     }
 
     @Override

@@ -53,8 +53,18 @@ public record SalisMundusMultiblockRecipe(
     }
 
     @Override
-    public ItemStack assemble(Input input, HolderLookup.Provider registries) {
+    public ItemStack assemble(Input input) {
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean showNotification() {
+        return false;
+    }
+
+    @Override
+    public String group() {
+        return "";
     }
 
     public ItemStack getResultItem(HolderLookup.Provider registries) {

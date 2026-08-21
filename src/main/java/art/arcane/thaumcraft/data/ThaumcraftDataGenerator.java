@@ -16,7 +16,7 @@ import art.arcane.thaumcraft.data.providers.recipes.SalisMundusMultiblockRecipeP
 import art.arcane.thaumcraft.data.providers.recipes.SalisMundusRecipeProvider;
 import art.arcane.thaumcraft.data.providers.recipes.VanillaRecipeProvider;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Thaumcraft.MOD_ID)
 public final class ThaumcraftDataGenerator {
 
     @SubscribeEvent
@@ -24,9 +24,9 @@ public final class ThaumcraftDataGenerator {
         DataGenerator dataGen = e.getGenerator();
         RegistrySetBuilder builder = new RegistrySetBuilder();
 
-        builder.add(Registries.CONFIGURED_FEATURE, WorldgenProvider.ConfiguredFeatures::bootstrap);
-        builder.add(Registries.PLACED_FEATURE, WorldgenProvider.PlacedFeatures::bootstrap);
-        builder.add(Registries.BIOME, BiomeProvider::bootstrap);
+        //builder.add(Registries.CONFIGURED_FEATURE, WorldgenProvider.ConfiguredFeatures::bootstrap);
+        //builder.add(Registries.PLACED_FEATURE, WorldgenProvider.PlacedFeatures::bootstrap);
+        //builder.add(Registries.BIOME, BiomeProvider::bootstrap);
 
         dataGen.addProvider(true, new ResearchCategoryProvider(builder).build(e));
         dataGen.addProvider(true, new ResearchEntryProvider(builder).build(e));
@@ -34,11 +34,6 @@ public final class ThaumcraftDataGenerator {
         dataGen.addProvider(true, aspectProvider);
         dataGen.addProvider(true, new AspectRegistryProvider(e));
         dataGen.addProvider(true, new AuraBiomeProvider(builder).build(e));
-
-        dataGen.addProvider(true, new GolemTraitProvider(builder).build(e));
-        dataGen.addProvider(true, new GolemMaterialProvider(builder).build(e));
-        dataGen.addProvider(true, new GolemPartProvider(builder).build(e));
-        dataGen.addProvider(true, new SealTypeProvider(builder).build(e));
 
         var combinedLookup = aspectProvider.getRegistryProvider();
         dataGen.addProvider(true, (DataProvider.Factory<DataProvider>) ArcaneCraftingProvider::new);
@@ -53,7 +48,6 @@ public final class ThaumcraftDataGenerator {
         dataGen.addProvider(true, ThaumcraftLootProvider.create(dataGen.getPackOutput(), e.getLookupProvider()));
         dataGen.addProvider(true, new TagsProvider(dataGen.getPackOutput(), e.getLookupProvider()));
         dataGen.addProvider(true, new DataMapsProvider(dataGen.getPackOutput(), e.getLookupProvider()));
-
         dataGen.addProvider(true, new SoundProvider(dataGen.getPackOutput()));
         dataGen.addProvider(true, new EquipmentInfoProvider(dataGen.getPackOutput()));
     }

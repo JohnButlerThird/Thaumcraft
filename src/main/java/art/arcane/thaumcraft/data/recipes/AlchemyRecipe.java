@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import art.arcane.thaumcraft.api.capabilities.IResearchCapability;
@@ -15,7 +16,7 @@ import art.arcane.thaumcraft.registries.ConfigRecipeTypes;
 public record AlchemyRecipe(
         Ingredient catalyst,
         AspectList aspects,
-        ItemStack result
+        ItemStackTemplate result
 ) implements Recipe<AlchemyRecipe.Input> {
 
     @Override
@@ -24,12 +25,22 @@ public record AlchemyRecipe(
         return pRecipeInput.aspects.contains(aspects) && this.catalyst.test(pRecipeInput.catalyst);
     }
 
-    @Override
-    public ItemStack assemble(Input input, HolderLookup.Provider registries) {
-        return result.copy();
-    }
+	@Override
+	public ItemStack assemble(Input input) {
+		return result.create();
+	}
 
-    @Override
+	@Override
+	public boolean showNotification() {
+		return false;
+	}
+
+	@Override
+	public String group() {
+		return "";
+	}
+
+	@Override
     public RecipeSerializer<? extends Recipe<Input>> getSerializer() {
         return ConfigRecipeTypes.ALCHEMY.serializer();
     }
@@ -52,13 +63,13 @@ public record AlchemyRecipe(
     public static final MapCodec<AlchemyRecipe> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Ingredient.CODEC.fieldOf("catalyst").forGetter(AlchemyRecipe::catalyst),
             AspectList.CODEC.fieldOf("aspects").forGetter(AlchemyRecipe::aspects),
-            ItemStack.CODEC.fieldOf("result").forGetter(AlchemyRecipe::result)
+            ItemStackTemplate.CODEC.fieldOf("result").forGetter(AlchemyRecipe::result)
     ).apply(i, AlchemyRecipe::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, AlchemyRecipe> STREAM_CODEC = StreamCodec.composite(
             Ingredient.CONTENTS_STREAM_CODEC, AlchemyRecipe::catalyst,
             AspectList.STREAM_CODEC, AlchemyRecipe::aspects,
-            ItemStack.STREAM_CODEC, AlchemyRecipe::result,
+            ItemStackTemplate.STREAM_CODEC, AlchemyRecipe::result,
             AlchemyRecipe::new);
 
     public record Input(

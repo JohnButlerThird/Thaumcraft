@@ -1,5 +1,5 @@
 package art.arcane.thaumcraft.extensions;
 
 public interface RegistriesDatapackGeneratorExt {
-    void setName(String name);
+    void thaumcraft$setName(String name);
 }

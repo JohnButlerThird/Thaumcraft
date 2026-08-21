@@ -1,42 +1,35 @@
 package art.arcane.thaumcraft.data.attachments;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import lombok.AllArgsConstructor;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import art.arcane.thaumcraft.api.capabilities.IInfusionAttachment;
 
 import java.util.Map;
 
-@AllArgsConstructor
-public class InfusionAttachment implements IInfusionAttachment {
-
-    private final Map<ResourceLocation, Integer> enchantments;
+public record InfusionAttachment(Map<Identifier, Integer> enchantments) implements IInfusionAttachment {
 
     @Override
-    public boolean hasEnchantment(ResourceLocation id) {
+    public boolean hasEnchantment(Identifier id) {
         return getEnchantmentLevel(id) > 0;
     }
 
     @Override
-    public int getEnchantmentLevel(ResourceLocation id) {
+    public int getEnchantmentLevel(Identifier id) {
         return enchantments.getOrDefault(id, 0);
     }
 
     @Override
-    public Map<ResourceLocation, Integer> getEnchantments() {
-        return enchantments;
-    }
-
-    @Override
-    public IInfusionAttachment addEnchantment(ResourceLocation id, int level) {
+    public IInfusionAttachment addEnchantment(Identifier id, int level) {
         enchantments.put(id, level);
         return this;
     }
 
     @Override
-    public boolean removeEnchantment(ResourceLocation id) {
+    public boolean removeEnchantment(Identifier id) {
         return enchantments.remove(id) != null;
     }
 
-    public static final Codec<InfusionAttachment> CODEC = Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT).xmap(InfusionAttachment::new, a -> a.enchantments);
+    public static final MapCodec<InfusionAttachment> CODEC = Codec.unboundedMap(Identifier.CODEC, Codec.INT).xmap(InfusionAttachment::new, a -> a.enchantments).fieldOf("infusions");
 }

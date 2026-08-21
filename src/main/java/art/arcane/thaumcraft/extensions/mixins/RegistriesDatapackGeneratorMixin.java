@@ -21,7 +21,7 @@ public class RegistriesDatapackGeneratorMixin implements RegistriesDatapackGener
     }
 
     @Override
-    public void setName(String name) {
+    public void thaumcraft$setName(String name) {
         this.name = name;
     }
 }

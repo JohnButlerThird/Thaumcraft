@@ -6,7 +6,7 @@ import art.arcane.thaumcraft.items.equipment.GogglesItem;
 import art.arcane.thaumcraft.items.tools.*;
 import art.arcane.thaumcraft.items.equipment.BootsTravellerItem;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -24,9 +24,6 @@ import art.arcane.thaumcraft.api.ThaumcraftMaterials;
 import art.arcane.thaumcraft.items.resources.JarLabelItem;
 import art.arcane.thaumcraft.items.resources.LootBagItem;
 import art.arcane.thaumcraft.items.resources.PhialItem;
-import art.arcane.thaumcraft.items.golemancy.GolemBellItem;
-import art.arcane.thaumcraft.items.golemancy.GolemPlacerItem;
-import art.arcane.thaumcraft.items.golemancy.SealPlacerItem;
 import art.arcane.thaumcraft.items.resources.SalisMundusItem;
 import art.arcane.thaumcraft.items.resources.VisCrystalItem;
 import art.arcane.thaumcraft.util.simple.SimpleCreativeTab;
@@ -66,41 +63,39 @@ public final class ConfigItems {
             ThaumcraftMaterials.Tools.THAUMIUM, ThaumcraftMaterials.Tools.THAUMIUM.attackDamageBonus(), ThaumcraftMaterials.Tools.THAUMIUM.speed(), p), ConfigCreativeTabs.MAIN);
     public static final DeferredItem<HoeItem> THAUMIUM_HOE = registerItem(Items.THAUMIUM_HOE, p -> new HoeItem(
             ThaumcraftMaterials.Tools.THAUMIUM, ThaumcraftMaterials.Tools.THAUMIUM.attackDamageBonus(), ThaumcraftMaterials.Tools.THAUMIUM.speed(), p), ConfigCreativeTabs.MAIN);
-    public static final DeferredItem<PickaxeItem> THAUMIUM_PICKAXE = registerItem(Items.THAUMIUM_PICKAXE, p -> new PickaxeItem(
-            ThaumcraftMaterials.Tools.THAUMIUM, ThaumcraftMaterials.Tools.THAUMIUM.attackDamageBonus(), ThaumcraftMaterials.Tools.THAUMIUM.speed(), p), ConfigCreativeTabs.MAIN);
+    public static final DeferredItem<Item> THAUMIUM_PICKAXE = registerItem(Items.THAUMIUM_PICKAXE, p -> new Item(p.pickaxe(ThaumcraftMaterials.Tools.THAUMIUM, ThaumcraftMaterials.Tools.THAUMIUM.attackDamageBonus(), ThaumcraftMaterials.Tools.THAUMIUM.speed())), ConfigCreativeTabs.MAIN);
     public static final DeferredItem<ShovelItem> THAUMIUM_SHOVEL = registerItem(Items.THAUMIUM_SHOVEL, p -> new ShovelItem(
             ThaumcraftMaterials.Tools.THAUMIUM, ThaumcraftMaterials.Tools.THAUMIUM.attackDamageBonus(), ThaumcraftMaterials.Tools.THAUMIUM.speed(), p), ConfigCreativeTabs.MAIN);
-    public static final DeferredItem<SwordItem> THAUMIUM_SWORD = registerItem(Items.THAUMIUM_SWORD, p -> new SwordItem(
-            ThaumcraftMaterials.Tools.THAUMIUM, ThaumcraftMaterials.Tools.THAUMIUM.attackDamageBonus(), ThaumcraftMaterials.Tools.THAUMIUM.speed(), p), ConfigCreativeTabs.MAIN);
+    public static final DeferredItem<Item> THAUMIUM_SWORD = registerItem(Items.THAUMIUM_SWORD, p -> new Item(p.sword(ThaumcraftMaterials.Tools.THAUMIUM, ThaumcraftMaterials.Tools.THAUMIUM.attackDamageBonus(), ThaumcraftMaterials.Tools.THAUMIUM.speed())), ConfigCreativeTabs.MAIN);
 
     // Armors
-    public static final DeferredItem<ArmorItem> ARMOR_CRIMSON_BOOTS = registerItem(Items.CRIMSON_BOOTS, p -> new ArmorItem(ThaumcraftMaterials.Armor.CRIMSON_BOOTS, ArmorType.BOOTS,
-            p.rarity(Rarity.UNCOMMON)
+    public static final DeferredItem<Item> ARMOR_CRIMSON_BOOTS = registerItem(Items.CRIMSON_BOOTS, p -> new Item(
+            p.humanoidArmor(ThaumcraftMaterials.Armor.CRIMSON_BOOTS, ArmorType.BOOTS).rarity(Rarity.UNCOMMON)
                     .component(ConfigItemComponents.WARPING.value(), 1)
                     .component(ConfigItemComponents.VIS_COST_MODIFIER.value(), -0.01F)),
             ConfigCreativeTabs.MAIN);
 
 	public static final DeferredItem<VisChargeItem> ARMOR_TRAVELLER_BOOTS = registerItem(Items.TRAVELLER_BOOTS, p -> new BootsTravellerItem(p.rarity(Rarity.RARE)), ConfigCreativeTabs.MAIN);
 
-	public static final DeferredItem<ArmorItem> ARMOR_THAUMATURGE_CHEST = registerArmorItem(ThaumcraftMaterials.Armor.THAUMATURGE, ArmorType.CHESTPLATE, p ->
+	public static final DeferredItem<Item> ARMOR_THAUMATURGE_CHEST = registerArmorItem(ThaumcraftMaterials.Armor.THAUMATURGE, ArmorType.CHESTPLATE, p ->
 			p.rarity(Rarity.UNCOMMON).component(ConfigItemComponents.VIS_COST_MODIFIER.value(), -0.03F), ConfigCreativeTabs.MAIN);
-	public static final DeferredItem<ArmorItem> ARMOR_THAUMATURGE_PANTS = registerArmorItem(ThaumcraftMaterials.Armor.THAUMATURGE, ArmorType.LEGGINGS, p ->
+	public static final DeferredItem<Item> ARMOR_THAUMATURGE_PANTS = registerArmorItem(ThaumcraftMaterials.Armor.THAUMATURGE, ArmorType.LEGGINGS, p ->
 			p.rarity(Rarity.UNCOMMON).component(ConfigItemComponents.VIS_COST_MODIFIER.value(), -0.03F), ConfigCreativeTabs.MAIN);
-	public static final DeferredItem<ArmorItem> ARMOR_THAUMATURGE_BOOTS = registerArmorItem(ThaumcraftMaterials.Armor.THAUMATURGE, ArmorType.BOOTS, p ->
+	public static final DeferredItem<Item> ARMOR_THAUMATURGE_BOOTS = registerArmorItem(ThaumcraftMaterials.Armor.THAUMATURGE, ArmorType.BOOTS, p ->
 			p.rarity(Rarity.UNCOMMON).component(ConfigItemComponents.VIS_COST_MODIFIER.value(), -0.02F), ConfigCreativeTabs.MAIN);
 
-	public static final DeferredItem<ArmorItem> ARMOR_THAUMIUM_HELMET = registerArmorItem(ThaumcraftMaterials.Armor.THAUMIUM, ArmorType.HELMET, p -> p.rarity(Rarity.UNCOMMON), ConfigCreativeTabs.MAIN);
-	public static final DeferredItem<ArmorItem> ARMOR_THAUMIUM_CHEST = registerArmorItem(ThaumcraftMaterials.Armor.THAUMIUM, ArmorType.CHESTPLATE, p -> p.rarity(Rarity.UNCOMMON), ConfigCreativeTabs.MAIN);
-	public static final DeferredItem<ArmorItem> ARMOR_THAUMIUM_PANTS = registerArmorItem(ThaumcraftMaterials.Armor.THAUMIUM, ArmorType.LEGGINGS, p -> p.rarity(Rarity.UNCOMMON), ConfigCreativeTabs.MAIN);
-	public static final DeferredItem<ArmorItem> ARMOR_THAUMIUM_BOOTS = registerArmorItem(ThaumcraftMaterials.Armor.THAUMIUM, ArmorType.BOOTS, p -> p.rarity(Rarity.UNCOMMON), ConfigCreativeTabs.MAIN);
+	public static final DeferredItem<Item> ARMOR_THAUMIUM_HELMET = registerArmorItem(ThaumcraftMaterials.Armor.THAUMIUM, ArmorType.HELMET, p -> p.rarity(Rarity.UNCOMMON), ConfigCreativeTabs.MAIN);
+	public static final DeferredItem<Item> ARMOR_THAUMIUM_CHEST = registerArmorItem(ThaumcraftMaterials.Armor.THAUMIUM, ArmorType.CHESTPLATE, p -> p.rarity(Rarity.UNCOMMON), ConfigCreativeTabs.MAIN);
+	public static final DeferredItem<Item> ARMOR_THAUMIUM_PANTS = registerArmorItem(ThaumcraftMaterials.Armor.THAUMIUM, ArmorType.LEGGINGS, p -> p.rarity(Rarity.UNCOMMON), ConfigCreativeTabs.MAIN);
+	public static final DeferredItem<Item> ARMOR_THAUMIUM_BOOTS = registerArmorItem(ThaumcraftMaterials.Armor.THAUMIUM, ArmorType.BOOTS, p -> p.rarity(Rarity.UNCOMMON), ConfigCreativeTabs.MAIN);
 
-	public static final DeferredItem<ArmorItem> ARMOR_VOID_HELMET = registerArmorItem(ThaumcraftMaterials.Armor.VOID_METAL, ArmorType.HELMET, p ->
+	public static final DeferredItem<Item> ARMOR_VOID_HELMET = registerArmorItem(ThaumcraftMaterials.Armor.VOID_METAL, ArmorType.HELMET, p ->
 			p.rarity(Rarity.UNCOMMON).component(ConfigItemComponents.WARPING.value(), 1), ConfigCreativeTabs.MAIN);
-	public static final DeferredItem<ArmorItem> ARMOR_VOID_CHEST = registerArmorItem(ThaumcraftMaterials.Armor.VOID_METAL, ArmorType.CHESTPLATE, p ->
+	public static final DeferredItem<Item> ARMOR_VOID_CHEST = registerArmorItem(ThaumcraftMaterials.Armor.VOID_METAL, ArmorType.CHESTPLATE, p ->
 			p.rarity(Rarity.UNCOMMON).component(ConfigItemComponents.WARPING.value(), 1), ConfigCreativeTabs.MAIN);
-	public static final DeferredItem<ArmorItem> ARMOR_VOID_PANTS = registerArmorItem(ThaumcraftMaterials.Armor.VOID_METAL, ArmorType.LEGGINGS, p ->
+	public static final DeferredItem<Item> ARMOR_VOID_PANTS = registerArmorItem(ThaumcraftMaterials.Armor.VOID_METAL, ArmorType.LEGGINGS, p ->
 			p.rarity(Rarity.UNCOMMON).component(ConfigItemComponents.WARPING.value(), 1), ConfigCreativeTabs.MAIN);
-	public static final DeferredItem<ArmorItem> ARMOR_VOID_BOOTS = registerArmorItem(ThaumcraftMaterials.Armor.VOID_METAL, ArmorType.BOOTS, p ->
+	public static final DeferredItem<Item> ARMOR_VOID_BOOTS = registerArmorItem(ThaumcraftMaterials.Armor.VOID_METAL, ArmorType.BOOTS, p ->
 			p.rarity(Rarity.UNCOMMON).component(ConfigItemComponents.WARPING.value(), 1), ConfigCreativeTabs.MAIN);
 
 
@@ -126,16 +121,6 @@ public final class ConfigItems {
     public static final DeferredItem<PhialItem> PHIAL = registerItem(Items.PHIAL, PhialItem::new, ConfigCreativeTabs.MAIN);
     public static final DeferredItem<VisCrystalItem> VIS_CRYSTAL = registerItem(Items.VIS_CRYSTAL, VisCrystalItem::new, ConfigCreativeTabs.MAIN);
     public static final DeferredItem<SalisMundusItem> SALIS_MUNDUS = registerItem(Items.SALIS_MUNDUS, SalisMundusItem::new, ConfigCreativeTabs.MAIN);
-
-    public static final DeferredItem<GolemPlacerItem> GOLEM_PLACER = registerItem(Items.GOLEM_PLACER, GolemPlacerItem::new, ConfigCreativeTabs.MAIN);
-    public static final DeferredItem<SealPlacerItem> SEAL_PLACER = registerItem(Items.SEAL_PLACER, SealPlacerItem::new, ConfigCreativeTabs.MAIN);
-    public static final DeferredItem<GolemBellItem> GOLEM_BELL = registerItem(Items.GOLEM_BELL, GolemBellItem::new, ConfigCreativeTabs.MAIN);
-
-    public static final DeferredItem<Item> MIND_CLOCKWORK = registerSimple(Items.MIND_CLOCKWORK, ConfigCreativeTabs.MAIN);
-    public static final DeferredItem<Item> MIND_BIOTHAUMIC = registerSimple(Items.MIND_BIOTHAUMIC, ConfigCreativeTabs.MAIN);
-    public static final DeferredItem<Item> MECHANISM_SIMPLE = registerSimple(Items.MECHANISM_SIMPLE, ConfigCreativeTabs.MAIN);
-    public static final DeferredItem<Item> MODULE_VISION = registerSimple(Items.MODULE_VISION, ConfigCreativeTabs.MAIN);
-    public static final DeferredItem<Item> MODULE_AGGRESSION = registerSimple(Items.MODULE_AGGRESSION, ConfigCreativeTabs.MAIN);
 
     public static final DeferredItem<LootBagItem> LOOT_BAG_COMMON = registerItem(Items.LOOT_BAG_COMMON, p -> new LootBagItem(art.arcane.thaumcraft.api.ThaumcraftData.Loot.TABLE_LOOT_BAG_COMMON, p.rarity(Rarity.COMMON)), ConfigCreativeTabs.MAIN);
     public static final DeferredItem<LootBagItem> LOOT_BAG_UNCOMMON = registerItem(Items.LOOT_BAG_UNCOMMON, p -> new LootBagItem(art.arcane.thaumcraft.api.ThaumcraftData.Loot.TABLE_LOOT_BAG_UNCOMMON, p.rarity(Rarity.UNCOMMON)), ConfigCreativeTabs.MAIN);
@@ -205,7 +190,7 @@ public final class ConfigItems {
 
     public static void init(IEventBus bus) { REGISTRY.register(bus); }
 
-    private static DeferredItem<Item> registerSimple(ResourceLocation location, SimpleCreativeTab tab) {
+    private static DeferredItem<Item> registerSimple(Identifier location, SimpleCreativeTab tab) {
         DeferredItem<Item> obj = REGISTRY.registerSimpleItem(location.getPath());
         if(tab != null) {
             tab.register(obj);
@@ -213,7 +198,7 @@ public final class ConfigItems {
         return obj;
     }
 
-    private static DeferredItem<Item> registerSimple(ResourceLocation location, UnaryOperator<Item.Properties> properties, SimpleCreativeTab tab) {
+    private static DeferredItem<Item> registerSimple(Identifier location, UnaryOperator<Item.Properties> properties, SimpleCreativeTab tab) {
         DeferredItem<Item> obj = REGISTRY.registerItem(location.getPath(), p -> new Item(properties.apply(p)));
         if(tab != null) {
             tab.register(obj);
@@ -221,7 +206,7 @@ public final class ConfigItems {
         return obj;
     }
 
-    private static <T extends Item> DeferredItem<T> registerItem(ResourceLocation location, Function<Item.Properties, T> item, SimpleCreativeTab tab) {
+    private static <T extends Item> DeferredItem<T> registerItem(Identifier location, Function<Item.Properties, T> item, SimpleCreativeTab tab) {
         DeferredItem<T> obj = REGISTRY.registerItem(location.getPath(), item);
         if(tab != null) {
             tab.register(obj);
@@ -229,22 +214,22 @@ public final class ConfigItems {
         return obj;
     }
 
-	private static DeferredItem<ArmorItem> registerArmorItem(ArmorMaterial material, ArmorType type, UnaryOperator<Item.Properties> itemProperties, SimpleCreativeTab tab) {
-		return registerItem(material.assetId().location().withSuffix("_" + type.getName()), p -> new ArmorItem(material, type, itemProperties.apply(p)), tab);
+	private static DeferredItem<Item> registerArmorItem(ArmorMaterial material, ArmorType type, UnaryOperator<Item.Properties> itemProperties, SimpleCreativeTab tab) {
+		return registerItem(material.assetId().identifier().withSuffix("_" + type.getName()), p -> new Item(itemProperties.apply(p.humanoidArmor(material, type))), tab);
 	}
 
     private static FancyArmorSet registerFancyArmorSet(ArmorMaterial material,
 													   FancyArmorItem.ArmorSet armorSet,
 													   UnaryOperator<Item.Properties> itemProperties,
 													   SimpleCreativeTab tab) {
-        DeferredItem<ArmorItem> head = registerItem(material.assetId().location().withSuffix("_helmet"), p -> new FancyArmorItem(armorSet, material, ArmorType.HELMET,  itemProperties.apply(p)), tab);
-        DeferredItem<ArmorItem> chest = registerItem(material.assetId().location().withSuffix("_chestplate"), p -> new FancyArmorItem(armorSet, material, ArmorType.CHESTPLATE,  itemProperties.apply(p)),tab);
-        DeferredItem<ArmorItem> leggings = registerItem(material.assetId().location().withSuffix("_leggings"), p -> new FancyArmorItem(armorSet, material, ArmorType.LEGGINGS,  itemProperties.apply(p)),tab);
+        DeferredItem<Item> head = registerItem(material.assetId().identifier().withSuffix("_helmet"), p -> new FancyArmorItem(armorSet, material, ArmorType.HELMET,  itemProperties.apply(p)), tab);
+        DeferredItem<Item> chest = registerItem(material.assetId().identifier().withSuffix("_chestplate"), p -> new FancyArmorItem(armorSet, material, ArmorType.CHESTPLATE,  itemProperties.apply(p)),tab);
+        DeferredItem<Item> leggings = registerItem(material.assetId().identifier().withSuffix("_leggings"), p -> new FancyArmorItem(armorSet, material, ArmorType.LEGGINGS,  itemProperties.apply(p)),tab);
 ;       return new FancyArmorSet(head, chest, leggings);
     }
 
     public record FancyArmorSet(
-            DeferredItem<ArmorItem> head,
-            DeferredItem<ArmorItem> chest,
-            DeferredItem<ArmorItem> legs) { }
+            DeferredItem<Item> head,
+            DeferredItem<Item> chest,
+            DeferredItem<Item> legs) { }
 }

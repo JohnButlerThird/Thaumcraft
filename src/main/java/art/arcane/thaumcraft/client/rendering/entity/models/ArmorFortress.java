@@ -3,18 +3,15 @@ package art.arcane.thaumcraft.client.rendering.entity.models;
 import art.arcane.thaumcraft.Thaumcraft;
 import art.arcane.thaumcraft.api.ThaumcraftMaterials;
 import art.arcane.thaumcraft.api.components.FortressFaceplateComponent;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.HumanoidModel;
+import art.arcane.thaumcraft.registries.ConfigItemComponents;
+import art.arcane.thaumcraft.registries.ConfigItems;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
 
-public class ArmorFortress<S extends HumanoidRenderState> extends HumanoidModel<S> {
+public class ArmorFortress<S extends HumanoidRenderState> extends FancyArmorModel<S> {
 
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Thaumcraft.id("armor_fortress"), "main");
 
@@ -30,7 +27,6 @@ public class ArmorFortress<S extends HumanoidRenderState> extends HumanoidModel<
 	private final ModelPart left_arm_2;
 	private final ModelPart right_arm_1;
 	private final ModelPart right_arm_2;
-	private final ModelPart leggings;
 	private final ModelPart left_front_flap;
 	private final ModelPart left_back_flap;
 	private final ModelPart left_leg_1;
@@ -40,10 +36,9 @@ public class ArmorFortress<S extends HumanoidRenderState> extends HumanoidModel<
 	private final ModelPart right_leg_1;
 	private final ModelPart right_leg_2;
 
-	private int level = 0;
 
 	public ArmorFortress(ModelPart root) {
-		super(root);
+		super(root, ThaumcraftMaterials.Armor.FORTRESS, false);
 		this.helmet_1 = this.hat.getChild("helmet_1");
 		this.helmet_2 = this.hat.getChild("helmet_2");
 		this.mask_devil = this.hat.getChild("mask_devil");
@@ -56,7 +51,6 @@ public class ArmorFortress<S extends HumanoidRenderState> extends HumanoidModel<
 		this.left_arm_2 = this.leftArm.getChild("left_arm_2");
 		this.right_arm_1 = this.rightArm.getChild("right_arm_1");
 		this.right_arm_2 = this.rightArm.getChild("right_arm_2");
-		this.leggings = root.getChild("leggings");
 		this.left_front_flap = this.leftLeg.getChild("left_front_flap");
 		this.left_back_flap = this.leftLeg.getChild("left_back_flap");
 		this.left_leg_1 = this.leftLeg.getChild("left_leg_1");
@@ -183,21 +177,9 @@ public class ArmorFortress<S extends HumanoidRenderState> extends HumanoidModel<
 		return LayerDefinition.create(meshdefinition, 128, 64);
 	}
 
-	public void render(PoseStack stack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
-		ResourceLocation assetId = ThaumcraftMaterials.Armor.FORTRESS.assetId().location();
-		ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(assetId.getNamespace(), "textures/entity/equipment/humanoid/" + assetId.getPath() + ".png");
-		renderToBuffer(stack, buffer.getBuffer(renderType(texture)), packedLight, packedOverlay);
-	}
-
-	public void resetState(int level) {
-		setAllVisible(false);
-		this.level = level;
-	}
-
 	@Override
 	public void setAllVisible(boolean visible) {
 		super.setAllVisible(visible);
-		this.leggings.visible = visible;
 		this.mask_devil.visible = this.mask_ghost.visible = this.mask_fiend.visible = this.goggles.visible = false;
 		this.helmet_1.visible = this.helmet_2.visible = false;
 		this.body_1.visible = this.body_2.visible = false;
@@ -207,50 +189,59 @@ public class ArmorFortress<S extends HumanoidRenderState> extends HumanoidModel<
 		this.right_leg_1.visible = this.right_leg_2.visible = false;
 	}
 
-	public void setVisible(EquipmentSlot slot, FortressFaceplateComponent fortressFaceplate) {
-		switch(slot) {
-			case HEAD -> {
-				if(fortressFaceplate != null) {
-					this.goggles.visible = fortressFaceplate.hasGoggles();
-					if(fortressFaceplate.type() != FortressFaceplateComponent.Type.NONE) {
-						this.hat.getChild(fortressFaceplate.type().getModelPart()).visible = true;
-					}
-				}
-				this.head.visible = true;
-				this.hat.visible = true;
-				if(level > 0)
-					this.helmet_1.visible = true;
-				if(level > 1)
-					this.helmet_2.visible = true;
-			}
-			case CHEST -> {
-				this.body.visible = true;
-				this.leftArm.visible = true;
-				this.rightArm.visible = true;
-				if(level > 0) {
-					this.body_1.visible = true;
-					this.left_arm_1.visible = true;
-					this.right_arm_1.visible = true;
-				}
-				if(level > 1) {
-					this.body_2.visible = true;
-					this.left_arm_2.visible = true;
-					this.right_arm_2.visible = true;
-				}
-			}
-			case LEGS -> {
-				this.leftLeg.visible = true;
-				this.rightLeg.visible = true;
-				this.leggings.visible = true;
-				if(level > 0) {
-					this.left_leg_1.visible = true;
-					this.right_leg_1.visible = true;
-				}
-				if(level > 1) {
-					this.left_leg_2.visible = true;
-					this.right_leg_2.visible = true;
-				}
+	@Override
+	protected void enableHead(S state) {
+		int level =  fortressLevel(state);
+		if(level >= 0)
+			this.helmet_1.visible = true;
+		if(level >= 1)
+			this.helmet_2.visible = true;
+
+		if(state.headEquipment.has(ConfigItemComponents.ARMOR_FORTRESS_FACEPLATE.value())) {
+			FortressFaceplateComponent component = state.headEquipment.get(ConfigItemComponents.ARMOR_FORTRESS_FACEPLATE.value());
+			this.goggles.visible = component.hasGoggles();
+			if(component.type() != FortressFaceplateComponent.Type.NONE) {
+				this.hat.getChild(component.type().getModelPart()).visible = true;
 			}
 		}
+	}
+
+	@Override
+	protected void enableChest(S state) {
+		int level =  fortressLevel(state);
+		if(level > 0) {
+			this.body_1.visible = true;
+			this.left_arm_1.visible = true;
+			this.right_arm_1.visible = true;
+		}
+		if(level > 1) {
+			this.body_2.visible = true;
+			this.left_arm_2.visible = true;
+			this.right_arm_2.visible = true;
+		}
+	}
+
+	@Override
+	protected void enableLegs(S state) {
+		int level =  fortressLevel(state);
+		if(level > 0) {
+			this.left_leg_1.visible = true;
+			this.right_leg_1.visible = true;
+		}
+		if(level > 1) {
+			this.left_leg_2.visible = true;
+			this.right_leg_2.visible = true;
+		}
+	}
+
+	private int fortressLevel(S state) {
+		int level = -1;
+		if(state.headEquipment.is(ConfigItems.ARMOR_FORTRESS.head()))
+			level++;
+		if(state.chestEquipment.is(ConfigItems.ARMOR_FORTRESS.chest()))
+			level++;
+		if(state.legsEquipment.is(ConfigItems.ARMOR_FORTRESS.legs()))
+			level++;
+		return level;
 	}
 }

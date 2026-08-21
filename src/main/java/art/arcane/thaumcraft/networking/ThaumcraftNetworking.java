@@ -9,21 +9,16 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import art.arcane.thaumcraft.Thaumcraft;
-import art.arcane.thaumcraft.client.fx.OreScanHandler;
-import art.arcane.thaumcraft.client.fx.ThaumcraftFX;
-import art.arcane.thaumcraft.client.rendering.SealClientData;
 import art.arcane.thaumcraft.items.tools.ElementalShovelItem;
 import art.arcane.thaumcraft.networking.packets.ClientboundAspectRegistrySyncPacket;
 import art.arcane.thaumcraft.networking.packets.ClientboundBamfEffectPacket;
 import art.arcane.thaumcraft.networking.packets.ClientboundEssentiaTrailPacket;
 import art.arcane.thaumcraft.networking.packets.ClientboundSalisMundusEffectPacket;
-import art.arcane.thaumcraft.networking.packets.ClientboundSealRemovePacket;
-import art.arcane.thaumcraft.networking.packets.ClientboundSealSyncPacket;
 import art.arcane.thaumcraft.networking.packets.ClientboundSoundingPacket;
 import art.arcane.thaumcraft.networking.packets.ServerboundCycleToolModePacket;
 import art.arcane.thaumcraft.registries.ConfigDataRegistries;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Thaumcraft.MOD_ID)
 public class ThaumcraftNetworking {
 
     private static final String PROTOCOL = "0.1";
@@ -39,7 +34,7 @@ public class ThaumcraftNetworking {
             });
         });
 
-        registrar.playToClient(ClientboundSoundingPacket.TYPE, ClientboundSoundingPacket.STREAM_CODEC, (data, ctx) -> {
+        /*registrar.playToClient(ClientboundSoundingPacket.TYPE, ClientboundSoundingPacket.STREAM_CODEC, (data, ctx) -> {
             ctx.enqueueWork(() -> OreScanHandler.handleSoundingScan(data.origin(), data.level()));
         });
 
@@ -51,24 +46,9 @@ public class ThaumcraftNetworking {
             ctx.enqueueWork(() -> ThaumcraftFX.drawBamf(data));
         });
 
-        registrar.playToClient(ClientboundSealSyncPacket.TYPE, ClientboundSealSyncPacket.STREAM_CODEC, (data, ctx) -> {
-            ctx.enqueueWork(() -> SealClientData.addSeal(
-                    data.pos(),
-                    data.face(),
-                    data.sealType(),
-                    data.color(),
-                    data.areaX(),
-                    data.areaY(),
-                    data.areaZ()));
-        });
-
-        registrar.playToClient(ClientboundSealRemovePacket.TYPE, ClientboundSealRemovePacket.STREAM_CODEC, (data, ctx) -> {
-            ctx.enqueueWork(() -> SealClientData.removeSeal(data.pos(), data.face()));
-		});
-
         registrar.playToClient(ClientboundEssentiaTrailPacket.TYPE, ClientboundEssentiaTrailPacket.STREAM_CODEC, (data, ctx) -> {
             ctx.enqueueWork(() -> ThaumcraftFX.drawEssentiaTrail(data));
-        });
+        });*/ //TODO: Rendering - Particles
 
         registrar.playToServer(ServerboundCycleToolModePacket.TYPE, ServerboundCycleToolModePacket.STREAM_CODEC, (data, ctx) -> {
             ctx.enqueueWork(() -> {

@@ -15,7 +15,7 @@ public class SilverwoodSaplingBlock extends SaplingBlock {
     public SilverwoodSaplingBlock(BlockBehaviour.Properties properties) {
         super(SilverwoodTreeGrower.SILVERWOOD, properties
                 .mapColor(MapColor.COLOR_LIGHT_BLUE)
-                .noCollission()
+                .noCollision()
                 .randomTicks()
                 .instabreak()
                 .sound(SoundType.GRASS)

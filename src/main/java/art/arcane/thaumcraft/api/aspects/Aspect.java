@@ -14,7 +14,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import art.arcane.thaumcraft.api.ThaumcraftData;
 import art.arcane.thaumcraft.data.aspects.PrimalAspects;
@@ -25,36 +25,28 @@ import art.arcane.thaumcraft.util.FallbackHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
-public class Aspect {
+public record Aspect(Colour colour, List<ResourceKey<Aspect>> components) {
 
     public static final Aspect UNKNOWN = new Aspect(Colour.fromInteger(0xFFFFFF, false), new ArrayList<>());
     public static final Holder<Aspect> UNKNOWN_HOLDER = new FallbackHolder<>(ThaumcraftData.Aspects.UNKNOWN, UNKNOWN);
 
-    private final Colour colour;
-    private final List<ResourceKey<Aspect>> components;
-
     public static Component getName(HolderLookup.Provider provider, ResourceKey<Aspect> key, boolean pureColor, boolean primalColor) {
-        if (key == null)
+        return getName(key == null ? null : ConfigDataRegistries.ASPECTS.getHolder(provider, key), pureColor, primalColor);
+    }
+
+    public static Component getName(Holder<Aspect> aspect, boolean pureColor, boolean primalColor) {
+        if (aspect == null)
             return Component.translatable("aspect.thaumcraft.untyped");
-        ResourceLocation id = key.location();
+        Identifier id = aspect.getKey().identifier();
         MutableComponent c = Component.translatable(id.toLanguageKey("aspect"));
         if (pureColor || primalColor) {
-            Aspect a = ConfigDataRegistries.ASPECTS.get(provider, key);
+            Aspect a = aspect.value();
             if (pureColor)
                 return c.setStyle(Style.EMPTY.withColor(a.colour().argb32(false)));
             else
-                return c.withStyle(PrimalAspects.getPrimalFormatting(key));
+                return c.withStyle(PrimalAspects.getPrimalFormatting(aspect.getKey()));
         }
         return c;
-    }
-
-    public Colour colour() {
-        return colour;
-    }
-
-    public List<ResourceKey<Aspect>> components() {
-        return components;
     }
 
     public static final MapCodec<Aspect> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
@@ -80,7 +72,7 @@ public class Aspect {
 
         @Override
         public String getSerializedName() {
-            return id.location().getPath();
+            return id.identifier().getPath();
         }
     }
 }

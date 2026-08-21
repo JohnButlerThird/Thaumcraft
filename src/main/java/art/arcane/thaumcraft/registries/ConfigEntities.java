@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -13,7 +12,6 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import art.arcane.thaumcraft.Thaumcraft;
 import art.arcane.thaumcraft.entities.MovingItemEntity;
-import art.arcane.thaumcraft.entities.golem.GolemEntity;
 import art.arcane.thaumcraft.util.ReflectionUtils;
 
 import java.util.function.Consumer;
@@ -21,7 +19,7 @@ import java.util.function.Supplier;
 
 import static art.arcane.thaumcraft.api.ThaumcraftData.Entities;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Thaumcraft.MOD_ID)
 public final class ConfigEntities {
 
     private static final DeferredRegister<EntityType<?>> REGISTRY = DeferredRegister.create(Registries.ENTITY_TYPE, Thaumcraft.MOD_ID);
@@ -35,17 +33,6 @@ public final class ConfigEntities {
     public static final EntityObject<MovingItemEntity> MOVING_ITEM = register(Entities.MOVING_ITEM, MovingItemEntity::new, MobCategory.MISC, .25F, .25F,
             builder -> { });
 
-    public static final LivingEntityObject<GolemEntity> GOLEM = registerLiving(Entities.GOLEM, GolemEntity::new, MobCategory.MISC, 0.4F, 0.9F,
-            builder -> builder.clientTrackingRange(8),
-            mobAttributes(a -> a
-                    .add(Attributes.MAX_HEALTH, 10)
-                    .add(Attributes.MOVEMENT_SPEED, 0.25)
-                    .add(Attributes.FLYING_SPEED, 0.25)
-                    .add(Attributes.ATTACK_DAMAGE, 1)
-                    .add(Attributes.ARMOR, 0)
-                    .add(Attributes.FOLLOW_RANGE, 32)
-            ));
-
     /* -------------------------------------------------------------------------------------------------------------- */
 
     public static void init(IEventBus bus) { REGISTRY.register(bus); }
@@ -56,7 +43,7 @@ public final class ConfigEntities {
             builder.accept(b);
             return b.build(id);
         };
-        return new EntityObject<>(REGISTRY.register(id.location().getPath(), supplier));
+        return new EntityObject<>(REGISTRY.register(id.identifier().getPath(), supplier));
     }
 
     private static <T extends LivingEntity> LivingEntityObject<T> registerLiving(ResourceKey<EntityType<?>> id, EntityType.EntityFactory<T> factory, MobCategory category, float width, float height, Consumer<EntityType.Builder<T>> builder, Supplier<AttributeSupplier> attributes) {
@@ -65,7 +52,7 @@ public final class ConfigEntities {
             builder.accept(b);
             return b.build(id);
         };
-        return new LivingEntityObject<>(REGISTRY.register(id.location().getPath(), supplier), attributes);
+        return new LivingEntityObject<>(REGISTRY.register(id.identifier().getPath(), supplier), attributes);
     }
 
     private static Supplier<AttributeSupplier> livingAttributes(Consumer<AttributeSupplier.Builder> additionalAttributes) {

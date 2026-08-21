@@ -3,19 +3,13 @@ package art.arcane.thaumcraft.data.aspects.fallback;
 import art.arcane.thaumcraft.api.ThaumcraftData;
 import art.arcane.thaumcraft.data.aspects.AspectList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.CrossbowItem;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.TridentItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.neoforged.neoforge.common.Tags;
 
 public final class DynamicPropertyCalculator {
 
@@ -25,19 +19,19 @@ public final class DynamicPropertyCalculator {
 
         ItemAttributeModifiers modifiers = stack.get(DataComponents.ATTRIBUTE_MODIFIERS);
 
-        if (item instanceof ArmorItem) {
+        if (stack.is(Tags.Items.ARMORS)) {
             int defense = getAttributeValue(modifiers, Attributes.ARMOR);
             if (defense > 0)
                 list.add(ThaumcraftData.Aspects.ARMOR, defense * 4);
         }
 
-        if (item instanceof SwordItem) {
+        if (stack.is(Tags.Items.MELEE_WEAPON_TOOLS) || stack.is(Tags.Items.RANGED_WEAPON_TOOLS)) {
             int damage = getAttributeValue(modifiers, Attributes.ATTACK_DAMAGE);
             if (damage > 0)
                 list.add(ThaumcraftData.Aspects.AVERSION, damage * 3);
         }
 
-        if (item instanceof DiggerItem && !(item instanceof SwordItem)) {
+        if (stack.is(Tags.Items.MINING_TOOL_TOOLS)) {
             int damage = getAttributeValue(modifiers, Attributes.ATTACK_DAMAGE);
             list.add(ThaumcraftData.Aspects.TOOL, Math.max(4, damage * 2));
         }

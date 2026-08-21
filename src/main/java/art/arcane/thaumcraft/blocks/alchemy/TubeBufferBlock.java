@@ -3,6 +3,7 @@ package art.arcane.thaumcraft.blocks.alchemy;
 import art.arcane.thaumcraft.blocks.entities.TubeBufferBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,7 +34,7 @@ public class TubeBufferBlock extends TubeBlock {
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction side) {
         if (level.getBlockEntity(pos) instanceof TubeBufferBlockEntity buffer) {
             return buffer.getComparatorLevel();
         }

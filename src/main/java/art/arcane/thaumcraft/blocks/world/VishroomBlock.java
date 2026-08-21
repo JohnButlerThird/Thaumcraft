@@ -6,6 +6,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -25,7 +26,7 @@ public class VishroomBlock extends BushBlock {
     public VishroomBlock(BlockBehaviour.Properties properties) {
         super(properties
                 .mapColor(MapColor.COLOR_PURPLE)
-                .noCollission()
+                .noCollision()
                 .instabreak()
                 .sound(SoundType.GRASS)
                 .lightLevel(state -> 6)
@@ -33,23 +34,17 @@ public class VishroomBlock extends BushBlock {
     }
 
     @Override
-    public MapCodec<? extends BushBlock> codec() {
-        return CODEC;
-    }
-
-    @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         return state.isSolid();
     }
 
-    @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (!level.isClientSide() && entity instanceof LivingEntity livingEntity && level.random.nextInt(5) == 0) {
-            livingEntity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 0));
-        }
-    }
+	@Override
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+		if (!level.isClientSide() && entity instanceof LivingEntity livingEntity && level.getRandom().nextInt(5) == 0) {
+			livingEntity.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 200, 0));
+		}
+	}
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (random.nextInt(3) == 0) {

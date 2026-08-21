@@ -2,8 +2,8 @@ package art.arcane.thaumcraft.world;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
@@ -14,7 +14,7 @@ import java.util.function.Consumer;
 
 public class MagicalForestRegion extends Region {
 
-    public MagicalForestRegion(ResourceLocation name, int weight) {
+    public MagicalForestRegion(Identifier name, int weight) {
         super(name, RegionType.OVERWORLD, weight);
     }
 

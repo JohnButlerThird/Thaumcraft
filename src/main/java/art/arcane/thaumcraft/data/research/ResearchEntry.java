@@ -8,8 +8,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFileCodec;
-import net.minecraft.resources.ResourceLocation;
 import art.arcane.thaumcraft.api.ThaumcraftData;
 
 import java.util.Arrays;
@@ -19,14 +19,14 @@ import java.util.List;
 public record ResearchEntry(
         DisplayProperties displayProperties,
         List<ResearchStage> stages,
-        List<ResourceLocation> parents,
-        List<ResourceLocation> siblings,
+        List<Identifier> parents,
+        List<Identifier> siblings,
         ResearchRewards rewards,
         List<ResearchStage> addenda) {
 
     public static final ResearchEntry EMPTY = new ResearchEntry(DisplayProperties.builder(0, 0).build(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), ResearchRewards.EMPTY, Collections.emptyList());
 
-    public static Component getName(ResourceLocation entry) {
+    public static Component getName(Identifier entry) {
         return Component.translatable("research." + entry.getNamespace() + ".entry." + entry.getPath().replace('/', '.') + ".name");
     }
 
@@ -41,8 +41,8 @@ public record ResearchEntry(
     public static final MapCodec<ResearchEntry> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             DisplayProperties.CODEC.fieldOf("display").forGetter(ResearchEntry::displayProperties),
             ResearchStage.CODEC.listOf().fieldOf("stages").forGetter(ResearchEntry::stages),
-            ResourceLocation.CODEC.listOf().optionalFieldOf("parents", EMPTY.parents).forGetter(ResearchEntry::parents),
-            ResourceLocation.CODEC.listOf().optionalFieldOf("siblings", EMPTY.siblings).forGetter(ResearchEntry::siblings),
+            Identifier.CODEC.listOf().optionalFieldOf("parents", EMPTY.parents).forGetter(ResearchEntry::parents),
+            Identifier.CODEC.listOf().optionalFieldOf("siblings", EMPTY.siblings).forGetter(ResearchEntry::siblings),
             ResearchRewards.CODEC.optionalFieldOf("rewards", EMPTY.rewards).forGetter(ResearchEntry::rewards),
             ResearchStage.CODEC.listOf().optionalFieldOf("addenda", EMPTY.addenda).forGetter(ResearchEntry::addenda)
     ).apply(i, ResearchEntry::new));
@@ -51,8 +51,8 @@ public record ResearchEntry(
     public static final StreamCodec<RegistryFriendlyByteBuf, ResearchEntry> STREAM_CODEC = StreamCodec.composite(
             DisplayProperties.STREAM_CODEC, ResearchEntry::displayProperties,
             ResearchStage.STREAM_CODEC.apply(ByteBufCodecs.list()), ResearchEntry::stages,
-            ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list()), ResearchEntry::parents,
-            ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list()), ResearchEntry::siblings,
+            Identifier.STREAM_CODEC.apply(ByteBufCodecs.list()), ResearchEntry::parents,
+            Identifier.STREAM_CODEC.apply(ByteBufCodecs.list()), ResearchEntry::siblings,
             ResearchRewards.STREAM_CODEC, ResearchEntry::rewards,
             ResearchStage.STREAM_CODEC.apply(ByteBufCodecs.list()), ResearchEntry::addenda,
             ResearchEntry::new);
@@ -63,7 +63,7 @@ public record ResearchEntry(
         private final List<ResearchStage> stages;
         private final DisplayProperties properties;
 
-        private List<ResourceLocation> parents, siblings;
+        private List<Identifier> parents, siblings;
         private ResearchRewards rewards;
         private List<ResearchStage> addenda;
 
@@ -77,12 +77,12 @@ public record ResearchEntry(
             this.addenda = Collections.emptyList();
         }
 
-        public Builder setParents(ResourceLocation... parents) {
+        public Builder setParents(Identifier... parents) {
             this.parents = Arrays.asList(parents);
             return this;
         }
 
-        public Builder setSiblings(ResourceLocation... siblings) {
+        public Builder setSiblings(Identifier... siblings) {
             this.siblings = Arrays.asList(siblings);
             return this;
         }

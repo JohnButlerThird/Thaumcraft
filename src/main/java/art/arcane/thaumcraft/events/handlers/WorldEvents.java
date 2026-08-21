@@ -15,10 +15,9 @@ import art.arcane.thaumcraft.Thaumcraft;
 import art.arcane.thaumcraft.commands.AuraCommands;
 import art.arcane.thaumcraft.data.attachments.AuraAttachment;
 import art.arcane.thaumcraft.data.aura.VisFlowProcessor;
-import art.arcane.thaumcraft.data.golemancy.SealSavedData;
 import art.arcane.thaumcraft.registries.ConfigDataAttachments;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Thaumcraft.MOD_ID)
 public final class WorldEvents {
 
     private static final int VIS_FLOW_INTERVAL = 20;
@@ -39,13 +38,6 @@ public final class WorldEvents {
                 tickCounter = 0;
                 VisFlowProcessor.processLevel(serverLevel);
             }
-        }
-    }
-
-    @SubscribeEvent
-    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent e) {
-        if (e.getEntity() instanceof ServerPlayer serverPlayer && serverPlayer.level() instanceof ServerLevel serverLevel) {
-            SealSavedData.get(serverLevel).syncAllToPlayer(serverPlayer);
         }
     }
 

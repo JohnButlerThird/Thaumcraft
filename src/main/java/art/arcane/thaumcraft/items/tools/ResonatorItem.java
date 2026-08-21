@@ -64,74 +64,65 @@ public class ResonatorItem extends Item {
                         COMPONENT_SUCTION_VALUE,
                         cap.getSuction(side),
                         Aspect.getName(access, cap.getSuctionType(side), false, false)).withStyle(ChatFormatting.RESET));
-        pContext.getPlayer().displayClientMessage(suction, false);
+        pContext.getPlayer().sendOverlayMessage(suction);
 
         if (cap instanceof TubeBlockEntity tube) {
-            pContext.getPlayer().displayClientMessage(
+            pContext.getPlayer().sendOverlayMessage(
                     Component.translatable(COMPONENT_CONNECTIONS).withStyle(ChatFormatting.GRAY)
                             .append(Component.literal(" - ").withStyle(ChatFormatting.DARK_GRAY))
-                            .append(buildConnectionSummary(tube)),
-                    false
-            );
+                            .append(buildConnectionSummary(tube)));
             if (tube.supportsFacingControl()) {
-                pContext.getPlayer().displayClientMessage(
+                pContext.getPlayer().sendOverlayMessage(
                         Component.translatable(COMPONENT_FACING).withStyle(ChatFormatting.GRAY)
                                 .append(Component.literal(" - ").withStyle(ChatFormatting.DARK_GRAY))
-                                .append(directionComponent(tube.getFacing()).withStyle(ChatFormatting.RESET)),
-                        false
-                );
+                                .append(directionComponent(tube.getFacing()).withStyle(ChatFormatting.RESET)));
             }
         }
 
         if (cap instanceof TubeValveBlockEntity valve) {
-            pContext.getPlayer().displayClientMessage(Component.translatable(COMPONENT_VALVE).withStyle(ChatFormatting.GOLD)
+            pContext.getPlayer().sendOverlayMessage(Component.translatable(COMPONENT_VALVE).withStyle(ChatFormatting.GOLD)
                     .append(Component.literal(" - ").withStyle(ChatFormatting.DARK_GRAY))
                     .append(Component.translatable(valve.isFlowAllowed() ? COMPONENT_VALVE_OPEN : COMPONENT_VALVE_CLOSED)
-                            .withStyle(valve.isFlowAllowed() ? ChatFormatting.GREEN : ChatFormatting.RED)), false);
+                            .withStyle(valve.isFlowAllowed() ? ChatFormatting.GREEN : ChatFormatting.RED)));
         }
 
         if (cap instanceof TubeFilterBlockEntity filter) {
-            pContext.getPlayer().displayClientMessage(
+            pContext.getPlayer().sendSystemMessage(
                     Component.translatable(COMPONENT_FILTER).withStyle(ChatFormatting.GOLD)
                             .append(Component.literal(" - ").withStyle(ChatFormatting.DARK_GRAY))
                             .append(filter.getFilterAspect() == null
                                     ? Component.translatable(COMPONENT_FILTER_NONE).withStyle(ChatFormatting.GRAY)
-                                    : Aspect.getName(access, filter.getFilterAspect(), false, false)),
-                    false
-            );
+                                    : Aspect.getName(access, filter.getFilterAspect(), false, false)));
         }
 
         if (cap instanceof TubeOnewayBlockEntity) {
-            pContext.getPlayer().displayClientMessage(Component.translatable(COMPONENT_ONEWAY).withStyle(ChatFormatting.GOLD), false);
+            pContext.getPlayer().sendSystemMessage(Component.translatable(COMPONENT_ONEWAY).withStyle(ChatFormatting.GOLD));
         }
 
         if (cap instanceof TubeRestrictBlockEntity) {
-            pContext.getPlayer().displayClientMessage(Component.translatable(COMPONENT_RESTRICT).withStyle(ChatFormatting.GOLD), false);
+            pContext.getPlayer().sendSystemMessage(Component.translatable(COMPONENT_RESTRICT).withStyle(ChatFormatting.GOLD));
         }
 
         boolean printedDetailedContent = false;
         if (cap instanceof TubeBufferBlockEntity buffer) {
-            pContext.getPlayer().displayClientMessage(
+            pContext.getPlayer().sendSystemMessage(
                     Component.translatable(COMPONENT_CHOKE).withStyle(ChatFormatting.GOLD)
                             .append(Component.literal(" - ").withStyle(ChatFormatting.DARK_GRAY))
-                            .append(buildChokeSummary(buffer)),
-                    false
-            );
+                            .append(buildChokeSummary(buffer)));
             if (!buffer.getContents().isEmpty()) {
-                pContext.getPlayer().displayClientMessage(Component.translatable(COMPONENT_CONTENT).withStyle(ChatFormatting.BLUE), false);
+                pContext.getPlayer().sendSystemMessage(Component.translatable(COMPONENT_CONTENT).withStyle(ChatFormatting.BLUE));
                 buffer.getContents().entrySet().stream()
-                        .sorted(Comparator.comparing(e -> e.getKey().location().toString()))
-                        .forEach(entry -> pContext.getPlayer().displayClientMessage(
-                                Component.translatable(COMPONENT_CONTENT_VALUE, entry.getValue(), Aspect.getName(access, entry.getKey(), false, false)).withStyle(ChatFormatting.RESET),
-                                false));
+                        .sorted(Comparator.comparing(e -> e.getKey().identifier().toString()))
+                        .forEach(entry -> pContext.getPlayer().sendSystemMessage(
+                                Component.translatable(COMPONENT_CONTENT_VALUE, entry.getValue(), Aspect.getName(access, entry.getKey(), false, false)).withStyle(ChatFormatting.RESET)));
                 printedDetailedContent = true;
             }
         }
 
         if (!printedDetailedContent && cap.getEssentia(side) > 0) {
-            pContext.getPlayer().displayClientMessage(Component.translatable(COMPONENT_CONTENT).withStyle(ChatFormatting.BLUE)
+            pContext.getPlayer().sendSystemMessage(Component.translatable(COMPONENT_CONTENT).withStyle(ChatFormatting.BLUE)
                     .append(Component.literal(" - ").withStyle(ChatFormatting.DARK_GRAY))
-                    .append(Component.translatable(COMPONENT_CONTENT_VALUE, cap.getEssentia(side), Aspect.getName(access, cap.getEssentiaType(side), false, false)).withStyle(ChatFormatting.RESET)), false);
+                    .append(Component.translatable(COMPONENT_CONTENT_VALUE, cap.getEssentia(side), Aspect.getName(access, cap.getEssentiaType(side), false, false)).withStyle(ChatFormatting.RESET)));
         }
 
         return InteractionResult.SUCCESS;

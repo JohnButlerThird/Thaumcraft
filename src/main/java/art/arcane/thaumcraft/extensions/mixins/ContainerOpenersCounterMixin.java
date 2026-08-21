@@ -22,7 +22,7 @@ public abstract class ContainerOpenersCounterMixin implements ContainerOpenersCo
 	@Shadow protected abstract void onClose(Level level, BlockPos pos, BlockState state);
 
 	@Override
-	public void backgroundIncrementOpener(Level level, BlockPos pos, BlockState state, boolean skipEvents) {
+	public void thaumcraft$backgroundIncrementOpener(Level level, BlockPos pos, BlockState state, boolean skipEvents) {
 		int i = this.openCount++;
 		if (i == 0) {
 			if(!skipEvents)
@@ -33,7 +33,7 @@ public abstract class ContainerOpenersCounterMixin implements ContainerOpenersCo
 		this.openerCountChanged(level, pos, state, i, this.openCount);
 	}
 
-	public void backgroundDecrementOpener(Level level, BlockPos pos, BlockState state, boolean skipEvents) {
+	public void thaumcraft$backgroundDecrementOpener(Level level, BlockPos pos, BlockState state, boolean skipEvents) {
 		int i = this.openCount--;
 		if(this.openCount == 0 && !skipEvents)
 				this.onClose(level, pos, state);

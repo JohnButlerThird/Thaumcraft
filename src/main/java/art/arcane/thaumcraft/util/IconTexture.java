@@ -3,11 +3,11 @@ package art.arcane.thaumcraft.util;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import art.arcane.thaumcraft.api.ThaumcraftData;
 
@@ -15,10 +15,10 @@ import art.arcane.thaumcraft.api.ThaumcraftData;
 public class IconTexture {
 
     private final boolean isItem;
-    private final ResourceLocation location;
+    private final Identifier location;
     private ItemStack stack;
 
-    public IconTexture(ResourceLocation location) {
+    public IconTexture(Identifier location) {
         if(location.getPath().endsWith(".png")) {
             /*if(Minecraft.getInstance() == null)
                 this.location = location;
@@ -39,22 +39,22 @@ public class IconTexture {
         }
     }
 
-    public void render(GuiGraphics graphics, int x, int y, int width, int height, float scale) {
+    public void render(GuiGraphicsExtractor graphics, int x, int y, int width, int height, float scale) {
         render(graphics, x, y, 0, 0, width, height, width, height, width, height, scale);
     }
 
-    public void render(GuiGraphics graphics, int x, int y, int u, int v, int uSize, int vSize, int texWidth, int texHeight, int width, int height, float scale) {
-        graphics.pose().pushPose();
+    public void render(GuiGraphicsExtractor graphics, int x, int y, int u, int v, int uSize, int vSize, int texWidth, int texHeight, int width, int height, float scale) {
+        graphics.pose().pushMatrix();
         if(isItem) {
             if(stack == null)
                 stack = new ItemStack(BuiltInRegistries.ITEM.getValue(location));
-            graphics.renderItem(stack, x, y);
+            graphics.item(stack, x, y);
         } else {
-            graphics.blit(RenderType::guiTextured, location, x, y, (int)(width * scale), (int)(height * scale), u, v, uSize, vSize, texWidth, texHeight);
+            graphics.blit(RenderPipelines.GUI, location, x, y, (int)(width * scale), (int)(height * scale), u, v, uSize, vSize, texWidth, texHeight);
         }
-        graphics.pose().popPose();
+        graphics.pose().popMatrix();
     }
 
-    public static final Codec<IconTexture> CODEC = ResourceLocation.CODEC.xmap(IconTexture::new, IconTexture::getLocation);
-    public static final StreamCodec<ByteBuf, IconTexture> STREAM_CODEC = ResourceLocation.STREAM_CODEC.map(IconTexture::new, IconTexture::getLocation);
+    public static final Codec<IconTexture> CODEC = Identifier.CODEC.xmap(IconTexture::new, IconTexture::getLocation);
+    public static final StreamCodec<ByteBuf, IconTexture> STREAM_CODEC = Identifier.STREAM_CODEC.map(IconTexture::new, IconTexture::getLocation);
 }

@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.level.LevelSimulatedReader;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
@@ -25,18 +26,8 @@ public class SilverwoodFoliagePlacer extends FoliagePlacer {
     }
 
     @Override
-    protected void createFoliage(
-            LevelSimulatedReader level,
-            FoliageSetter blockSetter,
-            RandomSource random,
-            TreeConfiguration config,
-            int maxFreeTreeHeight,
-            FoliageAttachment attachment,
-            int foliageHeight,
-            int foliageRadius,
-            int offset) {
-
-        BlockPos center = attachment.pos();
+    protected void createFoliage(WorldGenLevel level, FoliageSetter foliageSetter, RandomSource random, TreeConfiguration config, int treeHeight, FoliageAttachment foliageAttachment, int foliageHeight, int leafRadius, int offset) {
+        BlockPos center = foliageAttachment.pos();
         int x = center.getX();
         int y = center.getY();
         int z = center.getZ();
@@ -56,7 +47,7 @@ public class SilverwoodFoliagePlacer extends FoliagePlacer {
 
                     if (distSq < 10 + random.nextInt(8)) {
                         BlockPos leafPos = new BlockPos(xx, currentY, zz);
-                        tryPlaceLeaf(level, blockSetter, random, config, leafPos);
+                        tryPlaceLeaf(level, foliageSetter, random, config, leafPos);
                     }
                 }
             }

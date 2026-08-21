@@ -14,8 +14,6 @@ import art.arcane.thaumcraft.blocks.alchemy.CreativeAspectSourceBlock;
 import art.arcane.thaumcraft.blocks.alchemy.EssentiaInputBlock;
 import art.arcane.thaumcraft.blocks.alchemy.EssentiaOutputBlock;
 import art.arcane.thaumcraft.blocks.alchemy.CrucibleBlock;
-import art.arcane.thaumcraft.blocks.crafting.GolemBuilderBlock;
-import art.arcane.thaumcraft.blocks.crafting.GolemBuilderComponentBlock;
 import art.arcane.thaumcraft.blocks.alchemy.JarBlock;
 import art.arcane.thaumcraft.blocks.alchemy.TubeBufferBlock;
 import art.arcane.thaumcraft.blocks.alchemy.TubeBlock;
@@ -33,7 +31,7 @@ import art.arcane.thaumcraft.util.simple.SimpleBlockMaterials;
 import art.arcane.thaumcraft.util.simple.SimpleCreativeTab;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
@@ -130,7 +128,7 @@ public final class ConfigBlocks {
 	public static final BlockObject<FenceGateBlock> SILVERWOOD_FENCE_GATE = registerBlock(Blocks.SILVERWOOD_FENCE_GATE, props -> new FenceGateBlock(WoodType.OAK, silverwoodWoodProps(props)), ConfigCreativeTabs.MAIN);
 	public static final BlockObject<DoorBlock> SILVERWOOD_DOOR = registerBlock(Blocks.SILVERWOOD_DOOR, props -> new DoorBlock(BlockSetType.OAK, silverwoodWoodProps(props).noOcclusion()), ConfigCreativeTabs.MAIN);
 	public static final BlockObject<TrapDoorBlock> SILVERWOOD_TRAPDOOR = registerBlock(Blocks.SILVERWOOD_TRAPDOOR, props -> new TrapDoorBlock(BlockSetType.OAK, silverwoodWoodProps(props).noOcclusion()), ConfigCreativeTabs.MAIN);
-	public static final BlockObject<ButtonBlock> SILVERWOOD_BUTTON = registerBlock(Blocks.SILVERWOOD_BUTTON, props -> new ButtonBlock(BlockSetType.OAK, 30, silverwoodWoodProps(props).noCollission()), ConfigCreativeTabs.MAIN);
+	public static final BlockObject<ButtonBlock> SILVERWOOD_BUTTON = registerBlock(Blocks.SILVERWOOD_BUTTON, props -> new ButtonBlock(BlockSetType.OAK, 30, silverwoodWoodProps(props).noCollision()), ConfigCreativeTabs.MAIN);
 	public static final BlockObject<PressurePlateBlock> SILVERWOOD_PRESSURE_PLATE = registerBlock(Blocks.SILVERWOOD_PRESSURE_PLATE, props -> new PressurePlateBlock(BlockSetType.OAK, silverwoodWoodProps(props)), ConfigCreativeTabs.MAIN);
 	public static final BlockObject<GreatwoodLogBlock> GREATWOOD_LOG = registerBlock(Blocks.GREATWOOD_LOG, GreatwoodLogBlock::new, ConfigCreativeTabs.MAIN);
 	public static final BlockObject<RotatedPillarBlock> GREATWOOD_WOOD = registerBlock(Blocks.GREATWOOD_WOOD, props -> new RotatedPillarBlock(greatwoodWoodProps(props)), ConfigCreativeTabs.MAIN);
@@ -145,7 +143,7 @@ public final class ConfigBlocks {
 	public static final BlockObject<FenceGateBlock> GREATWOOD_FENCE_GATE = registerBlock(Blocks.GREATWOOD_FENCE_GATE, props -> new FenceGateBlock(WoodType.OAK, greatwoodWoodProps(props)), ConfigCreativeTabs.MAIN);
 	public static final BlockObject<DoorBlock> GREATWOOD_DOOR = registerBlock(Blocks.GREATWOOD_DOOR, props -> new DoorBlock(BlockSetType.OAK, greatwoodWoodProps(props).noOcclusion()), ConfigCreativeTabs.MAIN);
 	public static final BlockObject<TrapDoorBlock> GREATWOOD_TRAPDOOR = registerBlock(Blocks.GREATWOOD_TRAPDOOR, props -> new TrapDoorBlock(BlockSetType.OAK, greatwoodWoodProps(props).noOcclusion()), ConfigCreativeTabs.MAIN);
-	public static final BlockObject<ButtonBlock> GREATWOOD_BUTTON = registerBlock(Blocks.GREATWOOD_BUTTON, props -> new ButtonBlock(BlockSetType.OAK, 30, greatwoodWoodProps(props).noCollission()), ConfigCreativeTabs.MAIN);
+	public static final BlockObject<ButtonBlock> GREATWOOD_BUTTON = registerBlock(Blocks.GREATWOOD_BUTTON, props -> new ButtonBlock(BlockSetType.OAK, 30, greatwoodWoodProps(props).noCollision()), ConfigCreativeTabs.MAIN);
 	public static final BlockObject<PressurePlateBlock> GREATWOOD_PRESSURE_PLATE = registerBlock(Blocks.GREATWOOD_PRESSURE_PLATE, props -> new PressurePlateBlock(BlockSetType.OAK, greatwoodWoodProps(props)), ConfigCreativeTabs.MAIN);
 	public static final BlockObject<VishroomBlock> VISHROOM = registerBlock(Blocks.VISHROOM, VishroomBlock::new, ConfigCreativeTabs.MAIN);
 	public static final BlockObject<CinderpearllBlock> CINDERPEARL = registerBlock(Blocks.CINDERPEARL, CinderpearllBlock::new, ConfigCreativeTabs.MAIN);
@@ -154,8 +152,6 @@ public final class ConfigBlocks {
 	public static final BlockObject<HungryChestBlock> HUNGRY_CHEST = registerBlock(Blocks.HUNGRY_CHEST, HungryChestBlock::new, ConfigCreativeTabs.MAIN);
 	public static final BlockObject<EverfullUrnBlock> EVERFULL_URN = registerBlock(Blocks.EVERFULL_URN, EverfullUrnBlock::new, ConfigCreativeTabs.MAIN);
 
-	public static final BlockObject<GolemBuilderBlock> GOLEM_BUILDER = registerBlock(Blocks.GOLEM_BUILDER, GolemBuilderBlock::new, ConfigCreativeTabs.MAIN);
-	public static final DeferredBlock<GolemBuilderComponentBlock> GOLEM_BUILDER_COMPONENT = registerBlockNoItem(Blocks.GOLEM_BUILDER_COMPONENT, GolemBuilderComponentBlock::new);
 	public static final BlockObject<Block> TABLE_STONE = registerBlock(Blocks.TABLE_STONE, props -> new Block(SimpleBlockMaterials.stone(props).noOcclusion()), ConfigCreativeTabs.MAIN);
 	public static final BlockObject<Block> TABLE_WOOD = registerBlock(Blocks.TABLE_WOOD, props -> new Block(SimpleBlockMaterials.wood(props).noOcclusion()), ConfigCreativeTabs.MAIN);
 
@@ -176,7 +172,7 @@ public final class ConfigBlocks {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <B extends Block> BlockObject<B> registerBlock(ResourceLocation id, Function<BlockBehaviour.Properties, B> block, SimpleCreativeTab tab) {
+	private static <B extends Block> BlockObject<B> registerBlock(Identifier id, Function<BlockBehaviour.Properties, B> block, SimpleCreativeTab tab) {
 		DeferredBlock<B> blockObject = REGISTRY_BLOCKS.registerBlock(id.getPath(), block);
 		DeferredItem<BlockItem> itemObject = REGISTRY_ITEM.registerSimpleBlockItem(blockObject);
 		if (tab != null) {
@@ -185,14 +181,14 @@ public final class ConfigBlocks {
 		return new BlockObject<>(blockObject, itemObject);
 	}
 
-	private static <B extends Block> DeferredBlock<B> registerBlockNoItem(ResourceLocation id, Function<BlockBehaviour.Properties, B> block) {
+	private static <B extends Block> DeferredBlock<B> registerBlockNoItem(Identifier id, Function<BlockBehaviour.Properties, B> block) {
 		return REGISTRY_BLOCKS.registerBlock(id.getPath(), block);
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <B extends Block> BlockObject<B> registerBlock(ResourceLocation id, Function<BlockBehaviour.Properties, B> block, Rarity rarity, SimpleCreativeTab tab) {
+	private static <B extends Block> BlockObject<B> registerBlock(Identifier id, Function<BlockBehaviour.Properties, B> block, Rarity rarity, SimpleCreativeTab tab) {
 		DeferredBlock<B> blockObject = REGISTRY_BLOCKS.registerBlock(id.getPath(), block);
-		DeferredItem<BlockItem> itemObject = REGISTRY_ITEM.registerSimpleBlockItem(blockObject, new Item.Properties().rarity(rarity));
+		DeferredItem<BlockItem> itemObject = REGISTRY_ITEM.registerSimpleBlockItem(blockObject, p -> p.rarity(rarity));
 		if (tab != null) {
 			tab.register(itemObject);
 		}
@@ -200,7 +196,7 @@ public final class ConfigBlocks {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static <B extends Block> BlockObject<B> registerBlock(ResourceLocation id, Function<BlockBehaviour.Properties, B> block, Function<Item.Properties, Item> blockItem, SimpleCreativeTab tab) {
+	private static <B extends Block> BlockObject<B> registerBlock(Identifier id, Function<BlockBehaviour.Properties, B> block, Function<Item.Properties, Item> blockItem, SimpleCreativeTab tab) {
 		DeferredBlock<B> blockObject = REGISTRY_BLOCKS.registerBlock(id.getPath(), block);
 		DeferredItem<Item> itemObject = REGISTRY_ITEM.registerItem(id.getPath(), blockItem);
 		if (tab != null) {
@@ -209,10 +205,10 @@ public final class ConfigBlocks {
 		return new BlockObject<>(blockObject, itemObject);
 	}
 
-	private static <B extends Block, E extends Enum<E>> Map<E, BlockObject<B>> registerEnumBlock(ResourceLocation id, Class<E> clazz, BiFunction<E, BlockBehaviour.Properties, B> blockSupplier, BiFunction<E, Item.Properties, Item> itemSupplier, SimpleCreativeTab tab) {
+	private static <B extends Block, E extends Enum<E>> Map<E, BlockObject<B>> registerEnumBlock(Identifier id, Class<E> clazz, BiFunction<E, BlockBehaviour.Properties, B> blockSupplier, BiFunction<E, Item.Properties, Item> itemSupplier, SimpleCreativeTab tab) {
 		Map<E, BlockObject<B>> blockObjects = new HashMap<>();
 		for (E constant : clazz.getEnumConstants()) {
-			ResourceLocation name = id.withSuffix("_" + constant.name().toLowerCase());
+			Identifier name = id.withSuffix("_" + constant.name().toLowerCase());
 			blockObjects.put(constant, registerBlock(name, p -> blockSupplier.apply(constant, p), p -> itemSupplier.apply(constant, p), tab));
 		}
 		return blockObjects;

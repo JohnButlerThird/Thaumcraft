@@ -3,7 +3,6 @@ package art.arcane.thaumcraft.data.providers;
 import art.arcane.thaumcraft.Thaumcraft;
 import art.arcane.thaumcraft.client.rendering.entity.models.ArmorRobe;
 import art.arcane.thaumcraft.client.tints.AspectItemTintSource;
-import art.arcane.thaumcraft.client.tints.GolemMaterialItemTintSource;
 import art.arcane.thaumcraft.items.ItemModelProperties;
 import art.arcane.thaumcraft.registries.ConfigItems;
 import art.arcane.thaumcraft.util.RegistryUtils;
@@ -14,10 +13,10 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.model.*;
-import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.Item;
@@ -31,8 +30,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-
-public class ItemModelProvider extends ModelProvider {
+public class  ItemModelProvider extends ModelProvider {
 
 	private ItemModelGenerators items;
 
@@ -65,7 +63,7 @@ public class ItemModelProvider extends ModelProvider {
 		simpleItem(ConfigItems.PECH_WAND, "resources");
 
 		// Clusters
-		ResourceLocation clusterTexture = Thaumcraft.id("item/resources/cluster");
+		Identifier clusterTexture = Thaumcraft.id("item/resources/cluster");
 		tintedItemSharedTexture(ConfigItems.CLUSTER_IRON, clusterTexture, 0xD8AF93, "resources");
 		tintedItemSharedTexture(ConfigItems.CLUSTER_GOLD, clusterTexture, 0xFCEE4B, "resources");
 		tintedItemSharedTexture(ConfigItems.CLUSTER_COPPER, clusterTexture, 0xE77C56, "resources");
@@ -136,53 +134,23 @@ public class ItemModelProvider extends ModelProvider {
 		));
 
 		simpleItem(ConfigItems.GOGGLES);
-		tintableGolemItem(ConfigItems.GOLEM_PLACER, "golemancy");
-		sealPlacerItem();
-		simpleItem(ConfigItems.GOLEM_BELL, "golemancy");
-
-		batchItems("golemancy", ConfigItems.MIND_CLOCKWORK, ConfigItems.MIND_BIOTHAUMIC, ConfigItems.MECHANISM_SIMPLE, ConfigItems.MODULE_VISION, ConfigItems.MODULE_AGGRESSION);
-	}
-
-	protected void sealPlacerItem() {
-		String[] sealTypes = {
-				"guard", "guard_advanced", "pickup", "pickup_advanced", "provide", "stock",
-				"breaker", "breaker_advanced", "harvest", "lumber", "butcher",
-				"fill", "fill_advanced", "empty", "empty_advanced", "use"
-		};
-
-		ResourceLocation blankTexture = Thaumcraft.id("item/golemancy/seals/static/seal_blank");
-		ResourceLocation blankModelLoc = Thaumcraft.id("item/golemancy/seal_placer_blank");
-		ResourceLocation fallbackModel = ModelTemplates.FLAT_ITEM.create(blankModelLoc, TextureMapping.layer0(blankTexture), items.modelOutput);
-
-		ItemModel.Unbaked current = ItemModelUtils.plainModel(fallbackModel);
-
-		for (int i = sealTypes.length - 1; i >= 0; i--) {
-			String type = sealTypes[i];
-			ResourceLocation texture = Thaumcraft.id("item/golemancy/seals/static/seal_" + type);
-			ResourceLocation modelLoc = Thaumcraft.id("item/golemancy/seal_placer_" + type);
-			ResourceLocation model = ModelTemplates.FLAT_ITEM.create(modelLoc, TextureMapping.layer0(texture), items.modelOutput);
-			current = ItemModelUtils.conditional(new ItemModelProperties.SealTypeCheck(type), ItemModelUtils.plainModel(model), current);
-		}
-
-		items.itemModelOutput.accept(ConfigItems.SEAL_PLACER.value(), current);
 	}
 
 	protected void simpleItem(Holder<? extends Item> item, String... parentFolder) {
-		ResourceLocation location = RegistryUtils.getItemLocation(item, parentFolder);
-		ResourceLocation model = ModelTemplates.FLAT_ITEM.create(location, TextureMapping.layer0(location), items.modelOutput);
+		Identifier location = RegistryUtils.getItemLocation(item, parentFolder);
+		Identifier model = ModelTemplates.FLAT_ITEM.create(location, TextureMapping.layer0(new Material(location)), items.modelOutput);
 		items.itemModelOutput.accept(item.value(), ItemModelUtils.plainModel(model));
 	}
 
 	protected void objItem(Holder<? extends Item> item, int layers, Map<ItemDisplayContext, Consumer<TransformVecBuilder>> transforms, String... parentFolder) {
-		ResourceLocation texture = RegistryUtils.getItemLocation(item, parentFolder);
+		Identifier texture = RegistryUtils.getItemLocation(item, parentFolder);
 		TextureMapping mapping = new TextureMapping();
 		ExtendedModelTemplateBuilder builder = ExtendedModelTemplateBuilder.builder()
-				.customLoader(ObjModelBuilder::new, loader -> loader.flipV(true).modelLocation(RegistryUtils.getItemLocation(item, parentFolder).withPrefix("models/").withSuffix(".obj")))
-				.renderType("item_entity_translucent_cull");
+				.customLoader(ObjModelBuilder::new, loader -> loader.flipV(true).modelLocation(RegistryUtils.getItemLocation(item, parentFolder).withPrefix("models/").withSuffix(".obj")));
 		for (int i = 0; i < layers; i++) {
 			TextureSlot slot = TextureSlot.create("layer" + i);
 			builder.requiredTextureSlot(slot);
-			mapping.put(slot, texture.withSuffix("_" + i));
+			mapping.put(slot, new Material(texture.withSuffix("_" + i)));
 		}
 
 		transforms.forEach(builder::transform);
@@ -190,9 +158,9 @@ public class ItemModelProvider extends ModelProvider {
 		items.itemModelOutput.accept(item.value(), ItemModelUtils.plainModel(builder.build().create(item.value(), mapping, items.modelOutput)));
 	}
 
-	protected void simpleItemWithTexture(Holder<? extends Item> item, ResourceLocation texture) {
-		ResourceLocation location = RegistryUtils.getItemLocation(item);
-		ResourceLocation model = ModelTemplates.FLAT_ITEM.create(location, TextureMapping.layer0(texture), items.modelOutput);
+	protected void simpleItemWithTexture(Holder<? extends Item> item, Identifier texture) {
+		Identifier location = RegistryUtils.getItemLocation(item);
+		Identifier model = ModelTemplates.FLAT_ITEM.create(location, TextureMapping.layer0(new Material(texture)), items.modelOutput);
 		items.itemModelOutput.accept(item.value(), ItemModelUtils.plainModel(model));
 	}
 
@@ -202,21 +170,11 @@ public class ItemModelProvider extends ModelProvider {
 		}
 	}
 
-	protected void tintableGolemItem(Holder<? extends Item> item, String... parentFolder) {
-		ResourceLocation location = RegistryUtils.getItemLocation(item, parentFolder);
-
-		ResourceLocation model = ModelTemplates.FLAT_ITEM.create(location,
-				TextureMapping.layer0(location),
-				items.modelOutput);
-
-		items.itemModelOutput.accept(item.value(), ItemModelUtils.tintedModel(model, new GolemMaterialItemTintSource()));
-	}
-
 	protected void tintableAspectItem(Holder<? extends Item> item, String... parentFolder) {
-		ResourceLocation location = RegistryUtils.getItemLocation(item, parentFolder);
+		Identifier location = RegistryUtils.getItemLocation(item, parentFolder);
 
-		ResourceLocation model = ModelTemplates.FLAT_ITEM.create(location,
-				TextureMapping.layer0(location),
+		Identifier model = ModelTemplates.FLAT_ITEM.create(location,
+				TextureMapping.layer0(new Material(location)),
 				items.modelOutput);
 
 		items.itemModelOutput.accept(item.value(), ItemModelUtils.tintedModel(model, new AspectItemTintSource()));
@@ -224,13 +182,13 @@ public class ItemModelProvider extends ModelProvider {
 
 
 	protected void phialItem(Holder<? extends Item> item, String... parentFolder) {
-		ResourceLocation location = RegistryUtils.getItemLocation(item, parentFolder);
+		Identifier location = RegistryUtils.getItemLocation(item, parentFolder);
 
-		ResourceLocation emptyModel = ModelTemplates.FLAT_ITEM.create(location.withSuffix("_empty"),
-				TextureMapping.layer0(location),
+		Identifier emptyModel = ModelTemplates.FLAT_ITEM.create(location.withSuffix("_empty"),
+				TextureMapping.layer0(new Material(location)),
 				items.modelOutput);
-		ResourceLocation filledModel = ModelTemplates.TWO_LAYERED_ITEM.create(location.withSuffix("_filled"),
-				TextureMapping.layered(location, location.withSuffix("_overlay")),
+		Identifier filledModel = ModelTemplates.TWO_LAYERED_ITEM.create(location.withSuffix("_filled"),
+				TextureMapping.layered(new Material(location), new Material(location.withSuffix("_overlay"))),
 				items.modelOutput);
 
 		items.itemModelOutput.accept(item.value(), ItemModelUtils.conditional(
@@ -241,24 +199,24 @@ public class ItemModelProvider extends ModelProvider {
 	}
 
 	protected void tintableItemLayer(Holder<? extends Item> item, Supplier<? extends ItemTintSource> source, String... parentFolder) {
-		ResourceLocation location = RegistryUtils.getItemLocation(item, parentFolder);
-		ResourceLocation model = ModelTemplates.FLAT_ITEM.create(location,
-				TextureMapping.layer0(location),
+		Identifier location = RegistryUtils.getItemLocation(item, parentFolder);
+		Identifier model = ModelTemplates.FLAT_ITEM.create(location,
+				TextureMapping.layer0(new Material(location)),
 				items.modelOutput);
-		items.itemModelOutput.accept(item.value(), ItemModelUtils.tintedModel(model, new Constant(0xFFFFFFFF), source.get()));
+		items.itemModelOutput.accept(item.value(), ItemModelUtils.tintedModel(model, source.get()));
 	}
 
 	protected void tintableItem2Layer(Holder<? extends Item> item, Supplier<? extends ItemTintSource> source, String... parentFolder) {
-		ResourceLocation location = RegistryUtils.getItemLocation(item, parentFolder);
-		ResourceLocation model = ModelTemplates.TWO_LAYERED_ITEM.create(location,
-				TextureMapping.layered(location, location.withSuffix("_overlay")),
+		Identifier location = RegistryUtils.getItemLocation(item, parentFolder);
+		Identifier model = ModelTemplates.TWO_LAYERED_ITEM.create(location,
+				TextureMapping.layered(new Material(location), new Material(location.withSuffix("_overlay"))),
 				items.modelOutput);
 		items.itemModelOutput.accept(item.value(), ItemModelUtils.tintedModel(model, new Constant(0xFFFFFFFF), source.get()));
 	}
 
-	protected void tintedItemSharedTexture(Holder<? extends Item> item, ResourceLocation sharedTexture, int color, String... parentFolder) {
-		ResourceLocation location = RegistryUtils.getItemLocation(item, parentFolder);
-		ResourceLocation model = ModelTemplates.FLAT_ITEM.create(location, TextureMapping.layer0(sharedTexture), items.modelOutput);
+	protected void tintedItemSharedTexture(Holder<? extends Item> item, Identifier sharedTexture, int color, String... parentFolder) {
+		Identifier location = RegistryUtils.getItemLocation(item, parentFolder);
+		Identifier model = ModelTemplates.FLAT_ITEM.create(location, TextureMapping.layer0(new Material(sharedTexture)), items.modelOutput);
 		items.itemModelOutput.accept(item.value(), ItemModelUtils.tintedModel(model, new Constant(color)));
 	}
 

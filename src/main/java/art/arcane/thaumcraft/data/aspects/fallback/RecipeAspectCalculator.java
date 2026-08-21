@@ -5,17 +5,14 @@ import art.arcane.thaumcraft.data.recipes.AlchemyRecipe;
 import art.arcane.thaumcraft.data.recipes.ArcaneCraftingRecipe;
 import art.arcane.thaumcraft.data.recipes.InfusionRecipe;
 import art.arcane.thaumcraft.registries.ConfigRecipeTypes;
-import art.arcane.thaumcraft.util.codec.recipes.CodecRecipeSerializer;
+import art.arcane.thaumcraft.util.codec.CodecCraftingGrid;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 
@@ -151,7 +148,7 @@ public final class RecipeAspectCalculator {
 
         recipeManager.recipeMap().byType(ConfigRecipeTypes.ARCANE_CRAFTING.type()).forEach(holder -> {
             ArcaneCraftingRecipe recipe = holder.value();
-            ItemStack result = recipe.result();
+            ItemStack result = recipe.result().create();
             if (!result.isEmpty()) {
                 List<Ingredient> ingredients = flattenGrid(recipe.grid());
                 addToCache(result.getItem(), ingredients, result.getCount());
@@ -160,7 +157,7 @@ public final class RecipeAspectCalculator {
 
         recipeManager.recipeMap().byType(ConfigRecipeTypes.ALCHEMY.type()).forEach(holder -> {
             AlchemyRecipe recipe = holder.value();
-            ItemStack result = recipe.result();
+            ItemStack result = recipe.result().create();
             if (!result.isEmpty()) {
                 addToCache(result.getItem(), List.of(recipe.catalyst()), result.getCount());
             }
@@ -168,7 +165,7 @@ public final class RecipeAspectCalculator {
 
         recipeManager.recipeMap().byType(ConfigRecipeTypes.INFUSION.type()).forEach(holder -> {
             InfusionRecipe recipe = holder.value();
-            ItemStack result = recipe.result();
+            ItemStack result = recipe.result().create();
             if (!result.isEmpty()) {
                 List<Ingredient> ingredients = new ArrayList<>();
                 ingredients.add(recipe.catalyst());
@@ -186,7 +183,7 @@ public final class RecipeAspectCalculator {
                     return new ItemStack(itemDisplay.item().value());
                 }
                 if (result instanceof SlotDisplay.ItemStackSlotDisplay stackDisplay) {
-                    return stackDisplay.stack();
+                    return stackDisplay.stack().create();
                 }
             }
         } catch (Exception ignored) {}
@@ -205,7 +202,7 @@ public final class RecipeAspectCalculator {
                 .add(new RecipeInfo(nonEmpty, outputCount));
     }
 
-    private static List<Ingredient> flattenGrid(CodecRecipeSerializer.CraftingGrid grid) {
+    private static List<Ingredient> flattenGrid(CodecCraftingGrid grid) {
         List<Ingredient> result = new ArrayList<>();
         for (String row : grid.pattern()) {
             for (char c : row.toCharArray()) {

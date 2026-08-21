@@ -3,8 +3,8 @@ package art.arcane.thaumcraft.util.simple;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import art.arcane.thaumcraft.Thaumcraft;
@@ -33,8 +33,8 @@ public abstract class SimpleDataProvider<T> {
             this.context = ctx;
             createEntries();
         });
-        DatapackBuiltinEntriesProvider provider = new DatapackBuiltinEntriesProvider(e.getGenerator().getPackOutput(), e.getLookupProvider(), builder, Set.of(Thaumcraft.MOD_ID, ResourceLocation.DEFAULT_NAMESPACE, "c"));
-        ((RegistriesDatapackGeneratorExt)provider).setName(this.name);
+        DatapackBuiltinEntriesProvider provider = new DatapackBuiltinEntriesProvider(e.getGenerator().getPackOutput(), e.getLookupProvider(), builder, Set.of(Thaumcraft.MOD_ID, Identifier.DEFAULT_NAMESPACE, "c"));
+        ((RegistriesDatapackGeneratorExt)provider).thaumcraft$setName(this.name);
         return provider;
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -121,7 +122,7 @@ public class TubeBlock extends DirectionalBlock implements EntityBlock {
 
     @Override
     public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
-        if (!pOldState.is(pState.getBlock()) && !pLevel.isClientSide)
+        if (!pOldState.is(pState.getBlock()) && !pLevel.isClientSide())
             for(Direction dir : Direction.values())
                 pLevel.updateNeighborsAt(pPos.relative(dir), this);
     }
@@ -141,15 +142,14 @@ public class TubeBlock extends DirectionalBlock implements EntityBlock {
         level.setBlock(pos, determineConnections(level, state, pos), 1 | 2);
     }
 
-    @Override
-    public void onRemove(BlockState pState, Level pLevel, BlockPos pPos, BlockState pNewState, boolean pIsMoving) {
-        if (!pIsMoving && !pState.is(pNewState.getBlock())) {
-            super.onRemove(pState, pLevel, pPos, pNewState, pIsMoving);
-            if (!pLevel.isClientSide)
-                for(Direction dir : Direction.values())
-                    pLevel.updateNeighborsAt(pPos.relative(dir), this);
-        }
-    }
+	@Override
+	protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+		if (!movedByPiston) {
+			if (!level.isClientSide())
+				for(Direction dir : Direction.values())
+					level.updateNeighborsAt(pos.relative(dir), this);
+		}
+	}
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
@@ -172,7 +172,7 @@ public class TubeBlock extends DirectionalBlock implements EntityBlock {
             if (!aspects.isEmpty()) {
                 if (!pLevel.isClientSide()) {
                     filter.setFilterAspect(aspects.get(0));
-                    pLevel.playSound(null, pPos, ConfigSounds.KNOB_TWISTING.value(), SoundSource.BLOCKS, 0.7F, 1.2F + pLevel.random.nextFloat() * 0.2F);
+                    pLevel.playSound(null, pPos, ConfigSounds.KNOB_TWISTING.value(), SoundSource.BLOCKS, 0.7F, 1.2F + pLevel.getRandom().nextFloat() * 0.2F);
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -192,19 +192,17 @@ public class TubeBlock extends DirectionalBlock implements EntityBlock {
             // Valve behavior: normal use toggles flow; sneak uses side editing.
             if (blockEntity instanceof TubeValveBlockEntity valve && !player.isCrouching()) {
                 valve.toggleFlowAllowed();
-                level.playSound(null, pos, ConfigSounds.KNOB_TWISTING.value(), SoundSource.BLOCKS, 0.7F, 0.9F + level.random.nextFloat() * 0.2F);
-                player.displayClientMessage(
-                        Component.translatable(valve.isFlowAllowed() ? "msg.thaumcraft.gauntlet.valve.opened" : "msg.thaumcraft.gauntlet.valve.closed"),
-                        true
-                );
+                level.playSound(null, pos, ConfigSounds.KNOB_TWISTING.value(), SoundSource.BLOCKS, 0.7F, 0.9F + level.getRandom().nextFloat() * 0.2F);
+                player.sendOverlayMessage(
+                        Component.translatable(valve.isFlowAllowed() ? "msg.thaumcraft.gauntlet.valve.opened" : "msg.thaumcraft.gauntlet.valve.closed"));
                 return InteractionResult.SUCCESS;
             }
 
             // Buffer behavior: sneak cycles per-side choke (open/half/closed).
             if (blockEntity instanceof TubeBufferBlockEntity buffer && player.isCrouching()) {
                 buffer.cycleChoke(side);
-                level.playSound(null, pos, ConfigSounds.KNOB_TWISTING.value(), SoundSource.BLOCKS, 0.7F, 1.05F + level.random.nextFloat() * 0.15F);
-                player.displayClientMessage(
+                level.playSound(null, pos, ConfigSounds.KNOB_TWISTING.value(), SoundSource.BLOCKS, 0.7F, 1.05F + level.getRandom().nextFloat() * 0.15F);
+                player.sendOverlayMessage(
                         Component.translatable(
                                 "msg.thaumcraft.gauntlet.choke",
                                 Component.translatable("direction.minecraft." + side.getSerializedName()),
@@ -212,9 +210,7 @@ public class TubeBlock extends DirectionalBlock implements EntityBlock {
                                     case 1 -> "msg.thaumcraft.gauntlet.choke.half";
                                     case 2 -> "msg.thaumcraft.gauntlet.choke.closed";
                                     default -> "msg.thaumcraft.gauntlet.choke.open";
-                                })),
-                        true
-                );
+                                })));
                 return InteractionResult.SUCCESS;
             }
 
@@ -222,11 +218,9 @@ public class TubeBlock extends DirectionalBlock implements EntityBlock {
             if (!(blockEntity instanceof TubeValveBlockEntity) && !(blockEntity instanceof TubeBufferBlockEntity)
                     && tube.supportsFacingControl() && player.isCrouching()) {
                 tube.cycleFacing();
-                level.playSound(null, pos, ConfigSounds.KNOB_TWISTING.value(), SoundSource.BLOCKS, 0.7F, 1.0F + level.random.nextFloat() * 0.2F);
-                player.displayClientMessage(
-                        Component.translatable("msg.thaumcraft.gauntlet.facing", Component.translatable("direction.minecraft." + tube.getFacing().getSerializedName())),
-                        true
-                );
+                level.playSound(null, pos, ConfigSounds.KNOB_TWISTING.value(), SoundSource.BLOCKS, 0.7F, 1.0F + level.getRandom().nextFloat() * 0.2F);
+                player.sendOverlayMessage(
+                        Component.translatable("msg.thaumcraft.gauntlet.facing", Component.translatable("direction.minecraft." + tube.getFacing().getSerializedName())));
                 return InteractionResult.SUCCESS;
             }
 
@@ -237,13 +231,11 @@ public class TubeBlock extends DirectionalBlock implements EntityBlock {
             }
 
             tube.toggleSide(side);
-            level.playSound(null, pos, ConfigSounds.KNOB_TWISTING.value(), SoundSource.BLOCKS, 0.7F, 0.95F + level.random.nextFloat() * 0.15F);
-            player.displayClientMessage(
+            level.playSound(null, pos, ConfigSounds.KNOB_TWISTING.value(), SoundSource.BLOCKS, 0.7F, 0.95F + level.getRandom().nextFloat() * 0.15F);
+            player.sendOverlayMessage(
                     Component.translatable(
                             tube.isConnectable(side) ? "msg.thaumcraft.gauntlet.side.opened" : "msg.thaumcraft.gauntlet.side.closed",
-                            Component.translatable("direction.minecraft." + side.getSerializedName())),
-                    true
-            );
+                            Component.translatable("direction.minecraft." + side.getSerializedName())));
         }
         return InteractionResult.SUCCESS;
     }

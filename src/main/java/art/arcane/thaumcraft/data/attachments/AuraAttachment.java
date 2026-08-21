@@ -1,6 +1,7 @@
 package art.arcane.thaumcraft.data.attachments;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -48,7 +49,7 @@ public class AuraAttachment {
     private static final Direction[] HORIZONTAL_DIRECTIONS = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
 
     public AuraAttachment(ChunkAccess access, RandomSource random) {
-        Vec3i chunkPos = new Vec3i(access.getPos().x, access.getHeight(), access.getPos().z);
+        Vec3i chunkPos = new Vec3i(access.getPos().x(), access.getHeight(), access.getPos().z());
         RegistryAccess registryAccess = access.getLevel().registryAccess();
         float value = getBiomeAuraBase(registryAccess, access.getNoiseBiome(chunkPos.getX(), chunkPos.getY(), chunkPos.getZ()));
         for (Direction dir : HORIZONTAL_DIRECTIONS) {
@@ -68,7 +69,7 @@ public class AuraAttachment {
             if (key.isEmpty()) {
                 return DEFAULT_AURA_LEVEL;
             }
-            ResourceKey<AuraBiomeInfo> auraBiome = ResourceKey.create(ThaumcraftData.Registries.AURA_BIOME_INFO, key.get().location());
+            ResourceKey<AuraBiomeInfo> auraBiome = ResourceKey.create(ThaumcraftData.Registries.AURA_BIOME_INFO, key.get().identifier());
             AuraBiomeInfo info = ConfigDataRegistries.AURA_BIOME_INFO.get(access, auraBiome);
             float level = info != null ? info.auraLevel() : DEFAULT_AURA_LEVEL;
             return level > 0.01f ? level : DEFAULT_AURA_LEVEL;
@@ -77,7 +78,7 @@ public class AuraAttachment {
         }
     }
 
-    public static final Codec<AuraAttachment> CODEC = RecordCodecBuilder.create(i -> i.group(
+    public static final MapCodec<AuraAttachment> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Codec.SHORT.fieldOf(NBT_BASE).forGetter(AuraAttachment::getBaseVis),
             Codec.FLOAT.fieldOf(NBT_VIS).forGetter(AuraAttachment::getVis),
             Codec.FLOAT.fieldOf(NBT_FLUX).forGetter(AuraAttachment::getFlux)

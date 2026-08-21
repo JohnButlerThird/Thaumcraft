@@ -18,8 +18,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -36,6 +36,8 @@ import art.arcane.thaumcraft.data.recipes.InfusionRecipe;
 import art.arcane.thaumcraft.util.CraftingUtils;
 import art.arcane.thaumcraft.util.simple.SimpleBlockEntity;
 import art.arcane.thaumcraft.util.simple.TickableBlockEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -110,30 +112,30 @@ public class RunicMatrixBlockEntity extends SimpleBlockEntity implements Tickabl
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        this.state = MatrixState.fromString(nbt.getString("state"));
-		this.stability = nbt.getFloat("stability");
-		this.stabilityModifier = nbt.getFloat("stabilityModifier");
+    protected void loadData(ValueInput input) {
+        this.state = MatrixState.fromString(input.getString("state").get());
+		this.stability = input.getFloatOr("stability", 0F);
+		this.stabilityModifier = input.getFloatOr("stabilityModifier", 0F);
 		if(this.state == MatrixState.ABSORBING || this.state == MatrixState.CRAFTING) {
-			setRecipe(ThaumcraftClientRecipes.getRecipe(ConfigRecipeTypes.INFUSION.type(), ResourceLocation.tryParse(nbt.getString("recipe"))), null);
+			setRecipe(ThaumcraftClientRecipes.getRecipe(ConfigRecipeTypes.INFUSION.type(), Identifier.tryParse(input.getString("recipe").get())), null);
 		}
 		if(Thaumcraft.isDev()) {
-			this.cycleDelay = nbt.getInt("cycleDelay");
-			this.costModifier = nbt.getFloat("costModifier");
+			this.cycleDelay = input.getIntOr("cycleDelay", 0);
+			this.costModifier = input.getFloatOr("costModifier", 0F);
 		}
     }
 
     @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        nbt.putString("state", this.state.getSerializedName());
-		nbt.putFloat("stability", this.stability);
-		nbt.putFloat("stabilityModifier", this.stabilityModifier);
+    protected void saveData(ValueOutput output) {
+        output.putString("state", this.state.getSerializedName());
+		output.putFloat("stability", this.stability);
+		output.putFloat("stabilityModifier", this.stabilityModifier);
 		if((this.state == MatrixState.ABSORBING || this.state == MatrixState.CRAFTING) && currentRecipe != null) {
-			nbt.putString("recipe", currentRecipe.toString());
+			output.putString("recipe", currentRecipe.toString());
 		}
 		if(Thaumcraft.isDev()) {
-			nbt.putInt("cycleDelay", this.cycleDelay);
-			nbt.putFloat("costModifier", this.costModifier);
+			output.putInt("cycleDelay", this.cycleDelay);
+			output.putFloat("costModifier", this.costModifier);
 		}
     }
 
@@ -219,7 +221,7 @@ public class RunicMatrixBlockEntity extends SimpleBlockEntity implements Tickabl
 	private void doCrafting() {
 		boolean interrupted = false;
 		if(this.stability < STABILITY_CAP && this.stability > -100F) {
-			float loss = (currentRecipe.value().instability() / getInfusionStability().getModifier()) * getLevel().random.nextFloat();
+			float loss = (currentRecipe.value().instability() / getInfusionStability().getModifier()) * getLevel().getRandom().nextFloat();
 			stability = Math.clamp(stability + stabilityModifier - loss, -100F, STABILITY_CAP);
 		}
 
@@ -228,12 +230,12 @@ public class RunicMatrixBlockEntity extends SimpleBlockEntity implements Tickabl
 			interrupted = true;
 		}
 
-		if(interrupted || (stability < 0F && level.random.nextInt(1500) <= Mth.abs(stability))) {
+		if(interrupted || (stability < 0F && level.getRandom().nextInt(1500) <= Mth.abs(stability))) {
 			//TODO - Logic: Instability Events
-			stability += 5 + level.random.nextFloat() * 5F;
+			stability += 5 + level.getRandom().nextFloat() * 5F;
 			Player p = getLevel().getPlayerByUUID(craftingPlayer);
 			if(p != null && ResearchHelper.grantResearchTag(p, ThaumcraftData.ResearchTags.INFUSION_INSTABILITY))
-				p.displayClientMessage(Component.translatable("msg.thaumcraft.research.got_infusion_instability").withStyle(ChatFormatting.DARK_PURPLE), true);
+				p.sendOverlayMessage(Component.translatable("msg.thaumcraft.research.got_infusion_instability").withStyle(ChatFormatting.DARK_PURPLE));
 			if(!interrupted)
 				return;
 		}
@@ -277,10 +279,10 @@ public class RunicMatrixBlockEntity extends SimpleBlockEntity implements Tickabl
 					return;
 				}
 
-				if(getLevel().random.nextInt(1 + requiredItems.size()) == 0) {
+				if(getLevel().getRandom().nextInt(1 + requiredItems.size()) == 0) {
 					this.state = MatrixState.ABSORBING;
 					//TODO - Visuals: Transition back into absorbing state
-					ResourceKey<Aspect> randomAspect = currentRecipe.value().aspects().aspectsPresent().get(getLevel().random.nextInt(currentRecipe.value().aspects().aspectCount()));
+					ResourceKey<Aspect> randomAspect = currentRecipe.value().aspects().aspectsPresent().get(getLevel().getRandom().nextInt(currentRecipe.value().aspects().aspectCount()));
 					requiredEssentia.remove(randomAspect, 1);
 					stability -= 0.25F;
 					sync();
@@ -295,7 +297,7 @@ public class RunicMatrixBlockEntity extends SimpleBlockEntity implements Tickabl
 	}
 
 	private void finishCrafting() {
-		getCentrePedestal().get().setItemStack(this.currentRecipe.value().result().copy());
+		getCentrePedestal().get().setItemStack(this.currentRecipe.value().result().create());
 		getCentrePedestal().get().sync();
 		this.state = MatrixState.IDLE;
 		setRecipe(null, null);
@@ -358,7 +360,7 @@ public class RunicMatrixBlockEntity extends SimpleBlockEntity implements Tickabl
 					IInfusionPedestalCapability pedestal = level.getCapability(ConfigCapabilities.INFUSION_PEDESTAL, pos);
 					if (pedestal != null)
 						itemProviders.add(pedestal);
-					if (level.getCapability(ConfigCapabilities.INFUSION_STABILIZER, pos) != null || level.getBlockState(pos).getBlockHolder().getData(ConfigDataMaps.INFUSION_STABILIZER) != null)
+					if (level.getCapability(ConfigCapabilities.INFUSION_STABILIZER, pos) != null || level.getBlockState(pos).typeHolder().getData(ConfigDataMaps.INFUSION_STABILIZER) != null)
 						stabilityModifiers.add(pos);
 					IInfusionModifierCapability modifier = level.getCapability(ConfigCapabilities.INFUSION_MODIFIER, pos);
 					if(modifier != null && modifier.isModifyingInfusion(getLevel(), pos)) {
@@ -415,7 +417,7 @@ public class RunicMatrixBlockEntity extends SimpleBlockEntity implements Tickabl
 			return capability.getStabilizationModifier(getLevel(), getBlockPos(), pos, counterpart);
 		}
 
-		DataMapEntries.InfusionStabilizerData datamap = state.getBlockHolder().getData(ConfigDataMaps.INFUSION_STABILIZER);
+		DataMapEntries.InfusionStabilizerData datamap = state.typeHolder().getData(ConfigDataMaps.INFUSION_STABILIZER);
 		if(datamap != null) {
 			return symmetryBroken ? datamap.stabilizationPenalty() : datamap.stabilizationModifier();
 		}
@@ -539,7 +541,7 @@ public class RunicMatrixBlockEntity extends SimpleBlockEntity implements Tickabl
         ANCIENT(Thaumcraft.id("textures/block/runic_matrix_ancient.png"), -.1F, -.1F, -1),
         ELDRITCH(Thaumcraft.id("textures/block/runic_matrix_eldritch.png"), .05F,.2F, -3);
 
-        private final ResourceLocation texture;
+        private final Identifier texture;
         private float costModifier, stabilityRegen;
         private int cycleModifier;
     }

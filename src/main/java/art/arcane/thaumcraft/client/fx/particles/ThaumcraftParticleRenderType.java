@@ -3,13 +3,10 @@ package art.arcane.thaumcraft.client.fx.particles;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.TriState;
 import art.arcane.thaumcraft.Thaumcraft;
 
-public class ThaumcraftParticleRenderType {
+/*public class ThaumcraftParticleRenderType {
 
     public static final ResourceLocation PARTICLES_TEXTURE = Thaumcraft.id("textures/misc/particles.png");
 
@@ -59,4 +56,4 @@ public class ThaumcraftParticleRenderType {
             THAUMCRAFT_PARTICLES_TRANSLUCENT_RENDER_TYPE,
             false
     );
-}
+}*/

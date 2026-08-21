@@ -17,6 +17,14 @@
 
 - Forge OBJ loader quirk: Blockbench exports have UVs flipped vertically and offset by 0.5 on X/Z
 
+## 26.1 Update TODO
+
+- Runic Matrix is fucked up.
+- Fancy Armor models are inverted on the Y Axis.
+- Nametags are not being rendered.
+- Arcane Crafting Table interface is broken.
+- Particles.
+- Worldgen.
 ---
 
 ## TODO
@@ -102,7 +110,7 @@ Nothing so far. :)
     - [X] Greatwood (Logs, Leaves, Saplings, Planks, Stairs, Slabs, Fences, etc.)
     - [X] Silverwood (Logs, Leaves, Saplings, Planks, Stairs, Slabs, Fences, etc.)
     - [ ] **NOTE: Door and Wood Type textures need redesign**
-- [X] **Plants**
+- [ ] **Plants** (Datagen needs to be redone)
     - [X] Cinderpearl
     - [X] Shimmerleaf
     - [X] Vishroom
@@ -217,7 +225,7 @@ Nothing so far. :)
 - [X] Void Armor & Robes
 - [X] Thaumaturge's Armor
 - [X] Cultist Armor (Robes, Plate, Leader)
-    - [ ] Better System for 3D Armor (For the love of god, it's awful)
+    - [X] Better System for 3D Armor (For the love of god, it's awful)
     - [ ] Cloth Flaps
 - [ ] Fortress Armor
   -  [X] Main Armor Set

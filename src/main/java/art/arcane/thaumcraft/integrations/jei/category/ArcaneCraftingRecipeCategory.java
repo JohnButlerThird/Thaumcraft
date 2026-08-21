@@ -7,10 +7,10 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.Nullable;
 import art.arcane.thaumcraft.Thaumcraft;
@@ -21,7 +21,7 @@ import art.arcane.thaumcraft.registries.ConfigDataRegistries;
 import art.arcane.thaumcraft.registries.ConfigItems;
 
 public class ArcaneCraftingRecipeCategory implements IRecipeCategory<ArcaneCraftingRecipe> {
-    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(Thaumcraft.MOD_ID, "textures/ui/arcane_workbench_jei.png");
+    private static final Identifier BACKGROUND_TEXTURE = Thaumcraft.id("textures/ui/arcane_workbench_jei.png");
 
     @Override
     public IRecipeType<ArcaneCraftingRecipe> getRecipeType() {
@@ -49,15 +49,15 @@ public class ArcaneCraftingRecipeCategory implements IRecipeCategory<ArcaneCraft
     }
 
     @Override
-    public void draw(ArcaneCraftingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
-        guiGraphics.blit(RenderType::guiTextured, BACKGROUND_TEXTURE, 0, 0, 0, 0, getWidth(), getHeight(), getWidth(), getHeight());
+    public void draw(ArcaneCraftingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
+        guiGraphics.blit(RenderPipelines.GUI, BACKGROUND_TEXTURE, 0, 0, 0, 0, getWidth(), getHeight(), getWidth(), getHeight());
 
         var pose = guiGraphics.pose();
-        pose.pushPose();
-        pose.translate(168, 94, 400);
-        pose.scale(.75F, .75F, 0);
-        guiGraphics.drawCenteredString(Minecraft.getInstance().font, String.format("%d vis", recipe.visAmount()), 0, 0, 0x6E6EEE);
-        pose.popPose();
+        pose.pushMatrix();
+        pose.translate(168, 94);
+        pose.scale(.75F, .75F);
+        guiGraphics.centeredText(Minecraft.getInstance().font, String.format("%d vis", recipe.visAmount()), 0, 0, 0x6E6EEE);
+        pose.popMatrix();
     }
 
     @Override
@@ -92,7 +92,7 @@ public class ArcaneCraftingRecipeCategory implements IRecipeCategory<ArcaneCraft
             }
         }
 
-        builder.addOutputSlot().add(recipe.result()).setPosition(160, 64);
+        builder.addOutputSlot().add(recipe.result().create()).setPosition(160, 64);
 
         builder.moveRecipeTransferButton(150, 112);
     }

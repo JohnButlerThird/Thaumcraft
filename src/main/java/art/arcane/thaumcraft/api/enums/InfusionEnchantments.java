@@ -4,8 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
 import art.arcane.thaumcraft.api.components.InfusionEnchantmentComponent;
 import art.arcane.thaumcraft.registries.ConfigItemComponents;
@@ -27,19 +28,19 @@ public enum InfusionEnchantments implements StringRepresentable {
     HARVESTER(Enchantments.HARVESTER, 5),
     LAMPLIGHT(Enchantments.LAMPLIGHT, 1);
 
-    private final ResourceLocation id;
+    private final Identifier id;
     private final int maxLevel;
 
-    public static int getMaxLevel(ResourceLocation id) {
+    public static int getMaxLevel(Identifier id) {
         return Arrays.stream(values()).filter(e -> e.id.equals(id)).map(e -> e.maxLevel).findFirst().orElse(0);
     }
 
-    public static boolean hasEnchantment(ItemStack stack, InfusionEnchantments enchantment) {
+    public static boolean hasEnchantment(ItemInstance stack, InfusionEnchantments enchantment) {
         InfusionEnchantmentComponent component = stack.get(ConfigItemComponents.INFUSION_ENCHANTMENT.value());
         return component != null && component.enchantments().containsKey(enchantment);
     }
 
-    public static InfusionEnchantments getFromId(ResourceLocation rl) {
+    public static InfusionEnchantments getFromId(Identifier rl) {
         return Arrays.stream(values()).filter(e -> e.id.equals(rl)).findFirst().orElse(null);
     }
 

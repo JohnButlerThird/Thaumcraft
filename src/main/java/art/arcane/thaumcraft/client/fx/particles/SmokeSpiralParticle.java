@@ -5,10 +5,9 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.SpriteSet;
-import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.util.Mth;
 
-public class SmokeSpiralParticle extends TextureSheetParticle {
+/*public class SmokeSpiralParticle extends TextureSheetParticle {
 
     private final double originX;
     private final double originY;
@@ -87,4 +86,4 @@ public class SmokeSpiralParticle extends TextureSheetParticle {
             return particle;
         }
     }
-}
+}*/

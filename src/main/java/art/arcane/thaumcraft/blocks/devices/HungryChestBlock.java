@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -23,29 +24,29 @@ public class HungryChestBlock extends SimpleChestBlock<HungryChestBlockEntity> {
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (level.isClientSide || !(entity instanceof ItemEntity itemEntity)) {
-            return;
-        }
-        if (itemEntity.isRemoved()) {
-            return;
-        }
+	@Override
+	protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier effectApplier, boolean isPrecise) {
+		if (level.isClientSide() || !(entity instanceof ItemEntity itemEntity)) {
+			return;
+		}
+		if (itemEntity.isRemoved()) {
+			return;
+		}
 
 		HungryChestBlockEntity be = getEntity(level, pos);
-        ItemStack stack = itemEntity.getItem();
-        ItemStack leftover = be.insertItem(stack);
+		ItemStack stack = itemEntity.getItem();
+		ItemStack leftover = be.insertItem(stack);
 
-        if (leftover.isEmpty() || leftover.getCount() != stack.getCount()) {
+		if (leftover.isEmpty() || leftover.getCount() != stack.getCount()) {
 			System.out.println(pos);
 			BetterChestBlockEntity.playSound(level, pos, state, SoundEvents.GENERIC_EAT.value());
 			be.chew();
-        }
+		}
 
-        if (leftover.isEmpty()) {
-            itemEntity.discard();
-        } else {
-            itemEntity.setItem(leftover);
-        }
-    }
+		if (leftover.isEmpty()) {
+			itemEntity.discard();
+		} else {
+			itemEntity.setItem(leftover);
+		}
+	}
 }

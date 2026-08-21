@@ -8,6 +8,7 @@ import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
 import art.arcane.thaumcraft.data.attachments.AuraAttachment;
@@ -19,7 +20,7 @@ public final class AuraCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         float max = AuraAttachment.MAX_AURA;
         dispatcher.register(Commands.literal("thaumcraft")
-                .requires(source -> source.hasPermission(2))
+                .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_ADMIN))
                 .then(Commands.literal("aura")
                         .then(Commands.literal("get")
                                 .executes(AuraCommands::getAura))
@@ -48,7 +49,7 @@ public final class AuraCommands {
         CommandSourceStack source = context.getSource();
         BlockPos pos = BlockPos.containing(source.getPosition());
         ServerLevel level = source.getLevel();
-        ChunkPos chunkPos = new ChunkPos(pos);
+        ChunkPos chunkPos = ChunkPos.containing(pos);
 
         var auraOpt = AuraHelper.getAura(level, chunkPos);
         if (auraOpt.isEmpty()) {
@@ -59,7 +60,7 @@ public final class AuraCommands {
         AuraAttachment aura = auraOpt.get();
         source.sendSuccess(() -> Component.literal(String.format(
                 "Chunk [%d, %d] Aura: Base=%d, Vis=%.1f, Flux=%.1f",
-                chunkPos.x, chunkPos.z, aura.getBaseVis(), aura.getVis(), aura.getFlux()
+                chunkPos.x(), chunkPos.z(), aura.getBaseVis(), aura.getVis(), aura.getFlux()
         )), false);
         return 1;
     }
@@ -79,14 +80,14 @@ public final class AuraCommands {
         CommandSourceStack source = context.getSource();
         BlockPos pos = BlockPos.containing(source.getPosition());
         ServerLevel level = source.getLevel();
-        ChunkPos chunkPos = new ChunkPos(pos);
+        ChunkPos chunkPos = ChunkPos.containing(pos);
 
-        if (!level.hasChunk(chunkPos.x, chunkPos.z)) {
+        if (!level.hasChunk(chunkPos.x(), chunkPos.z())) {
             source.sendFailure(Component.literal("Chunk not loaded"));
             return 0;
         }
 
-        LevelChunk chunk = level.getChunk(chunkPos.x, chunkPos.z);
+        LevelChunk chunk = level.getChunk(chunkPos.x(), chunkPos.z());
         AuraAttachment newAura = new AuraAttachment((short) amount);
         chunk.setData(ConfigDataAttachments.CHUNK_AURA.get(), newAura);
         chunk.markUnsaved();
@@ -111,10 +112,10 @@ public final class AuraCommands {
         CommandSourceStack source = context.getSource();
         BlockPos pos = BlockPos.containing(source.getPosition());
         ServerLevel level = source.getLevel();
-        ChunkPos centerChunk = new ChunkPos(pos);
+        ChunkPos centerChunk = ChunkPos.containing(pos);
 
-        int regionX = centerChunk.x >> 5;
-        int regionZ = centerChunk.z >> 5;
+        int regionX = centerChunk.x() >> 5;
+        int regionZ = centerChunk.z() >> 5;
 
         int resetCount = 0;
         int totalVis = 0;
@@ -154,7 +155,7 @@ public final class AuraCommands {
         CommandSourceStack source = context.getSource();
         BlockPos pos = BlockPos.containing(source.getPosition());
         ServerLevel level = source.getLevel();
-        ChunkPos chunkPos = new ChunkPos(pos);
+        ChunkPos chunkPos = ChunkPos.containing(pos);
 
         var auraOpt = AuraHelper.getAura(level, chunkPos);
         if (auraOpt.isEmpty()) {
@@ -163,7 +164,7 @@ public final class AuraCommands {
         }
 
         modifier.accept(auraOpt.get());
-        level.getChunk(chunkPos.x, chunkPos.z).markUnsaved();
+        level.getChunk(chunkPos.x(), chunkPos.z()).markUnsaved();
 
         source.sendSuccess(() -> Component.literal(successMsg), true);
         return 1;

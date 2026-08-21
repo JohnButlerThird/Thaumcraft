@@ -5,6 +5,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -12,7 +14,7 @@ public final class VisChargeCommand {
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
 		dispatcher.register(Commands.literal("thaumcraft")
-				.requires(source -> source.hasPermission(2) && source.isPlayer())
+				.requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_OWNER) && source.isPlayer())
 				.then(Commands.literal("charge")
 						.executes(ctx -> chargeAll(ctx.getSource().getPlayer(), -1))
 						.then(Commands.argument("amount", IntegerArgumentType.integer(1))
@@ -22,9 +24,14 @@ public final class VisChargeCommand {
 	}
 
 	private static int chargeAll(Player player, int amount) {
-		player.getInventory().items.stream().filter(itemStack -> itemStack.getItem() instanceof VisChargeItem).forEach(i -> chargeItem(i, amount));
-		player.getInventory().armor.stream().filter(itemStack -> itemStack.getItem() instanceof VisChargeItem).forEach(i -> chargeItem(i, amount));
-		player.getInventory().offhand.stream().filter(itemStack -> itemStack.getItem() instanceof VisChargeItem).forEach(i -> chargeItem(i, amount));
+		player.getInventory().getNonEquipmentItems().stream().filter(itemStack -> itemStack.getItem() instanceof VisChargeItem).forEach(i -> chargeItem(i, amount));
+		for (EquipmentSlot value : EquipmentSlot.values()) {
+			if(value.equals(EquipmentSlot.BODY))
+				continue;
+			ItemStack item = player.getItemBySlot(value);
+			if(!item.isEmpty() && item.getItem() instanceof VisChargeItem)
+				chargeItem(item, amount);
+		}
 		return 0;
 	}
 

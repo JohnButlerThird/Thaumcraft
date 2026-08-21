@@ -27,7 +27,7 @@ public class EquipmentInfoProvider extends EquipmentAssetProvider {
                         .addLayers(
                                 EquipmentClientInfo.LayerType.HUMANOID,
                                 new EquipmentClientInfo.Layer(
-                                        ThaumcraftMaterials.Armor.CRIMSON_BOOTS.assetId().location(),
+                                        ThaumcraftMaterials.Armor.CRIMSON_BOOTS.assetId().identifier(),
                                         Optional.empty(),
                                         false)).build());
 
@@ -36,7 +36,7 @@ public class EquipmentInfoProvider extends EquipmentAssetProvider {
 						.addLayers(
 								EquipmentClientInfo.LayerType.HUMANOID,
 								new EquipmentClientInfo.Layer(
-										ThaumcraftMaterials.Armor.TRAVELLER.assetId().location(),
+										ThaumcraftMaterials.Armor.TRAVELLER.assetId().identifier(),
 										Optional.empty(),
 										false)).build());
 
@@ -45,7 +45,7 @@ public class EquipmentInfoProvider extends EquipmentAssetProvider {
 						.addLayers(
 								EquipmentClientInfo.LayerType.HUMANOID,
 								new EquipmentClientInfo.Layer(
-										ThaumcraftMaterials.Armor.GOGGLE.assetId().location(),
+										ThaumcraftMaterials.Armor.GOGGLE.assetId().identifier(),
 										Optional.empty(),
 										false)).build());
 
@@ -54,21 +54,21 @@ public class EquipmentInfoProvider extends EquipmentAssetProvider {
 						.addLayers(
 								EquipmentClientInfo.LayerType.HUMANOID,
 								new EquipmentClientInfo.Layer(
-										ThaumcraftMaterials.Armor.THAUMATURGE.assetId().location(),
+										ThaumcraftMaterials.Armor.THAUMATURGE.assetId().identifier(),
 										Optional.empty(),
 										false),
 								new EquipmentClientInfo.Layer(
-										ThaumcraftMaterials.Armor.THAUMATURGE.assetId().location().withSuffix("_overlay"),
+										ThaumcraftMaterials.Armor.THAUMATURGE.assetId().identifier().withSuffix("_overlay"),
 										Optional.of(new EquipmentClientInfo.Dyeable(Optional.of(COLOUR_THAUMATURGE))),
 										false))
 						.addLayers(
 								EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS,
 								new EquipmentClientInfo.Layer(
-										ThaumcraftMaterials.Armor.THAUMATURGE.assetId().location(),
+										ThaumcraftMaterials.Armor.THAUMATURGE.assetId().identifier(),
 										Optional.empty(),
 										false),
 								new EquipmentClientInfo.Layer(
-										ThaumcraftMaterials.Armor.THAUMATURGE.assetId().location().withSuffix("_overlay"),
+										ThaumcraftMaterials.Armor.THAUMATURGE.assetId().identifier().withSuffix("_overlay"),
 										Optional.of(new EquipmentClientInfo.Dyeable(Optional.of(COLOUR_THAUMATURGE))),
 										false)).build());
 
@@ -77,13 +77,13 @@ public class EquipmentInfoProvider extends EquipmentAssetProvider {
 						.addLayers(
 								EquipmentClientInfo.LayerType.HUMANOID,
 								new EquipmentClientInfo.Layer(
-										ThaumcraftMaterials.Armor.THAUMIUM.assetId().location(),
+										ThaumcraftMaterials.Armor.THAUMIUM.assetId().identifier(),
 										Optional.empty(),
 										false))
 						.addLayers(
 								EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS,
 								new EquipmentClientInfo.Layer(
-										ThaumcraftMaterials.Armor.THAUMIUM.assetId().location(),
+										ThaumcraftMaterials.Armor.THAUMIUM.assetId().identifier(),
 										Optional.empty(),
 										false)).build());
 
@@ -92,13 +92,13 @@ public class EquipmentInfoProvider extends EquipmentAssetProvider {
 						.addLayers(
 								EquipmentClientInfo.LayerType.HUMANOID,
 								new EquipmentClientInfo.Layer(
-										ThaumcraftMaterials.Armor.VOID_METAL.assetId().location(),
+										ThaumcraftMaterials.Armor.VOID_METAL.assetId().identifier(),
 										Optional.empty(),
 										false))
 						.addLayers(
 								EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS,
 								new EquipmentClientInfo.Layer(
-										ThaumcraftMaterials.Armor.VOID_METAL.assetId().location(),
+										ThaumcraftMaterials.Armor.VOID_METAL.assetId().identifier(),
 										Optional.empty(),
 										false)).build());
 

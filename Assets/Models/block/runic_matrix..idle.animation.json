@@ -1,0 +1,24 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"idle": {
+			"loop": true,
+			"animation_length": 4.8333,
+			"bones": {
+				"root": {
+					"relative_to": {
+						"rotation": "entity"
+					},
+					"rotation": {
+						"0.0": {
+							"vector": [0, "-query.anim_time * 360 / 18 * query.thaumcraft.runic_matrix.startup", 40]
+						},
+						"3.4167": {
+							"vector": [0, "-21.9537-query.anim_time * 360 / 18 * query.thaumcraft.runic_matrix.startup", 56.282]
+						}
+					}
+				}
+			}
+		}
+	}
+}

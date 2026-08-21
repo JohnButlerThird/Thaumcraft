@@ -1,6 +1,7 @@
 package art.arcane.thaumcraft.blocks;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
@@ -56,10 +57,9 @@ public class DioptraBlock extends TickableEntityBlock<DioptraBlockEntity> {
         return true;
     }
 
-    @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        DioptraBlockEntity be = getEntity(level, pos);
-        float value = state.getValue(DISPLAY_VIS) ? be.getCenterVis() : be.getCenterFlux();
-        return Math.min(15, (int) (value / 500F * 14F) + 1);
-    }
+	@Override
+	protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+		DioptraBlockEntity be = getEntity(level, pos);
+		return Math.min(15, (int) (be.getCenterData(state.getValue(DISPLAY_VIS)) / 500F * 14F) + 1);
+	}
 }

@@ -1,7 +1,6 @@
 package art.arcane.thaumcraft.blocks.entities;
 
 import art.arcane.thaumcraft.blocks.NitorBlock;
-import art.arcane.thaumcraft.client.fx.ThaumcraftFX;
 import art.arcane.thaumcraft.registries.ConfigBlockEntities;
 import art.arcane.thaumcraft.util.simple.SimpleBlockEntity;
 import art.arcane.thaumcraft.util.simple.TickableBlockEntity;
@@ -34,15 +33,15 @@ public class NitorBlockEntity extends SimpleBlockEntity implements TickableBlock
         int color = state.getValue(NitorBlock.COLOR).getTextureDiffuseColor();
         BlockPos pos = getBlockPos();
 
-        double x = pos.getX() + 0.5 + level.random.nextGaussian() * 0.025;
-        double y = pos.getY() + 0.45 + level.random.nextGaussian() * 0.025;
-        double z = pos.getZ() + 0.5 + level.random.nextGaussian() * 0.025;
+        double x = pos.getX() + 0.5 + level.getRandom().nextGaussian() * 0.025;
+        double y = pos.getY() + 0.45 + level.getRandom().nextGaussian() * 0.025;
+        double z = pos.getZ() + 0.5 + level.getRandom().nextGaussian() * 0.025;
 
-        ThaumcraftFX.drawNitorFlames(
+        /*ThaumcraftFX.drawNitorFlames( TODO: Rendering - Particles
                 x, y, z,
-                level.random.nextGaussian() * 0.0025,
-                level.random.nextFloat() * 0.06,
-                level.random.nextGaussian() * 0.0025,
+                level.getRandom().nextGaussian() * 0.0025,
+                level.getRandom().nextFloat() * 0.06,
+                level.getRandom().nextGaussian() * 0.0025,
                 color, 0
         );
 
@@ -51,14 +50,6 @@ public class NitorBlockEntity extends SimpleBlockEntity implements TickableBlock
                     pos.getX() + 0.5, pos.getY() + 0.49, pos.getZ() + 0.5,
                     0.0, 0.0, 0.0
             );
-        }
-    }
-
-    @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider registries) {
-    }
-
-    @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider registries) {
+        }*/
     }
 }

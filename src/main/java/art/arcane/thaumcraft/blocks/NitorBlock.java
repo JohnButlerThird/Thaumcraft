@@ -34,7 +34,7 @@ public class NitorBlock extends TickableEntityBlock<NitorBlockEntity> {
                 .sound(SoundType.WOOL)
                 .lightLevel(bs -> 15)
                 .noOcclusion()
-                .noCollission()
+                .noCollision()
                 .mapColor(state -> state.getValue(COLOR).getMapColor()), ConfigBlockEntities.NITOR::entityType);
         registerDefaultState(stateDefinition.any().setValue(COLOR, DyeColor.YELLOW));
     }

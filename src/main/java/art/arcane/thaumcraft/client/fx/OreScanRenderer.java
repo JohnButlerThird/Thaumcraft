@@ -6,8 +6,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -15,7 +13,7 @@ import org.joml.Matrix4f;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@OnlyIn(Dist.CLIENT)
+/*@OnlyIn(Dist.CLIENT)
 public class OreScanRenderer {
 
     private static final ConcurrentLinkedQueue<GlowingMarker> activeMarkers = new ConcurrentLinkedQueue<>();
@@ -136,4 +134,4 @@ public class OreScanRenderer {
             }
         }
     }
-}
+}*/

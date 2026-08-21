@@ -1,8 +1,6 @@
 package art.arcane.thaumcraft.registries;
 
 import art.arcane.thaumcraft.api.components.FortressFaceplateComponent;
-import art.arcane.thaumcraft.api.components.GolemConfiguration;
-import art.arcane.thaumcraft.data.golemancy.SealType;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -12,8 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Unit;
 import net.neoforged.bus.api.IEventBus;
@@ -54,24 +51,19 @@ public class ConfigItemComponents {
 	public static final Holder<DataComponentType<Integer>> DYE_COLOR = register(ItemComponents.DYE_COLOR, Codec.INT, ByteBufCodecs.VAR_INT);
 
 	public static final Holder<DataComponentType<FortressFaceplateComponent>> ARMOR_FORTRESS_FACEPLATE = register(ItemComponents.ARMOR_FORTRESS_FACEPLATE, FortressFaceplateComponent.CODEC, FortressFaceplateComponent.STREAM_CODEC);
-	public static final Holder<DataComponentType<Unit>> GOGGLE_SIGHT = register(ItemComponents.GOGGLE_SIGHT, Codec.unit(Unit.INSTANCE), StreamCodec.unit(Unit.INSTANCE));
-
-	public static final Holder<DataComponentType<GolemConfiguration>> GOLEM_CONFIG = register(ItemComponents.GOLEM_CONFIG, GolemConfiguration.CODEC, GolemConfiguration.STREAM_CODEC);
-	public static final Holder<DataComponentType<ResourceKey<SealType>>> SEAL_TYPE = register(ItemComponents.SEAL_TYPE,
-			ResourceKey.codec(art.arcane.thaumcraft.api.ThaumcraftData.Registries.SEAL_TYPE),
-			ResourceKey.streamCodec(art.arcane.thaumcraft.api.ThaumcraftData.Registries.SEAL_TYPE));
+	public static final Holder<DataComponentType<Unit>> GOGGLE_SIGHT = register(ItemComponents.GOGGLE_SIGHT, Unit.CODEC, StreamCodec.unit(Unit.INSTANCE));
 
     /* -------------------------------------------------------------------------------------------------------------- */
 
     public static void init(IEventBus bus) { REGISTRY.register(bus); }
 
     @SuppressWarnings("unchecked")
-    private static <E, T extends DataComponentType<E>> Holder<T> register(ResourceLocation id, Codec<E> codec, StreamCodec<? super RegistryFriendlyByteBuf, E> streamCodec) {
+    private static <E, T extends DataComponentType<E>> Holder<T> register(Identifier id, Codec<E> codec, StreamCodec<? super RegistryFriendlyByteBuf, E> streamCodec) {
         return (Holder<T>)REGISTRY.register(id.getPath(), () -> DataComponentType.<E>builder().persistent(codec).networkSynchronized(streamCodec).build());
     }
 
     @SuppressWarnings("unchecked")
-    private static <E, T extends DataComponentType<E>> Holder<T> marker(ResourceLocation id, StreamCodec<? super RegistryFriendlyByteBuf, E> streamCodec) {
+    private static <E, T extends DataComponentType<E>> Holder<T> marker(Identifier id, StreamCodec<? super RegistryFriendlyByteBuf, E> streamCodec) {
         return (Holder<T>)REGISTRY.register(id.getPath(), () -> DataComponentType.<E>builder().networkSynchronized(streamCodec).build());
     }
 }

@@ -15,7 +15,7 @@ public class GreatwoodSaplingBlock extends SaplingBlock {
     public GreatwoodSaplingBlock(BlockBehaviour.Properties properties) {
         super(GreatwoodTreeGrower.GREATWOOD, properties
                 .mapColor(MapColor.PLANT)
-                .noCollission()
+                .noCollision()
                 .randomTicks()
                 .instabreak()
                 .sound(SoundType.GRASS)

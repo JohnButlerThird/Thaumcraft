@@ -12,7 +12,7 @@ import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = Thaumcraft.MOD_ID)
 public class DataEvents {
 
     @SubscribeEvent
@@ -24,7 +24,7 @@ public class DataEvents {
 
     @SubscribeEvent
     public static void onReloadListenerEvent(AddServerReloadListenersEvent event) {
-        event.addListener(ThaumcraftData.Registries.ASPECT_REGISTRY.location(), ConfigDataRegistries.ASPECT_REGISTRY);
+        event.addListener(ThaumcraftData.Registries.ASPECT_REGISTRY.identifier(), ConfigDataRegistries.ASPECT_REGISTRY);
     }
 
     @SubscribeEvent

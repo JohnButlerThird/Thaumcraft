@@ -3,8 +3,9 @@ package art.arcane.thaumcraft.util;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderOwner;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 
 import java.util.Optional;
@@ -31,9 +32,14 @@ public class FallbackHolder<T> implements Holder<T> {
         return true;
     }
 
-    @Override
-    public boolean is(ResourceLocation pLocation) {
-        return pLocation.equals(key.location());
+	@Override
+	public boolean areComponentsBound() {
+		return false;
+	}
+
+	@Override
+    public boolean is(Identifier pLocation) {
+        return pLocation.equals(key.identifier());
     }
 
     @Override
@@ -48,7 +54,7 @@ public class FallbackHolder<T> implements Holder<T> {
 
     @Override
     public boolean is(TagKey<T> pTagKey) {
-        return pTagKey.location().equals(key.location());
+        return pTagKey.location().equals(key.identifier());
     }
 
     @Override
@@ -61,7 +67,12 @@ public class FallbackHolder<T> implements Holder<T> {
         return Stream.empty();
     }
 
-    @Override
+	@Override
+	public DataComponentMap components() {
+		return DataComponentMap.EMPTY;
+	}
+
+	@Override
     public Either<ResourceKey<T>, T> unwrap() {
         return Either.left(key);
     }

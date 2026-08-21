@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelSimulatedReader;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
@@ -38,23 +39,16 @@ public class GreatwoodTrunkPlacer extends TrunkPlacer {
     }
 
     @Override
-    public List<FoliagePlacer.FoliageAttachment> placeTrunk(
-            LevelSimulatedReader level,
-            BiConsumer<BlockPos, BlockState> blockSetter,
-            RandomSource random,
-            int freeTreeHeight,
-            BlockPos startPos,
-            TreeConfiguration config) {
-
+    public List<FoliagePlacer.FoliageAttachment> placeTrunk(WorldGenLevel level, BiConsumer<BlockPos, BlockState> blockSetter, RandomSource random, int treeHeight, BlockPos startPos, TreeConfiguration config) {
         int heightLimit = this.getTreeHeight(random);
         int x = startPos.getX();
         int y = startPos.getY();
         int z = startPos.getZ();
 
-        setDirtAt(level, blockSetter, random, startPos.below(), config);
-        setDirtAt(level, blockSetter, random, startPos.below().east(), config);
-        setDirtAt(level, blockSetter, random, startPos.below().south(), config);
-        setDirtAt(level, blockSetter, random, startPos.below().east().south(), config);
+        placeBelowTrunkBlock(level, blockSetter, random, startPos.below(), config);
+        placeBelowTrunkBlock(level, blockSetter, random, startPos.below().east(), config);
+        placeBelowTrunkBlock(level, blockSetter, random, startPos.below().south(), config);
+        placeBelowTrunkBlock(level, blockSetter, random, startPos.below().east().south(), config);
 
         List<FoliagePlacer.FoliageAttachment> foliageAttachments = new ArrayList<>();
 
@@ -146,7 +140,7 @@ public class GreatwoodTrunkPlacer extends TrunkPlacer {
         return size * 0.5f;
     }
 
-    private void placeBranches(LevelSimulatedReader level, BiConsumer<BlockPos, BlockState> blockSetter,
+    private void placeBranches(WorldGenLevel level, BiConsumer<BlockPos, BlockState> blockSetter,
                                RandomSource random, TreeConfiguration config,
                                int baseX, int baseY, int baseZ, int heightLimit, int[][] leafNodes) {
         int height = (int) (heightLimit * HEIGHT_ATTENUATION);
@@ -166,7 +160,7 @@ public class GreatwoodTrunkPlacer extends TrunkPlacer {
         }
     }
 
-    private void placeTrunkSection(LevelSimulatedReader level, BiConsumer<BlockPos, BlockState> blockSetter,
+    private void placeTrunkSection(WorldGenLevel level, BiConsumer<BlockPos, BlockState> blockSetter,
                                    RandomSource random, TreeConfiguration config,
                                    int x, int y, int z, int height) {
         for (int yOffset = 0; yOffset < height; yOffset++) {
@@ -177,7 +171,7 @@ public class GreatwoodTrunkPlacer extends TrunkPlacer {
         }
     }
 
-    private void placeBlockLine(LevelSimulatedReader level, BiConsumer<BlockPos, BlockState> blockSetter,
+    private void placeBlockLine(WorldGenLevel level, BiConsumer<BlockPos, BlockState> blockSetter,
                                 RandomSource random, TreeConfiguration config,
                                 int[] start, int[] end) {
         int[] delta = {0, 0, 0};

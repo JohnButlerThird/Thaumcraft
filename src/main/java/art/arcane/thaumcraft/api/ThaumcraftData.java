@@ -2,13 +2,11 @@ package art.arcane.thaumcraft.api;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.equipment.EquipmentAsset;
@@ -18,10 +16,6 @@ import art.arcane.thaumcraft.Thaumcraft;
 import art.arcane.thaumcraft.api.aspects.Aspect;
 import art.arcane.thaumcraft.data.aspects.AspectList;
 import art.arcane.thaumcraft.data.aura.AuraBiomeInfo;
-import art.arcane.thaumcraft.data.golemancy.GolemMaterial;
-import art.arcane.thaumcraft.data.golemancy.GolemPart;
-import art.arcane.thaumcraft.data.golemancy.GolemTrait;
-import art.arcane.thaumcraft.data.golemancy.SealType;
 import art.arcane.thaumcraft.data.recipes.ArcaneCraftingRecipe;
 import art.arcane.thaumcraft.data.research.ResearchCategory;
 import art.arcane.thaumcraft.data.research.ResearchEntry;
@@ -37,18 +31,12 @@ public final class ThaumcraftData {
         public static final ResourceKey<Registry<ResearchEntry>> RESEARCH_ENTRY = ResourceKey.createRegistryKey(Thaumcraft.id("research_entries"));
 
         public static final ResourceKey<Registry<ArcaneCraftingRecipe>> ARCANE_CRAFTING_RECIPE_TYPE = ResourceKey.createRegistryKey(Thaumcraft.id("arcane_crafting"));
-
-        public static final ResourceKey<Registry<GolemTrait>> GOLEM_TRAIT = ResourceKey.createRegistryKey(Thaumcraft.id("golem_traits"));
-        public static final ResourceKey<Registry<GolemMaterial>> GOLEM_MATERIAL = ResourceKey.createRegistryKey(Thaumcraft.id("golem_materials"));
-        public static final ResourceKey<Registry<GolemPart>> GOLEM_PART = ResourceKey.createRegistryKey(Thaumcraft.id("golem_parts"));
-        public static final ResourceKey<Registry<SealType>> SEAL_TYPE = ResourceKey.createRegistryKey(Thaumcraft.id("seal_types"));
     }
 
     public static final class TintSources {
 
-        public static final ResourceLocation ASPECT_ITEM = Thaumcraft.id("aspect_item");
-        public static final ResourceLocation DYED_ITEM = Thaumcraft.id("dyed_item");
-        public static final ResourceLocation GOLEM_MATERIAL_ITEM = Thaumcraft.id("golem_material_item");
+        public static final Identifier ASPECT_ITEM = Thaumcraft.id("aspect_item");
+        public static final Identifier DYED_ITEM = Thaumcraft.id("dyed_item");
     }
 
     /**
@@ -56,7 +44,7 @@ public final class ThaumcraftData {
      */
     public static final class Textures {
 
-        public static final ResourceLocation UNKNOWN = Thaumcraft.id("textures/unknown.png");
+        public static final Identifier UNKNOWN = Thaumcraft.id("textures/unknown.png");
     }
 
 
@@ -132,15 +120,6 @@ public final class ThaumcraftData {
                 return ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, Thaumcraft.id(id));
             }
         }
-
-        public static final class SalisMundusMultiblock {
-
-            public static final ResourceKey<Recipe<?>> GOLEM_BUILDER = key("golem_builder");
-
-            private static ResourceKey<Recipe<?>> key(String id) {
-                return ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, Thaumcraft.id(id));
-            }
-        }
     }
 
 
@@ -168,35 +147,33 @@ public final class ThaumcraftData {
 		public static final ResourceKey<ResearchEntry> INFUSION_INSTABILITY = key("instability",  ResearchCategories.INFUSION);
 
         private static ResourceKey<ResearchEntry> key(String id, ResourceKey<ResearchCategory> category) {
-            return ResourceKey.create(Registries.RESEARCH_ENTRY, Thaumcraft.id(category.location().getPath() + "/" + id));
+            return ResourceKey.create(Registries.RESEARCH_ENTRY, Thaumcraft.id(category.identifier().getPath() + "/" + id));
         }
     }
 
 	public static final class ResearchTags {
-		public static final ResourceLocation INFUSION_INSTABILITY = parented("instability", ResearchCategories.INFUSION);
+		public static final Identifier INFUSION_INSTABILITY = parented("instability", ResearchCategories.INFUSION);
 
-		private static ResourceLocation parented(String key, ResourceKey<ResearchCategory> category) {
-			return category.location().withSuffix("/" + key);
+		private static Identifier parented(String key, ResourceKey<ResearchCategory> category) {
+			return category.identifier().withSuffix("/" + key);
 		}
 	}
 
     public static final class ItemComponents {
 
-        public static final ResourceLocation INFUSION_ENCHANTMENTS = Thaumcraft.id("infusions");
-        public static final ResourceLocation ASPECT_HOLDER = Thaumcraft.id("aspect");
-        public static final ResourceLocation CRYSTAL_ASPECT = Thaumcraft.id("crystal_aspect");
-        public static final ResourceLocation COLLECTOR_MARKER = Thaumcraft.id("collector_marker");
-        public static final ResourceLocation AXIS = Thaumcraft.id("axis");
-        public static final ResourceLocation WARPING = Thaumcraft.id("warping");
-        public static final ResourceLocation VIS_COST_MODIFIER = Thaumcraft.id("vis_cost_modifier");
-        public static final ResourceLocation VIS_CHARGE_MAX = Thaumcraft.id("vis_charge_max");
-        public static final ResourceLocation VIS_CHARGE = Thaumcraft.id("vis_charge");
-        public static final ResourceLocation TIMER = Thaumcraft.id("timer");
-        public static final ResourceLocation DYE_COLOR = Thaumcraft.id("dye_color");
-        public static final ResourceLocation GOGGLE_SIGHT = Thaumcraft.id("goggle_sight");
-        public static final ResourceLocation ARMOR_FORTRESS_FACEPLATE = Thaumcraft.id("fortress_faceplate");
-        public static final ResourceLocation GOLEM_CONFIG = Thaumcraft.id("golem_config");
-        public static final ResourceLocation SEAL_TYPE = Thaumcraft.id("seal_type");
+        public static final Identifier INFUSION_ENCHANTMENTS = Thaumcraft.id("infusions");
+        public static final Identifier ASPECT_HOLDER = Thaumcraft.id("aspect");
+        public static final Identifier CRYSTAL_ASPECT = Thaumcraft.id("crystal_aspect");
+        public static final Identifier COLLECTOR_MARKER = Thaumcraft.id("collector_marker");
+        public static final Identifier AXIS = Thaumcraft.id("axis");
+        public static final Identifier WARPING = Thaumcraft.id("warping");
+        public static final Identifier VIS_COST_MODIFIER = Thaumcraft.id("vis_cost_modifier");
+        public static final Identifier VIS_CHARGE_MAX = Thaumcraft.id("vis_charge_max");
+        public static final Identifier VIS_CHARGE = Thaumcraft.id("vis_charge");
+        public static final Identifier TIMER = Thaumcraft.id("timer");
+        public static final Identifier DYE_COLOR = Thaumcraft.id("dye_color");
+        public static final Identifier GOGGLE_SIGHT = Thaumcraft.id("goggle_sight");
+        public static final Identifier ARMOR_FORTRESS_FACEPLATE = Thaumcraft.id("fortress_faceplate");
     }
 
     /**
@@ -204,114 +181,103 @@ public final class ThaumcraftData {
      */
     public static final class Items {
 
-        public static final ResourceLocation THAUMONOMICON = Thaumcraft.id("thaumonomicon");
-        public static final ResourceLocation JAR_BRACE = Thaumcraft.id("jar_brace");
-        public static final ResourceLocation JAR_LABEL = Thaumcraft.id("jar_label");
-        public static final ResourceLocation JAR_LABEL_MARKED = Thaumcraft.id("jar_label_marked");
+        public static final Identifier THAUMONOMICON = Thaumcraft.id("thaumonomicon");
+        public static final Identifier JAR_BRACE = Thaumcraft.id("jar_brace");
+        public static final Identifier JAR_LABEL = Thaumcraft.id("jar_label");
+        public static final Identifier JAR_LABEL_MARKED = Thaumcraft.id("jar_label_marked");
 
-        public static final ResourceLocation PHIAL = Thaumcraft.id("phial");
-        public static final ResourceLocation VIS_CRYSTAL = Thaumcraft.id("vis_crystal");
+        public static final Identifier PHIAL = Thaumcraft.id("phial");
+        public static final Identifier VIS_CRYSTAL = Thaumcraft.id("vis_crystal");
 
-        public static final ResourceLocation LOOT_BAG_COMMON = Thaumcraft.id("loot_bag_common");
-        public static final ResourceLocation LOOT_BAG_UNCOMMON = Thaumcraft.id("loot_bag_uncommon");
-        public static final ResourceLocation LOOT_BAG_RARE = Thaumcraft.id("loot_bag_rare");
+        public static final Identifier LOOT_BAG_COMMON = Thaumcraft.id("loot_bag_common");
+        public static final Identifier LOOT_BAG_UNCOMMON = Thaumcraft.id("loot_bag_uncommon");
+        public static final Identifier LOOT_BAG_RARE = Thaumcraft.id("loot_bag_rare");
 
-        public static final ResourceLocation INGOT_THAUMIUM = Thaumcraft.id("ingot_thaumium");
-        public static final ResourceLocation INGOT_VOID = Thaumcraft.id("ingot_void");
-        public static final ResourceLocation INGOT_BRASS = Thaumcraft.id("ingot_brass");
+        public static final Identifier INGOT_THAUMIUM = Thaumcraft.id("ingot_thaumium");
+        public static final Identifier INGOT_VOID = Thaumcraft.id("ingot_void");
+        public static final Identifier INGOT_BRASS = Thaumcraft.id("ingot_brass");
 
-        public static final ResourceLocation AMBER = Thaumcraft.id("amber");
-        public static final ResourceLocation CINNABAR = Thaumcraft.id("cinnabar");
-        public static final ResourceLocation QUICKSILVER = Thaumcraft.id("quicksilver");
+        public static final Identifier AMBER = Thaumcraft.id("amber");
+        public static final Identifier CINNABAR = Thaumcraft.id("cinnabar");
+        public static final Identifier QUICKSILVER = Thaumcraft.id("quicksilver");
 
-        public static final ResourceLocation PLATE_BRASS = Thaumcraft.id("plate_brass");
-        public static final ResourceLocation PLATE_IRON = Thaumcraft.id("plate_iron");
-        public static final ResourceLocation PLATE_THAUMIUM = Thaumcraft.id("plate_thaumium");
-        public static final ResourceLocation PLATE_VOID = Thaumcraft.id("plate_void");
+        public static final Identifier PLATE_BRASS = Thaumcraft.id("plate_brass");
+        public static final Identifier PLATE_IRON = Thaumcraft.id("plate_iron");
+        public static final Identifier PLATE_THAUMIUM = Thaumcraft.id("plate_thaumium");
+        public static final Identifier PLATE_VOID = Thaumcraft.id("plate_void");
 
-        public static final ResourceLocation NUGGET_BRASS = Thaumcraft.id("nugget_brass");
-        public static final ResourceLocation NUGGET_QUICKSILVER = Thaumcraft.id("nugget_quicksilver");
-        public static final ResourceLocation NUGGET_THAUMIUM = Thaumcraft.id("nugget_thaumium");
-        public static final ResourceLocation NUGGET_VOID = Thaumcraft.id("nugget_void");
-        public static final ResourceLocation NUGGET_QUARTZ = Thaumcraft.id("nugget_quartz");
+        public static final Identifier NUGGET_BRASS = Thaumcraft.id("nugget_brass");
+        public static final Identifier NUGGET_QUICKSILVER = Thaumcraft.id("nugget_quicksilver");
+        public static final Identifier NUGGET_THAUMIUM = Thaumcraft.id("nugget_thaumium");
+        public static final Identifier NUGGET_VOID = Thaumcraft.id("nugget_void");
+        public static final Identifier NUGGET_QUARTZ = Thaumcraft.id("nugget_quartz");
 
-        public static final ResourceLocation FILTER = Thaumcraft.id("filter");
-        public static final ResourceLocation FABRIC = Thaumcraft.id("fabric");
-        public static final ResourceLocation TALLOW = Thaumcraft.id("tallow");
-        public static final ResourceLocation ALUMENTUM = Thaumcraft.id("alumentum");
-        public static final ResourceLocation VOID_SEED = Thaumcraft.id("void_seed");
-        public static final ResourceLocation MAGIC_DUST = Thaumcraft.id("magic_dust");
-        public static final ResourceLocation PECH_WAND = Thaumcraft.id("pech_wand");
+        public static final Identifier FILTER = Thaumcraft.id("filter");
+        public static final Identifier FABRIC = Thaumcraft.id("fabric");
+        public static final Identifier TALLOW = Thaumcraft.id("tallow");
+        public static final Identifier ALUMENTUM = Thaumcraft.id("alumentum");
+        public static final Identifier VOID_SEED = Thaumcraft.id("void_seed");
+        public static final Identifier MAGIC_DUST = Thaumcraft.id("magic_dust");
+        public static final Identifier PECH_WAND = Thaumcraft.id("pech_wand");
 
-        public static final ResourceLocation CLUSTER_IRON = Thaumcraft.id("cluster_iron");
-        public static final ResourceLocation CLUSTER_GOLD = Thaumcraft.id("cluster_gold");
-        public static final ResourceLocation CLUSTER_COPPER = Thaumcraft.id("cluster_copper");
-        public static final ResourceLocation CLUSTER_CINNABAR = Thaumcraft.id("cluster_cinnabar");
+        public static final Identifier CLUSTER_IRON = Thaumcraft.id("cluster_iron");
+        public static final Identifier CLUSTER_GOLD = Thaumcraft.id("cluster_gold");
+        public static final Identifier CLUSTER_COPPER = Thaumcraft.id("cluster_copper");
+        public static final Identifier CLUSTER_CINNABAR = Thaumcraft.id("cluster_cinnabar");
 
-        public static final ResourceLocation ZOMBIE_BRAIN = Thaumcraft.id("zombie_brain");
-        public static final ResourceLocation TRIPLE_MEAT_TREAT = Thaumcraft.id("triple_meat_treat");
+        public static final Identifier ZOMBIE_BRAIN = Thaumcraft.id("zombie_brain");
+        public static final Identifier TRIPLE_MEAT_TREAT = Thaumcraft.id("triple_meat_treat");
 
-        public static final ResourceLocation UPGRADE_SPEED = Thaumcraft.id("upgrade_speed");
-        public static final ResourceLocation UPGRADE_CAPACITY = Thaumcraft.id("upgrade_capacity");
-        public static final ResourceLocation UPGRADE_RAGE = Thaumcraft.id("upgrade_rage");
-        public static final ResourceLocation UPGRADE_EFFICIENCY = Thaumcraft.id("upgrade_efficiency");
+        public static final Identifier UPGRADE_SPEED = Thaumcraft.id("upgrade_speed");
+        public static final Identifier UPGRADE_CAPACITY = Thaumcraft.id("upgrade_capacity");
+        public static final Identifier UPGRADE_RAGE = Thaumcraft.id("upgrade_rage");
+        public static final Identifier UPGRADE_EFFICIENCY = Thaumcraft.id("upgrade_efficiency");
         // Tools
-        public static final ResourceLocation GAUNTLET = Thaumcraft.id("gauntlet");
-        public static final ResourceLocation ESSENTIA_RESONATOR = Thaumcraft.id("resonator");
-        public static final ResourceLocation SCRIBING_TOOLS = Thaumcraft.id("scribing_tools");
-        public static final ResourceLocation PRIMAL_CRUSHER = Thaumcraft.id("primal_crusher");
-        public static final ResourceLocation SANITY_CHECKER = Thaumcraft.id("sanity_checker");
-        public static final ResourceLocation CRIMSON_BLADE = Thaumcraft.id("crimson_blade");
-        public static final ResourceLocation ELEMENTAL_AXE = Thaumcraft.id("elemental_axe");
-        public static final ResourceLocation ELEMENTAL_HOE = Thaumcraft.id("elemental_hoe");
-        public static final ResourceLocation ELEMENTAL_PICKAXE = Thaumcraft.id("elemental_pickaxe");
-        public static final ResourceLocation ELEMENTAL_SHOVEL = Thaumcraft.id("elemental_shovel");
-        public static final ResourceLocation ELEMENTAL_SWORD = Thaumcraft.id("elemental_sword");
-        public static final ResourceLocation VOID_AXE = Thaumcraft.id("void_axe");
-        public static final ResourceLocation VOID_HOE = Thaumcraft.id("void_hoe");
-        public static final ResourceLocation VOID_PICKAXE = Thaumcraft.id("void_pickaxe");
-        public static final ResourceLocation VOID_SHOVEL = Thaumcraft.id("void_shovel");
-        public static final ResourceLocation VOID_SWORD = Thaumcraft.id("void_sword");
-        public static final ResourceLocation THAUMIUM_AXE = Thaumcraft.id("thaumium_axe");
-        public static final ResourceLocation THAUMIUM_HOE = Thaumcraft.id("thaumium_hoe");
-        public static final ResourceLocation THAUMIUM_PICKAXE = Thaumcraft.id("thaumium_pickaxe");
-        public static final ResourceLocation THAUMIUM_SHOVEL = Thaumcraft.id("thaumium_shovel");
-        public static final ResourceLocation THAUMIUM_SWORD = Thaumcraft.id("thaumium_sword");
+        public static final Identifier GAUNTLET = Thaumcraft.id("gauntlet");
+        public static final Identifier ESSENTIA_RESONATOR = Thaumcraft.id("resonator");
+        public static final Identifier SCRIBING_TOOLS = Thaumcraft.id("scribing_tools");
+        public static final Identifier PRIMAL_CRUSHER = Thaumcraft.id("primal_crusher");
+        public static final Identifier SANITY_CHECKER = Thaumcraft.id("sanity_checker");
+        public static final Identifier CRIMSON_BLADE = Thaumcraft.id("crimson_blade");
+        public static final Identifier ELEMENTAL_AXE = Thaumcraft.id("elemental_axe");
+        public static final Identifier ELEMENTAL_HOE = Thaumcraft.id("elemental_hoe");
+        public static final Identifier ELEMENTAL_PICKAXE = Thaumcraft.id("elemental_pickaxe");
+        public static final Identifier ELEMENTAL_SHOVEL = Thaumcraft.id("elemental_shovel");
+        public static final Identifier ELEMENTAL_SWORD = Thaumcraft.id("elemental_sword");
+        public static final Identifier VOID_AXE = Thaumcraft.id("void_axe");
+        public static final Identifier VOID_HOE = Thaumcraft.id("void_hoe");
+        public static final Identifier VOID_PICKAXE = Thaumcraft.id("void_pickaxe");
+        public static final Identifier VOID_SHOVEL = Thaumcraft.id("void_shovel");
+        public static final Identifier VOID_SWORD = Thaumcraft.id("void_sword");
+        public static final Identifier THAUMIUM_AXE = Thaumcraft.id("thaumium_axe");
+        public static final Identifier THAUMIUM_HOE = Thaumcraft.id("thaumium_hoe");
+        public static final Identifier THAUMIUM_PICKAXE = Thaumcraft.id("thaumium_pickaxe");
+        public static final Identifier THAUMIUM_SHOVEL = Thaumcraft.id("thaumium_shovel");
+        public static final Identifier THAUMIUM_SWORD = Thaumcraft.id("thaumium_sword");
         // Armor
-        public static final ResourceLocation CRIMSON_BOOTS = Thaumcraft.id("crimson_boots");
-        public static final ResourceLocation TRAVELLER_BOOTS = Thaumcraft.id("traveller_boots");
+        public static final Identifier CRIMSON_BOOTS = Thaumcraft.id("crimson_boots");
+        public static final Identifier TRAVELLER_BOOTS = Thaumcraft.id("traveller_boots");
 
-        public static final ResourceLocation SALIS_MUNDUS = Thaumcraft.id("salis_mundus");
-        public static final ResourceLocation SCANNER = Thaumcraft.id("scanner");
-        public static final ResourceLocation GOGGLES = Thaumcraft.id("goggles");
-
-        public static final ResourceLocation GOLEM_PLACER = Thaumcraft.id("golem_placer");
-        public static final ResourceLocation SEAL_PLACER = Thaumcraft.id("seal_placer");
-        public static final ResourceLocation GOLEM_BELL = Thaumcraft.id("golem_bell");
-
-        public static final ResourceLocation MIND_CLOCKWORK = Thaumcraft.id("mind_clockwork");
-        public static final ResourceLocation MIND_BIOTHAUMIC = Thaumcraft.id("mind_biothaumic");
-        public static final ResourceLocation MECHANISM_SIMPLE = Thaumcraft.id("mechanism_simple");
-        public static final ResourceLocation MODULE_VISION = Thaumcraft.id("module_vision");
-        public static final ResourceLocation MODULE_AGGRESSION = Thaumcraft.id("module_aggression");
+        public static final Identifier SALIS_MUNDUS = Thaumcraft.id("salis_mundus");
+        public static final Identifier SCANNER = Thaumcraft.id("scanner");
+        public static final Identifier GOGGLES = Thaumcraft.id("goggles");
     }
 
     public static final class Enchantments {
 
-        public static final ResourceLocation COLLECTOR = Thaumcraft.id("collector");
-        public static final ResourceLocation BURROWING = Thaumcraft.id("burrowing");
-        public static final ResourceLocation REFINING = Thaumcraft.id("refining");
-        public static final ResourceLocation SOUNDING = Thaumcraft.id("sounding");
-        public static final ResourceLocation DESTRUCTIVE = Thaumcraft.id("destructive");
-        public static final ResourceLocation ARCING = Thaumcraft.id("arcing");
-        public static final ResourceLocation HARVESTER = Thaumcraft.id("harvester");
-        public static final ResourceLocation LAMPLIGHT = Thaumcraft.id("lamplight.json");
+        public static final Identifier COLLECTOR = Thaumcraft.id("collector");
+        public static final Identifier BURROWING = Thaumcraft.id("burrowing");
+        public static final Identifier REFINING = Thaumcraft.id("refining");
+        public static final Identifier SOUNDING = Thaumcraft.id("sounding");
+        public static final Identifier DESTRUCTIVE = Thaumcraft.id("destructive");
+        public static final Identifier ARCING = Thaumcraft.id("arcing");
+        public static final Identifier HARVESTER = Thaumcraft.id("harvester");
+        public static final Identifier LAMPLIGHT = Thaumcraft.id("lamplight.json");
     }
 
     public static final class ItemProperties {
 
-        public static final ResourceLocation HAS_ASPECT = Thaumcraft.id("has_aspect");
-        public static final ResourceLocation SEAL_TYPE_CHECK = Thaumcraft.id("seal_type_check");
+        public static final Identifier HAS_ASPECT = Thaumcraft.id("has_aspect");
     }
 
     public static final class Tags {
@@ -324,245 +290,146 @@ public final class ThaumcraftData {
 
     public static final class Blocks {
 
-        public static final ResourceLocation ARCANE_STONE = Thaumcraft.id("arcane_stone");
-        public static final ResourceLocation ARCANE_STONE_STAIRS = ARCANE_STONE.withSuffix("_stairs");
-        public static final ResourceLocation ARCANE_STONE_SLAB = ARCANE_STONE.withSuffix("_slab");
-        public static final ResourceLocation ARCANE_STONE_BRICK = Thaumcraft.id("arcane_stone_brick");
-        public static final ResourceLocation ARCANE_STONE_BRICK_STAIRS = ARCANE_STONE_BRICK.withSuffix("_stairs");
-        public static final ResourceLocation ARCANE_STONE_BRICK_SLAB = ARCANE_STONE_BRICK.withSuffix("_slab");
-        public static final ResourceLocation ANCIENT_STONE = Thaumcraft.id("ancient_stone");
-        public static final ResourceLocation ANCIENT_STONE_STAIRS = ANCIENT_STONE.withSuffix("_stairs");
-        public static final ResourceLocation ANCIENT_STONE_SLAB = ANCIENT_STONE.withSuffix("_slab");
-        public static final ResourceLocation ANCIENT_STONE_TILE = Thaumcraft.id("ancient_stone_tile");
-        public static final ResourceLocation ANCIENT_STONE_TILE_STAIRS = ANCIENT_STONE_TILE.withSuffix("_stairs");
-        public static final ResourceLocation ANCIENT_STONE_TILE_SLAB = ANCIENT_STONE_TILE.withSuffix("_slab");
-        public static final ResourceLocation ELDRITCH_STONE = Thaumcraft.id("eldritch_stone");
-        public static final ResourceLocation ELDRITCH_STONE_STAIRS = ELDRITCH_STONE.withSuffix("_stairs");
-        public static final ResourceLocation ELDRITCH_STONE_SLAB = ELDRITCH_STONE.withSuffix("_slab");
+        public static final Identifier ARCANE_STONE = Thaumcraft.id("arcane_stone");
+        public static final Identifier ARCANE_STONE_STAIRS = ARCANE_STONE.withSuffix("_stairs");
+        public static final Identifier ARCANE_STONE_SLAB = ARCANE_STONE.withSuffix("_slab");
+        public static final Identifier ARCANE_STONE_BRICK = Thaumcraft.id("arcane_stone_brick");
+        public static final Identifier ARCANE_STONE_BRICK_STAIRS = ARCANE_STONE_BRICK.withSuffix("_stairs");
+        public static final Identifier ARCANE_STONE_BRICK_SLAB = ARCANE_STONE_BRICK.withSuffix("_slab");
+        public static final Identifier ANCIENT_STONE = Thaumcraft.id("ancient_stone");
+        public static final Identifier ANCIENT_STONE_STAIRS = ANCIENT_STONE.withSuffix("_stairs");
+        public static final Identifier ANCIENT_STONE_SLAB = ANCIENT_STONE.withSuffix("_slab");
+        public static final Identifier ANCIENT_STONE_TILE = Thaumcraft.id("ancient_stone_tile");
+        public static final Identifier ANCIENT_STONE_TILE_STAIRS = ANCIENT_STONE_TILE.withSuffix("_stairs");
+        public static final Identifier ANCIENT_STONE_TILE_SLAB = ANCIENT_STONE_TILE.withSuffix("_slab");
+        public static final Identifier ELDRITCH_STONE = Thaumcraft.id("eldritch_stone");
+        public static final Identifier ELDRITCH_STONE_STAIRS = ELDRITCH_STONE.withSuffix("_stairs");
+        public static final Identifier ELDRITCH_STONE_SLAB = ELDRITCH_STONE.withSuffix("_slab");
 
-        public static final ResourceLocation ARCANE_WORKBENCH = Thaumcraft.id("arcane_workbench");
-        public static final ResourceLocation ARCANE_PEDESTAL = Thaumcraft.id("pedestal_arcane");
-        public static final ResourceLocation ANCIENT_PEDESTAL = Thaumcraft.id("pedestal_ancient");
-        public static final ResourceLocation ELDRITCH_PEDESTAL = Thaumcraft.id("pedestal_eldritch");
-        public static final ResourceLocation CRUCIBLE = Thaumcraft.id("crucible");
-        public static final ResourceLocation RUNIC_MATRIX = Thaumcraft.id("runic_matrix");
-        public static final ResourceLocation WARDED_JAR = Thaumcraft.id("warded_jar");
-        public static final ResourceLocation VOID_JAR = Thaumcraft.id("void_jar");
+        public static final Identifier ARCANE_WORKBENCH = Thaumcraft.id("arcane_workbench");
+        public static final Identifier ARCANE_PEDESTAL = Thaumcraft.id("pedestal_arcane");
+        public static final Identifier ANCIENT_PEDESTAL = Thaumcraft.id("pedestal_ancient");
+        public static final Identifier ELDRITCH_PEDESTAL = Thaumcraft.id("pedestal_eldritch");
+        public static final Identifier CRUCIBLE = Thaumcraft.id("crucible");
+        public static final Identifier RUNIC_MATRIX = Thaumcraft.id("runic_matrix");
+        public static final Identifier WARDED_JAR = Thaumcraft.id("warded_jar");
+        public static final Identifier VOID_JAR = Thaumcraft.id("void_jar");
 
-        public static final ResourceLocation CRYSTAL_COLONY = Thaumcraft.id("crystal_colony");
-        public static final ResourceLocation NITOR = Thaumcraft.id("nitor");
+        public static final Identifier CRYSTAL_COLONY = Thaumcraft.id("crystal_colony");
+        public static final Identifier NITOR = Thaumcraft.id("nitor");
 
-        public static final ResourceLocation TUBE = Thaumcraft.id("tube");
-        public static final ResourceLocation TUBE_VALVE = Thaumcraft.id("tube_valve");
-        public static final ResourceLocation TUBE_FILTER = Thaumcraft.id("tube_filter");
-        public static final ResourceLocation TUBE_RESTRICT = Thaumcraft.id("tube_restrict");
-        public static final ResourceLocation TUBE_ONEWAY = Thaumcraft.id("tube_oneway");
-        public static final ResourceLocation TUBE_BUFFER = Thaumcraft.id("tube_buffer");
-        public static final ResourceLocation ESSENTIA_INPUT = Thaumcraft.id("essentia_input");
-        public static final ResourceLocation ESSENTIA_OUTPUT = Thaumcraft.id("essentia_output");
+        public static final Identifier TUBE = Thaumcraft.id("tube");
+        public static final Identifier TUBE_VALVE = Thaumcraft.id("tube_valve");
+        public static final Identifier TUBE_FILTER = Thaumcraft.id("tube_filter");
+        public static final Identifier TUBE_RESTRICT = Thaumcraft.id("tube_restrict");
+        public static final Identifier TUBE_ONEWAY = Thaumcraft.id("tube_oneway");
+        public static final Identifier TUBE_BUFFER = Thaumcraft.id("tube_buffer");
+        public static final Identifier ESSENTIA_INPUT = Thaumcraft.id("essentia_input");
+        public static final Identifier ESSENTIA_OUTPUT = Thaumcraft.id("essentia_output");
 
-        public static final ResourceLocation CREATIVE_ASPECT_SOURCE = Thaumcraft.id("creative_aspect_source");
-        public static final ResourceLocation INFUSION_STONE_SPEED =  Thaumcraft.id("infusion_stone_speed");
-        public static final ResourceLocation INFUSION_STONE_COST =  Thaumcraft.id("infusion_stone_cost");
+        public static final Identifier CREATIVE_ASPECT_SOURCE = Thaumcraft.id("creative_aspect_source");
+        public static final Identifier INFUSION_STONE_SPEED =  Thaumcraft.id("infusion_stone_speed");
+        public static final Identifier INFUSION_STONE_COST =  Thaumcraft.id("infusion_stone_cost");
 
-        public static final ResourceLocation LAMPLIGHT = Thaumcraft.id("lamplight");
-        public static final ResourceLocation INFUSION_PILLAR_ARCANE = Thaumcraft.id("infusion_pillar_arcane");
-        public static final ResourceLocation INFUSION_PILLAR_ANCIENT = Thaumcraft.id("infusion_pillar_ancient");
-        public static final ResourceLocation INFUSION_PILLAR_ELDRITCH = Thaumcraft.id("infusion_pillar_eldritch");
+        public static final Identifier LAMPLIGHT = Thaumcraft.id("lamplight");
+        public static final Identifier INFUSION_PILLAR_ARCANE = Thaumcraft.id("infusion_pillar_arcane");
+        public static final Identifier INFUSION_PILLAR_ANCIENT = Thaumcraft.id("infusion_pillar_ancient");
+        public static final Identifier INFUSION_PILLAR_ELDRITCH = Thaumcraft.id("infusion_pillar_eldritch");
 
-        public static final ResourceLocation DIOPTRA = Thaumcraft.id("dioptra");
-        public static final ResourceLocation LEVITATOR = Thaumcraft.id("levitator");
+        public static final Identifier DIOPTRA = Thaumcraft.id("dioptra");
+        public static final Identifier LEVITATOR = Thaumcraft.id("levitator");
 
-        public static final ResourceLocation ORE_AMBER = Thaumcraft.id("ore_amber");
-        public static final ResourceLocation ORE_CINNABAR = Thaumcraft.id("ore_cinnabar");
-        public static final ResourceLocation ORE_QUARTZ = Thaumcraft.id("ore_quartz");
-        public static final ResourceLocation DEEPSLATE_ORE_AMBER = Thaumcraft.id("deepslate_ore_amber");
-        public static final ResourceLocation DEEPSLATE_ORE_CINNABAR = Thaumcraft.id("deepslate_ore_cinnabar");
-        public static final ResourceLocation DEEPSLATE_ORE_QUARTZ = Thaumcraft.id("deepslate_ore_quartz");
+        public static final Identifier ORE_AMBER = Thaumcraft.id("ore_amber");
+        public static final Identifier ORE_CINNABAR = Thaumcraft.id("ore_cinnabar");
+        public static final Identifier ORE_QUARTZ = Thaumcraft.id("ore_quartz");
+        public static final Identifier DEEPSLATE_ORE_AMBER = Thaumcraft.id("deepslate_ore_amber");
+        public static final Identifier DEEPSLATE_ORE_CINNABAR = Thaumcraft.id("deepslate_ore_cinnabar");
+        public static final Identifier DEEPSLATE_ORE_QUARTZ = Thaumcraft.id("deepslate_ore_quartz");
 
-        public static final ResourceLocation METAL_BRASS = Thaumcraft.id("metal_brass");
-        public static final ResourceLocation METAL_THAUMIUM = Thaumcraft.id("metal_thaumium");
-        public static final ResourceLocation METAL_VOID = Thaumcraft.id("metal_void");
+        public static final Identifier METAL_BRASS = Thaumcraft.id("metal_brass");
+        public static final Identifier METAL_THAUMIUM = Thaumcraft.id("metal_thaumium");
+        public static final Identifier METAL_VOID = Thaumcraft.id("metal_void");
 
-        public static final ResourceLocation AMBER_BLOCK = Thaumcraft.id("amber_block");
-        public static final ResourceLocation AMBER_BRICK = Thaumcraft.id("amber_brick");
+        public static final Identifier AMBER_BLOCK = Thaumcraft.id("amber_block");
+        public static final Identifier AMBER_BRICK = Thaumcraft.id("amber_brick");
 
-        public static final ResourceLocation SILVERWOOD_LOG = Thaumcraft.id("silverwood_log");
-        public static final ResourceLocation SILVERWOOD_WOOD = Thaumcraft.id("silverwood_wood");
-        public static final ResourceLocation STRIPPED_SILVERWOOD_LOG = Thaumcraft.id("stripped_silverwood_log");
-        public static final ResourceLocation STRIPPED_SILVERWOOD_WOOD = Thaumcraft.id("stripped_silverwood_wood");
-        public static final ResourceLocation SILVERWOOD_LEAVES = Thaumcraft.id("silverwood_leaves");
-        public static final ResourceLocation SILVERWOOD_SAPLING = Thaumcraft.id("silverwood_sapling");
-        public static final ResourceLocation SILVERWOOD_PLANKS = Thaumcraft.id("silverwood_planks");
-        public static final ResourceLocation SILVERWOOD_STAIRS = Thaumcraft.id("silverwood_stairs");
-        public static final ResourceLocation SILVERWOOD_SLAB = Thaumcraft.id("silverwood_slab");
-        public static final ResourceLocation SILVERWOOD_FENCE = Thaumcraft.id("silverwood_fence");
-        public static final ResourceLocation SILVERWOOD_FENCE_GATE = Thaumcraft.id("silverwood_fence_gate");
-        public static final ResourceLocation SILVERWOOD_DOOR = Thaumcraft.id("silverwood_door");
-        public static final ResourceLocation SILVERWOOD_TRAPDOOR = Thaumcraft.id("silverwood_trapdoor");
-        public static final ResourceLocation SILVERWOOD_BUTTON = Thaumcraft.id("silverwood_button");
-        public static final ResourceLocation SILVERWOOD_PRESSURE_PLATE = Thaumcraft.id("silverwood_pressure_plate");
+        public static final Identifier SILVERWOOD_LOG = Thaumcraft.id("silverwood_log");
+        public static final Identifier SILVERWOOD_WOOD = Thaumcraft.id("silverwood_wood");
+        public static final Identifier STRIPPED_SILVERWOOD_LOG = Thaumcraft.id("stripped_silverwood_log");
+        public static final Identifier STRIPPED_SILVERWOOD_WOOD = Thaumcraft.id("stripped_silverwood_wood");
+        public static final Identifier SILVERWOOD_LEAVES = Thaumcraft.id("silverwood_leaves");
+        public static final Identifier SILVERWOOD_SAPLING = Thaumcraft.id("silverwood_sapling");
+        public static final Identifier SILVERWOOD_PLANKS = Thaumcraft.id("silverwood_planks");
+        public static final Identifier SILVERWOOD_STAIRS = Thaumcraft.id("silverwood_stairs");
+        public static final Identifier SILVERWOOD_SLAB = Thaumcraft.id("silverwood_slab");
+        public static final Identifier SILVERWOOD_FENCE = Thaumcraft.id("silverwood_fence");
+        public static final Identifier SILVERWOOD_FENCE_GATE = Thaumcraft.id("silverwood_fence_gate");
+        public static final Identifier SILVERWOOD_DOOR = Thaumcraft.id("silverwood_door");
+        public static final Identifier SILVERWOOD_TRAPDOOR = Thaumcraft.id("silverwood_trapdoor");
+        public static final Identifier SILVERWOOD_BUTTON = Thaumcraft.id("silverwood_button");
+        public static final Identifier SILVERWOOD_PRESSURE_PLATE = Thaumcraft.id("silverwood_pressure_plate");
 
-        public static final ResourceLocation GREATWOOD_LOG = Thaumcraft.id("greatwood_log");
-        public static final ResourceLocation GREATWOOD_WOOD = Thaumcraft.id("greatwood_wood");
-        public static final ResourceLocation STRIPPED_GREATWOOD_LOG = Thaumcraft.id("stripped_greatwood_log");
-        public static final ResourceLocation STRIPPED_GREATWOOD_WOOD = Thaumcraft.id("stripped_greatwood_wood");
-        public static final ResourceLocation GREATWOOD_LEAVES = Thaumcraft.id("greatwood_leaves");
-        public static final ResourceLocation GREATWOOD_SAPLING = Thaumcraft.id("greatwood_sapling");
-        public static final ResourceLocation GREATWOOD_PLANKS = Thaumcraft.id("greatwood_planks");
-        public static final ResourceLocation GREATWOOD_STAIRS = Thaumcraft.id("greatwood_stairs");
-        public static final ResourceLocation GREATWOOD_SLAB = Thaumcraft.id("greatwood_slab");
-        public static final ResourceLocation GREATWOOD_FENCE = Thaumcraft.id("greatwood_fence");
-        public static final ResourceLocation GREATWOOD_FENCE_GATE = Thaumcraft.id("greatwood_fence_gate");
-        public static final ResourceLocation GREATWOOD_DOOR = Thaumcraft.id("greatwood_door");
-        public static final ResourceLocation GREATWOOD_TRAPDOOR = Thaumcraft.id("greatwood_trapdoor");
-        public static final ResourceLocation GREATWOOD_BUTTON = Thaumcraft.id("greatwood_button");
-        public static final ResourceLocation GREATWOOD_PRESSURE_PLATE = Thaumcraft.id("greatwood_pressure_plate");
+        public static final Identifier GREATWOOD_LOG = Thaumcraft.id("greatwood_log");
+        public static final Identifier GREATWOOD_WOOD = Thaumcraft.id("greatwood_wood");
+        public static final Identifier STRIPPED_GREATWOOD_LOG = Thaumcraft.id("stripped_greatwood_log");
+        public static final Identifier STRIPPED_GREATWOOD_WOOD = Thaumcraft.id("stripped_greatwood_wood");
+        public static final Identifier GREATWOOD_LEAVES = Thaumcraft.id("greatwood_leaves");
+        public static final Identifier GREATWOOD_SAPLING = Thaumcraft.id("greatwood_sapling");
+        public static final Identifier GREATWOOD_PLANKS = Thaumcraft.id("greatwood_planks");
+        public static final Identifier GREATWOOD_STAIRS = Thaumcraft.id("greatwood_stairs");
+        public static final Identifier GREATWOOD_SLAB = Thaumcraft.id("greatwood_slab");
+        public static final Identifier GREATWOOD_FENCE = Thaumcraft.id("greatwood_fence");
+        public static final Identifier GREATWOOD_FENCE_GATE = Thaumcraft.id("greatwood_fence_gate");
+        public static final Identifier GREATWOOD_DOOR = Thaumcraft.id("greatwood_door");
+        public static final Identifier GREATWOOD_TRAPDOOR = Thaumcraft.id("greatwood_trapdoor");
+        public static final Identifier GREATWOOD_BUTTON = Thaumcraft.id("greatwood_button");
+        public static final Identifier GREATWOOD_PRESSURE_PLATE = Thaumcraft.id("greatwood_pressure_plate");
 
-        public static final ResourceLocation VISHROOM = Thaumcraft.id("vishroom");
-        public static final ResourceLocation CINDERPEARL = Thaumcraft.id("cinderpearl");
-        public static final ResourceLocation SHIMMERLEAF = Thaumcraft.id("shimmerleaf");
+        public static final Identifier VISHROOM = Thaumcraft.id("vishroom");
+        public static final Identifier CINDERPEARL = Thaumcraft.id("cinderpearl");
+        public static final Identifier SHIMMERLEAF = Thaumcraft.id("shimmerleaf");
 
-        public static final ResourceLocation HUNGRY_CHEST = Thaumcraft.id("hungry_chest");
-        public static final ResourceLocation EVERFULL_URN = Thaumcraft.id("everfull_urn");
+        public static final Identifier HUNGRY_CHEST = Thaumcraft.id("hungry_chest");
+        public static final Identifier EVERFULL_URN = Thaumcraft.id("everfull_urn");
 
-        public static final ResourceLocation GOLEM_BUILDER = Thaumcraft.id("golem_builder");
-        public static final ResourceLocation GOLEM_BUILDER_COMPONENT = Thaumcraft.id("golem_builder_component");
-        public static final ResourceLocation TABLE_STONE = Thaumcraft.id("table_stone");
-        public static final ResourceLocation TABLE_WOOD = Thaumcraft.id("table_wood");
+        public static final Identifier TABLE_STONE = Thaumcraft.id("table_stone");
+        public static final Identifier TABLE_WOOD = Thaumcraft.id("table_wood");
     }
 
     public static final class CreativeTabs {
-        public static final ResourceLocation MAIN = Thaumcraft.id("main");
+        public static final Identifier MAIN = Thaumcraft.id("main");
     }
 
     public static final class BlockEntities {
 
-        public static final ResourceLocation ARCANE_WORKBENCH = Blocks.ARCANE_WORKBENCH;
-        public static final ResourceLocation CRUCIBLE = Blocks.CRUCIBLE;
-        public static final ResourceLocation RUNIC_MATRIX = Blocks.RUNIC_MATRIX;
-        public static final ResourceLocation PEDESTAL = Thaumcraft.id("pedestal");
-        public static final ResourceLocation JAR = Thaumcraft.id("jar");
-        public static final ResourceLocation TUBE = Blocks.TUBE;
-        public static final ResourceLocation TUBE_VALVE = Blocks.TUBE_VALVE;
-        public static final ResourceLocation TUBE_FILTER = Blocks.TUBE_FILTER;
-        public static final ResourceLocation TUBE_RESTRICT = Blocks.TUBE_RESTRICT;
-        public static final ResourceLocation TUBE_ONEWAY = Blocks.TUBE_ONEWAY;
-        public static final ResourceLocation TUBE_BUFFER = Blocks.TUBE_BUFFER;
-        public static final ResourceLocation ESSENTIA_INPUT = Blocks.ESSENTIA_INPUT;
-        public static final ResourceLocation ESSENTIA_OUTPUT = Blocks.ESSENTIA_OUTPUT;
-        public static final ResourceLocation CREATIVE_ASPECT_SOURCE = Blocks.CREATIVE_ASPECT_SOURCE;
-        public static final ResourceLocation DIOPTRA = Blocks.DIOPTRA;
-        public static final ResourceLocation LEVITATOR = Blocks.LEVITATOR;
-        public static final ResourceLocation HUNGRY_CHEST = Blocks.HUNGRY_CHEST;
-        public static final ResourceLocation EVERFULL_URN = Blocks.EVERFULL_URN;
-        public static final ResourceLocation NITOR = Blocks.NITOR;
-        public static final ResourceLocation GOLEM_BUILDER = Blocks.GOLEM_BUILDER;
-        public static final ResourceLocation GOLEM_BUILDER_COMPONENT = Blocks.GOLEM_BUILDER_COMPONENT;
+        public static final Identifier ARCANE_WORKBENCH = Blocks.ARCANE_WORKBENCH;
+        public static final Identifier CRUCIBLE = Blocks.CRUCIBLE;
+        public static final Identifier RUNIC_MATRIX = Blocks.RUNIC_MATRIX;
+        public static final Identifier PEDESTAL = Thaumcraft.id("pedestal");
+        public static final Identifier JAR = Thaumcraft.id("jar");
+        public static final Identifier TUBE = Blocks.TUBE;
+        public static final Identifier TUBE_VALVE = Blocks.TUBE_VALVE;
+        public static final Identifier TUBE_FILTER = Blocks.TUBE_FILTER;
+        public static final Identifier TUBE_RESTRICT = Blocks.TUBE_RESTRICT;
+        public static final Identifier TUBE_ONEWAY = Blocks.TUBE_ONEWAY;
+        public static final Identifier TUBE_BUFFER = Blocks.TUBE_BUFFER;
+        public static final Identifier ESSENTIA_INPUT = Blocks.ESSENTIA_INPUT;
+        public static final Identifier ESSENTIA_OUTPUT = Blocks.ESSENTIA_OUTPUT;
+        public static final Identifier CREATIVE_ASPECT_SOURCE = Blocks.CREATIVE_ASPECT_SOURCE;
+        public static final Identifier DIOPTRA = Blocks.DIOPTRA;
+        public static final Identifier LEVITATOR = Blocks.LEVITATOR;
+        public static final Identifier HUNGRY_CHEST = Blocks.HUNGRY_CHEST;
+        public static final Identifier EVERFULL_URN = Blocks.EVERFULL_URN;
+        public static final Identifier NITOR = Blocks.NITOR;
     }
 
     public static final class Entities {
 
         public static final ResourceKey<EntityType<?>> TRAVELING_TRUNK = key("traveling_trunk");
         public static final ResourceKey<EntityType<?>> MOVING_ITEM = key("moving_item");
-        public static final ResourceKey<EntityType<?>> GOLEM = key("golem");
 
         private static ResourceKey<EntityType<?>> key(String id) {
             return ResourceKey.create(net.minecraft.core.registries.Registries.ENTITY_TYPE, Thaumcraft.id(id));
-        }
-    }
-
-    public static final class GolemTraits {
-
-        public static final ResourceKey<GolemTrait> SMART = key("smart");
-        public static final ResourceKey<GolemTrait> DEFT = key("deft");
-        public static final ResourceKey<GolemTrait> CLUMSY = key("clumsy");
-        public static final ResourceKey<GolemTrait> FIGHTER = key("fighter");
-        public static final ResourceKey<GolemTrait> WHEELED = key("wheeled");
-        public static final ResourceKey<GolemTrait> FLYER = key("flyer");
-        public static final ResourceKey<GolemTrait> CLIMBER = key("climber");
-        public static final ResourceKey<GolemTrait> HEAVY = key("heavy");
-        public static final ResourceKey<GolemTrait> LIGHT = key("light");
-        public static final ResourceKey<GolemTrait> FRAGILE = key("fragile");
-        public static final ResourceKey<GolemTrait> REPAIR = key("repair");
-        public static final ResourceKey<GolemTrait> SCOUT = key("scout");
-        public static final ResourceKey<GolemTrait> ARMORED = key("armored");
-        public static final ResourceKey<GolemTrait> BRUTAL = key("brutal");
-        public static final ResourceKey<GolemTrait> FIREPROOF = key("fireproof");
-        public static final ResourceKey<GolemTrait> BREAKER = key("breaker");
-        public static final ResourceKey<GolemTrait> HAULER = key("hauler");
-        public static final ResourceKey<GolemTrait> RANGED = key("ranged");
-        public static final ResourceKey<GolemTrait> BLASTPROOF = key("blastproof");
-
-        private static ResourceKey<GolemTrait> key(String id) {
-            return ResourceKey.create(Registries.GOLEM_TRAIT, Thaumcraft.id(id));
-        }
-    }
-
-    public static final class GolemMaterials {
-
-        public static final ResourceKey<GolemMaterial> WOOD = key("wood");
-        public static final ResourceKey<GolemMaterial> IRON = key("iron");
-        public static final ResourceKey<GolemMaterial> CLAY = key("clay");
-        public static final ResourceKey<GolemMaterial> BRASS = key("brass");
-        public static final ResourceKey<GolemMaterial> THAUMIUM = key("thaumium");
-        public static final ResourceKey<GolemMaterial> VOID = key("void");
-
-        private static ResourceKey<GolemMaterial> key(String id) {
-            return ResourceKey.create(Registries.GOLEM_MATERIAL, Thaumcraft.id(id));
-        }
-    }
-
-    public static final class GolemParts {
-
-        public static final ResourceKey<GolemPart> HEAD_BASIC = key("head_basic");
-        public static final ResourceKey<GolemPart> HEAD_SMART = key("head_smart");
-        public static final ResourceKey<GolemPart> HEAD_SMART_ARMORED = key("head_smart_armored");
-        public static final ResourceKey<GolemPart> HEAD_SCOUT = key("head_scout");
-        public static final ResourceKey<GolemPart> HEAD_SMART_SCOUT = key("head_smart_scout");
-
-        public static final ResourceKey<GolemPart> ARM_BASIC = key("arm_basic");
-        public static final ResourceKey<GolemPart> ARM_FINE = key("arm_fine");
-        public static final ResourceKey<GolemPart> ARM_CLAWS = key("arm_claws");
-        public static final ResourceKey<GolemPart> ARM_BREAKERS = key("arm_breakers");
-        public static final ResourceKey<GolemPart> ARM_DARTS = key("arm_darts");
-
-        public static final ResourceKey<GolemPart> LEG_WALKER = key("leg_walker");
-        public static final ResourceKey<GolemPart> LEG_ROLLER = key("leg_roller");
-        public static final ResourceKey<GolemPart> LEG_CLIMBER = key("leg_climber");
-        public static final ResourceKey<GolemPart> LEG_FLYER = key("leg_flyer");
-
-        public static final ResourceKey<GolemPart> ADDON_NONE = key("addon_none");
-        public static final ResourceKey<GolemPart> ADDON_ARMORED = key("addon_armored");
-        public static final ResourceKey<GolemPart> ADDON_FIGHTER = key("addon_fighter");
-        public static final ResourceKey<GolemPart> ADDON_HAULER = key("addon_hauler");
-
-        private static ResourceKey<GolemPart> key(String id) {
-            return ResourceKey.create(Registries.GOLEM_PART, Thaumcraft.id(id));
-        }
-    }
-
-    public static final class SealTypes {
-
-        public static final ResourceKey<SealType> GUARD = key("guard");
-        public static final ResourceKey<SealType> GUARD_ADVANCED = key("guard_advanced");
-        public static final ResourceKey<SealType> PICKUP = key("pickup");
-        public static final ResourceKey<SealType> PICKUP_ADVANCED = key("pickup_advanced");
-        public static final ResourceKey<SealType> PROVIDE = key("provide");
-        public static final ResourceKey<SealType> STOCK = key("stock");
-        public static final ResourceKey<SealType> BREAKER = key("breaker");
-        public static final ResourceKey<SealType> BREAKER_ADVANCED = key("breaker_advanced");
-        public static final ResourceKey<SealType> HARVEST = key("harvest");
-        public static final ResourceKey<SealType> LUMBER = key("lumber");
-        public static final ResourceKey<SealType> BUTCHER = key("butcher");
-        public static final ResourceKey<SealType> FILL = key("fill");
-        public static final ResourceKey<SealType> FILL_ADVANCED = key("fill_advanced");
-        public static final ResourceKey<SealType> EMPTY = key("empty");
-        public static final ResourceKey<SealType> EMPTY_ADVANCED = key("empty_advanced");
-        public static final ResourceKey<SealType> USE = key("use");
-
-        private static ResourceKey<SealType> key(String id) {
-            return ResourceKey.create(Registries.SEAL_TYPE, Thaumcraft.id(id));
         }
     }
 
@@ -590,19 +457,19 @@ public final class ThaumcraftData {
      */
     public static final class Capabilities {
 
-        public static final ResourceLocation RESEARCH = Thaumcraft.id("research");
-        public static final ResourceLocation ESSENTIA = Thaumcraft.id("essentia_transfer");
-        public static final ResourceLocation AURA = Thaumcraft.id("aura");
-        public static final ResourceLocation INFUSION_ENCHANTMENT = Thaumcraft.id("infusion_enchantment");
-        public static final ResourceLocation INFUSION_STABILIZER = Thaumcraft.id("infusion_stabilizer");
-        public static final ResourceLocation INFUSION_PEDESTAL = Thaumcraft.id("infusion_pedestal");
-        public static final ResourceLocation INFUSION_MODIFIER = Thaumcraft.id("infusion_modifier");
-        public static final ResourceLocation GOGGLE_RENDERER = Thaumcraft.id("goggle_renderer");
+        public static final Identifier RESEARCH = Thaumcraft.id("research");
+        public static final Identifier ESSENTIA = Thaumcraft.id("essentia_transfer");
+        public static final Identifier AURA = Thaumcraft.id("aura");
+        public static final Identifier INFUSION_ENCHANTMENT = Thaumcraft.id("infusion_enchantment");
+        public static final Identifier INFUSION_STABILIZER = Thaumcraft.id("infusion_stabilizer");
+        public static final Identifier INFUSION_PEDESTAL = Thaumcraft.id("infusion_pedestal");
+        public static final Identifier INFUSION_MODIFIER = Thaumcraft.id("infusion_modifier");
+        public static final Identifier GOGGLE_RENDERER = Thaumcraft.id("goggle_renderer");
     }
 
     public static final class DataMaps {
 
-        public static final ResourceLocation INFUSION_STABILIZER = Thaumcraft.id("infusion_stabilizer");
+        public static final Identifier INFUSION_STABILIZER = Thaumcraft.id("infusion_stabilizer");
     }
 
     public static final class Loot {
@@ -611,10 +478,10 @@ public final class ThaumcraftData {
         public static final ResourceKey<net.minecraft.world.level.storage.loot.LootTable> TABLE_LOOT_BAG_UNCOMMON = key("loot_bags/uncommon");
         public static final ResourceKey<net.minecraft.world.level.storage.loot.LootTable> TABLE_LOOT_BAG_RARE = key("loot_bags/rare");
 
-        public static final ResourceLocation CONDITION_INFUSION_ENCHANTMENT = Thaumcraft.id("infusion_enchantment");
-        public static final ResourceLocation MODIFIER_HOMING_ITEM = Thaumcraft.id("homing_item");
-        public static final ResourceLocation MODIFIER_HARVESTER = Thaumcraft.id("harvester_loot");
-        public static final ResourceLocation MODIFIER_REFINING = Thaumcraft.id("refining_loot");
+        public static final Identifier CONDITION_INFUSION_ENCHANTMENT = Thaumcraft.id("infusion_enchantment");
+        public static final Identifier MODIFIER_HOMING_ITEM = Thaumcraft.id("homing_item");
+        public static final Identifier MODIFIER_HARVESTER = Thaumcraft.id("harvester_loot");
+        public static final Identifier MODIFIER_REFINING = Thaumcraft.id("refining_loot");
 
         private static ResourceKey<net.minecraft.world.level.storage.loot.LootTable> key(String id) {
             return ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, Thaumcraft.id(id));
@@ -652,14 +519,12 @@ public final class ThaumcraftData {
     }
 
     public static final class Networking {
-        public static final ResourceLocation SYNC_ASPECT_REGISTRY = Thaumcraft.id("sync_aspect_registry");
-        public static final ResourceLocation SOUNDING_SCAN = Thaumcraft.id("sounding_scan");
-        public static final ResourceLocation CYCLE_TOOL_MODE = Thaumcraft.id("cycle_tool_mode");
-        public static final ResourceLocation SALIS_MUNDUS_EFFECT = Thaumcraft.id("salis_mundus_effect");
-        public static final ResourceLocation BAMF_EFFECT = Thaumcraft.id("bamf_effect");
-        public static final ResourceLocation SEAL_SYNC = Thaumcraft.id("seal_sync");
-        public static final ResourceLocation SEAL_REMOVE = Thaumcraft.id("seal_remove");
-        public static final ResourceLocation ESSENTIA_TRAIL = Thaumcraft.id("essentia_trail");
+        public static final Identifier SYNC_ASPECT_REGISTRY = Thaumcraft.id("sync_aspect_registry");
+        public static final Identifier SOUNDING_SCAN = Thaumcraft.id("sounding_scan");
+        public static final Identifier CYCLE_TOOL_MODE = Thaumcraft.id("cycle_tool_mode");
+        public static final Identifier SALIS_MUNDUS_EFFECT = Thaumcraft.id("salis_mundus_effect");
+        public static final Identifier BAMF_EFFECT = Thaumcraft.id("bamf_effect");
+        public static final Identifier ESSENTIA_TRAIL = Thaumcraft.id("essentia_trail");
     }
 
     /**

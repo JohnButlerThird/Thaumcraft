@@ -3,17 +3,16 @@ package art.arcane.thaumcraft.entities;
 import art.arcane.thaumcraft.registries.ConfigEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
@@ -21,8 +20,8 @@ import java.util.UUID;
 
 public class MovingItemEntity extends ItemEntity {
 
-	private static final EntityDataAccessor<Optional<UUID>> DATA_TARGET_UUID =
-		SynchedEntityData.defineId(MovingItemEntity.class, EntityDataSerializers.OPTIONAL_UUID);
+	private static final EntityDataAccessor<Optional<EntityReference<LivingEntity>>> DATA_TARGET =
+		SynchedEntityData.defineId(MovingItemEntity.class, EntityDataSerializers.OPTIONAL_LIVING_ENTITY_REFERENCE);
 
 	private Entity cachedTarget;
 
@@ -32,16 +31,16 @@ public class MovingItemEntity extends ItemEntity {
 		this.setNoGravity(true);
 	}
 
-	public MovingItemEntity(ItemEntity entity, Entity target) {
+	public MovingItemEntity(ItemEntity entity, LivingEntity target) {
 		this(entity.level(), entity.position(), entity.getItem(), target);
 	}
 
-	public MovingItemEntity(Level pLevel, Vec3 position, ItemStack stack, Entity target) {
+	public MovingItemEntity(Level pLevel, Vec3 position, ItemStack stack, LivingEntity target) {
 		super(ConfigEntities.MOVING_ITEM.entityType(), pLevel);
 		this.setPos(position.x(), position.y(), position.z());
 		this.setItem(stack);
 		if (target != null) {
-			this.entityData.set(DATA_TARGET_UUID, Optional.of(target.getUUID()));
+			this.entityData.set(DATA_TARGET, Optional.of(EntityReference.of(target)));
 			this.cachedTarget = target;
 		}
 		this.noPhysics = true;
@@ -51,28 +50,28 @@ public class MovingItemEntity extends ItemEntity {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
-		builder.define(DATA_TARGET_UUID, Optional.empty());
+		builder.define(DATA_TARGET, Optional.empty());
 	}
 
 	private Entity getTargetEntity() {
-		Optional<UUID> targetUUID = this.entityData.get(DATA_TARGET_UUID);
-		if (targetUUID.isEmpty()) {
+		Optional<EntityReference<LivingEntity>> target = this.entityData.get(DATA_TARGET);
+		if (target.isEmpty()) {
 			cachedTarget = null;
 			return null;
 		}
 
-		if (cachedTarget != null && cachedTarget.isAlive() && cachedTarget.getUUID().equals(targetUUID.get())) {
+		if (cachedTarget != null && cachedTarget.isAlive() && cachedTarget.getUUID().equals(target.get().getUUID())) {
 			return cachedTarget;
 		}
 
 		if (level() instanceof ServerLevel serverLevel) {
-			cachedTarget = serverLevel.getEntity(targetUUID.get());
+			cachedTarget = target.get().getEntity(serverLevel, LivingEntity.class);
 		} else if (level().isClientSide()) {
 			Minecraft mc = Minecraft.getInstance();
-			if (mc.player != null && mc.player.getUUID().equals(targetUUID.get())) {
+			if (mc.player != null && mc.player.getUUID().equals(target.get().getUUID())) {
 				cachedTarget = mc.player;
 			} else {
-				for (Entity entity : level().getEntities(this, getBoundingBox().inflate(64), e -> e.getUUID().equals(targetUUID.get()))) {
+				for (Entity entity : level().getEntities(this, getBoundingBox().inflate(64), e -> e.getUUID().equals(target.get().getUUID()))) {
 					cachedTarget = entity;
 					break;
 				}
@@ -82,12 +81,12 @@ public class MovingItemEntity extends ItemEntity {
 	}
 
 	private void clearTarget() {
-		this.entityData.set(DATA_TARGET_UUID, Optional.empty());
+		this.entityData.set(DATA_TARGET, Optional.empty());
 		this.cachedTarget = null;
 	}
 
 	private boolean hasTarget() {
-		return this.entityData.get(DATA_TARGET_UUID).isPresent();
+		return this.entityData.get(DATA_TARGET).isPresent();
 	}
 
 	@Override
@@ -114,7 +113,7 @@ public class MovingItemEntity extends ItemEntity {
 				this.setNoGravity(false);
 			}
 
-			this.hasImpulse = true;
+			this.needsSync = true;
 			this.hurtMarked = true;
 		}
 
@@ -153,19 +152,15 @@ public class MovingItemEntity extends ItemEntity {
 	}
 
 	@Override
-	public void addAdditionalSaveData(CompoundTag tag) {
-		super.addAdditionalSaveData(tag);
-		Optional<UUID> targetUUID = this.entityData.get(DATA_TARGET_UUID);
-		if (targetUUID.isPresent()) {
-			tag.putUUID("TargetUUID", targetUUID.get());
-		}
+	public void addAdditionalSaveData(ValueOutput output) {
+		super.addAdditionalSaveData(output);
+		this.entityData.get(DATA_TARGET).ifPresent(ref -> ref.store(output, "TargetUUID"));
 	}
 
 	@Override
-	public void readAdditionalSaveData(CompoundTag tag) {
-		super.readAdditionalSaveData(tag);
-		if (tag.hasUUID("TargetUUID")) {
-			this.entityData.set(DATA_TARGET_UUID, Optional.of(tag.getUUID("TargetUUID")));
-		}
+	public void readAdditionalSaveData(ValueInput input) {
+		super.readAdditionalSaveData(input);
+		EntityReference<LivingEntity> target = EntityReference.read(input, "TargetUUID");
+		this.entityData.set(DATA_TARGET, target != null ? Optional.of(target) : Optional.empty());
 	}
 }

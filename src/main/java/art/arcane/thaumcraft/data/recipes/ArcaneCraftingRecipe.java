@@ -1,16 +1,17 @@
 package art.arcane.thaumcraft.data.recipes;
 
+import art.arcane.thaumcraft.util.codec.CodecCraftingGrid;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
@@ -20,7 +21,6 @@ import art.arcane.thaumcraft.api.capabilities.IResearchCapability;
 import art.arcane.thaumcraft.data.research.ResearchEntry;
 import art.arcane.thaumcraft.registries.ConfigDataRegistries;
 import art.arcane.thaumcraft.registries.ConfigRecipeTypes;
-import art.arcane.thaumcraft.util.codec.recipes.CodecRecipeSerializer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,19 +29,28 @@ import java.util.Optional;
 
 public record ArcaneCraftingRecipe(
         ResourceKey<ResearchEntry> requiredResearch,
-        CodecRecipeSerializer.CraftingGrid grid,
+        CodecCraftingGrid grid,
         Map<Aspect.Primal, Integer> crystals,
         int visAmount,
-        ItemStack result
+        ItemStackTemplate result
 ) implements Recipe<RecipeInput> {
 
+	@Override
+	public ItemStack assemble(RecipeInput input) {
+		return this.result.create();
+	}
 
-    @Override
-    public ItemStack assemble(RecipeInput input, HolderLookup.Provider registries) {
-        return this.result.copy();
-    }
+	@Override
+	public boolean showNotification() {
+		return false;
+	}
 
-    @Override
+	@Override
+	public String group() {
+		return "";
+	}
+
+	@Override
     public boolean matches(RecipeInput input, Level level) {
         return grid.verify(input, 6) && crystals.keySet().stream().allMatch(p -> !input.getItem(p.ordinal()).isEmpty() && input.getItem(p.ordinal()).getCount() >= crystals.get(p));
     }
@@ -79,29 +88,29 @@ public record ArcaneCraftingRecipe(
 
     public static final MapCodec<ArcaneCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             ResourceKey.codec(ThaumcraftData.Registries.RESEARCH_ENTRY).optionalFieldOf("requiredResearch").forGetter(obj -> Optional.ofNullable(obj.requiredResearch)),
-            CodecRecipeSerializer.CraftingGrid.dimensionedCodec(3, 3).fieldOf("grid").forGetter(ArcaneCraftingRecipe::grid),
+            CodecCraftingGrid.dimensionedCodec(3, 3).fieldOf("grid").forGetter(ArcaneCraftingRecipe::grid),
             Codec.unboundedMap(StringRepresentable.fromValues(Aspect.Primal::values), Codec.INT).fieldOf("crystals").forGetter(ArcaneCraftingRecipe::crystals),
             Codec.INT.fieldOf("visCost").forGetter(ArcaneCraftingRecipe::visAmount),
-            ItemStack.CODEC.fieldOf("result").forGetter(ArcaneCraftingRecipe::result)
+            ItemStackTemplate.CODEC.fieldOf("result").forGetter(ArcaneCraftingRecipe::result)
     ).apply(i, (research, grid, crystals, cost, result) -> new ArcaneCraftingRecipe(research.orElse(null), grid, crystals, cost, result)));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ArcaneCraftingRecipe> STREAM_CODEC = StreamCodec.composite(
             ResourceKey.streamCodec(ThaumcraftData.Registries.RESEARCH_ENTRY), ArcaneCraftingRecipe::requiredResearch,
-            CodecRecipeSerializer.CraftingGrid.dimensionedStreamCodec(3, 3), ArcaneCraftingRecipe::grid,
+            CodecCraftingGrid.dimensionedStreamCodec(3, 3), ArcaneCraftingRecipe::grid,
             ByteBufCodecs.map(HashMap::new, NeoForgeStreamCodecs.enumCodec(Aspect.Primal.class), ByteBufCodecs.INT), ArcaneCraftingRecipe::crystals,
             ByteBufCodecs.INT, ArcaneCraftingRecipe::visAmount,
-            ItemStack.STREAM_CODEC, ArcaneCraftingRecipe::result,
+            ItemStackTemplate.STREAM_CODEC, ArcaneCraftingRecipe::result,
             ArcaneCraftingRecipe::new);
 
     public static final class Builder {
 
-        private ItemStack result;
+        private ItemStackTemplate result;
         private ResourceKey<ResearchEntry> requiredResearch;
-        private CodecRecipeSerializer.CraftingGrid grid;
+        private CodecCraftingGrid grid;
         private Map<Aspect.Primal, Integer> crystals;
         private int visCost;
 
-        public Builder(ItemStack result) {
+        public Builder(ItemStackTemplate result) {
             this.result = result;
             crystals = new HashMap<>(Aspect.Primal.values().length);
         }
@@ -112,7 +121,7 @@ public record ArcaneCraftingRecipe(
         }
 
         public Builder setPattern(String one, String two, String three, Map<Character, Ingredient> keys) {
-            grid = new CodecRecipeSerializer.CraftingGrid(3, 3, List.of(one, two, three), keys);
+            grid = new CodecCraftingGrid(3, 3, List.of(one, two, three), keys);
             return this;
         }
 

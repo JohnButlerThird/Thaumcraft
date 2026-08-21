@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import art.arcane.thaumcraft.api.capabilities.IInfusionPedestalCapability;
 import art.arcane.thaumcraft.registries.ConfigBlockEntities;
 import art.arcane.thaumcraft.util.simple.SimpleBlockEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -29,13 +31,13 @@ public class PedestalBlockEntity extends SimpleBlockEntity implements IInfusionP
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        this.itemStack = ItemStack.parseOptional(pRegistries, nbt.getCompound("item"));
+    protected void loadData(ValueInput input) {
+        this.itemStack = input.read("item", ItemStack.OPTIONAL_CODEC).orElse(ItemStack.EMPTY);
     }
 
     @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        nbt.put("item", itemStack.saveOptional(pRegistries));
+    protected void saveData(ValueOutput output) {
+        output.store("item", ItemStack.OPTIONAL_CODEC,  this.itemStack);
     }
 
 	/* -------------------------------------------------------------------------------------------------------------- */
@@ -49,7 +51,7 @@ public class PedestalBlockEntity extends SimpleBlockEntity implements IInfusionP
 
     @Override
     public void consumeItem() {
-        this.itemStack = this.itemStack.getCraftingRemainder();
+        this.itemStack = this.itemStack.getCraftingRemainder().create();
         sync();
     }
 

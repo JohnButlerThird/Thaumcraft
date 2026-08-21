@@ -5,7 +5,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -15,16 +15,16 @@ import java.util.List;
 
 public final class SimpleCreativeTab {
 
-    private final ResourceLocation icon;
+    private final Identifier icon;
     private final List<Holder<? extends Item>> items;
-    private final ResourceLocation id;
+    private final Identifier id;
     private final CreativeModeTab.Builder builder;
 
-    public SimpleCreativeTab(ResourceLocation id, ResourceLocation icon) {
+    public SimpleCreativeTab(Identifier id, Identifier icon) {
         this(id, icon, false);
     }
 
-    public SimpleCreativeTab(ResourceLocation id, ResourceLocation icon, boolean isBottomTab) {
+    public SimpleCreativeTab(Identifier id, Identifier icon, boolean isBottomTab) {
         this.items = new ArrayList<>();
         this.id = id;
         this.icon = icon;
@@ -32,7 +32,7 @@ public final class SimpleCreativeTab {
         builder.title(Component.translatable("itemGroup." + id.getNamespace().toLowerCase() + "." + id.getPath().toLowerCase()));
     }
 
-    public ResourceLocation id() {
+    public Identifier id() {
         return this.id;
     }
 

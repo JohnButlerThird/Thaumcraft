@@ -18,15 +18,15 @@ public final class VisFlowProcessor {
     private static final float[] PHASE_VIS_TABLE = {0.25F, 0.15F, 0.1F, 0.05F, 0F, 0.05F, 0.1F, 0.15F};
 
     public static void processLevel(ServerLevel level) {
-        int moonPhase = (int) (level.getDayTime() / 24000L % 8L);
+        int moonPhase = (int) (level.getGameTime() / 24000L % 8L);
         float phaseVis = PHASE_VIS_TABLE[moonPhase];
         float phaseFlux = 0.25F - phaseVis;
 
         List<LevelChunk> loadedChunks = new ArrayList<>();
         for (var entity : level.getAllEntities()) {
-            ChunkPos chunkPos = new ChunkPos(entity.blockPosition());
-            if (level.hasChunk(chunkPos.x, chunkPos.z)) {
-                LevelChunk chunk = level.getChunk(chunkPos.x, chunkPos.z);
+            ChunkPos chunkPos = ChunkPos.containing(entity.blockPosition());
+            if (level.hasChunk(chunkPos.x(), chunkPos.z())) {
+                LevelChunk chunk = level.getChunk(chunkPos.x(), chunkPos.z());
                 if (chunk.hasData(ConfigDataAttachments.CHUNK_AURA.get()) && !loadedChunks.contains(chunk)) {
                     loadedChunks.add(chunk);
                 }
@@ -35,11 +35,11 @@ public final class VisFlowProcessor {
 
         level.players().forEach(player -> {
             int radius = level.getServer().getPlayerList().getViewDistance();
-            ChunkPos center = new ChunkPos(player.blockPosition());
+            ChunkPos center = ChunkPos.containing(player.blockPosition());
             for (int x = -radius; x <= radius; x++) {
                 for (int z = -radius; z <= radius; z++) {
-                    if (level.hasChunk(center.x + x, center.z + z)) {
-                        LevelChunk chunk = level.getChunk(center.x + x, center.z + z);
+                    if (level.hasChunk(center.x() + x, center.z() + z)) {
+                        LevelChunk chunk = level.getChunk(center.x() + x, center.z() + z);
                         if (chunk.hasData(ConfigDataAttachments.CHUNK_AURA.get()) && !loadedChunks.contains(chunk)) {
                             loadedChunks.add(chunk);
                         }
@@ -59,8 +59,8 @@ public final class VisFlowProcessor {
 
         List<AuraAttachment> neighbors = new ArrayList<>();
         for (int[] offset : NEIGHBOR_OFFSETS) {
-            int nx = pos.x + offset[0];
-            int nz = pos.z + offset[1];
+            int nx = pos.x() + offset[0];
+            int nz = pos.z() + offset[1];
             if (level.hasChunk(nx, nz)) {
                 LevelChunk neighborChunk = level.getChunk(nx, nz);
                 if (neighborChunk.hasData(ConfigDataAttachments.CHUNK_AURA.get())) {

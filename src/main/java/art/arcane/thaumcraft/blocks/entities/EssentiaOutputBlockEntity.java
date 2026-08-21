@@ -37,14 +37,6 @@ public class EssentiaOutputBlockEntity extends SimpleBlockEntity implements IEss
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider registries) {
-    }
-
-    @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider registries) {
-    }
-
-    @Override
     public void onServerTick() {
         if (this.level == null || this.level.isClientSide()) {
             return;

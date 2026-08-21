@@ -62,7 +62,6 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
         this.player = player;
         this.access = access;
         this.craftingSlots = craftingSlots;
-        this.craftingSlots.addListener(this::slotsChanged);
         this.data = new SimpleContainerData(3);
 
         populateCrystalSlots();
@@ -195,7 +194,7 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
     }
 
     private void craftingComponentsUpdated(Level pLevel, BlockPos pos, Player pPlayer) {
-        if (!pLevel.isClientSide) {
+        if (!pLevel.isClientSide()) {
             ServerPlayer serverplayer = (ServerPlayer) pPlayer;
             ItemStack result = ItemStack.EMPTY;
             IResearchCapability cap = player.getCapability(ConfigCapabilities.RESEARCH);
@@ -205,7 +204,7 @@ public class ArcaneWorkbenchMenu extends AbstractContainerMenu {
                 data.set(DATA_ACTIVE_CRYSTALS, BitPacker.encodeFlags(recipe.value().crystals().keySet(), BitPacker.Length.BYTE));
                 data.set(DATA_REQUIRED_VIS, recipe.value().visAmount());
                 if (this.resultSlots.setRecipeUsed(serverplayer, recipe)) {
-                    result = recipe.value().result();
+                    result = recipe.value().result().create();
                 }
             } else {
                 data.set(DATA_ACTIVE_CRYSTALS, 0);

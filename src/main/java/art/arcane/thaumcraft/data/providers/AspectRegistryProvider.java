@@ -2,15 +2,17 @@ package art.arcane.thaumcraft.data.providers;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.WeatheringCopperItems;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.WeatheringCopperBlocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.JsonCodecProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -162,7 +164,8 @@ public class AspectRegistryProvider extends JsonCodecProvider<AspectList> {
         entity(new AspectList().add(Aspects.LIFE, 5).add(Aspects.CREATURE, 5), EntityType.EGG);
         entity(new AspectList().add(Aspects.ICE, 3), EntityType.SNOWBALL);
         entity(new AspectList().add(Aspects.MIND, 15), EntityType.EXPERIENCE_BOTTLE);
-        entity(new AspectList().add(Aspects.ALCHEMY, 10).add(Aspects.WATER, 5), EntityType.POTION);
+        entity(new AspectList().add(Aspects.ALCHEMY, 10).add(Aspects.WATER, 5), EntityType.SPLASH_POTION);
+        entity(new AspectList().add(Aspects.ALCHEMY, 10).add(Aspects.WATER, 5), EntityType.LINGERING_POTION);
         entity(new AspectList().add(Aspects.FIRE, 15).add(Aspects.CHAOS, 10), EntityType.FIREBALL);
         entity(new AspectList().add(Aspects.FIRE, 10).add(Aspects.CHAOS, 5), EntityType.SMALL_FIREBALL);
         entity(new AspectList().add(Aspects.FIRE, 20).add(Aspects.CHAOS, 15).add(Aspects.DARKNESS, 10), EntityType.DRAGON_FIREBALL);
@@ -821,7 +824,8 @@ public class AspectRegistryProvider extends JsonCodecProvider<AspectList> {
         both(new AspectList().add(Aspects.CREATURE, 5).add(Aspects.WATER, 5).add(Aspects.LIFE, 5), Blocks.FROGSPAWN);
         both(new AspectList().add(Aspects.PLANT, 5).add(Aspects.TAINT, 5).add(Aspects.ALCHEMY, 5), Blocks.NETHER_WART);
         both(new AspectList().add(Aspects.DESIRE, 10).add(Aspects.LIFE, 10), Blocks.CAKE);
-        both(new AspectList().add(Aspects.METAL, 5).add(Aspects.CRAFT, 3), Blocks.CHAIN);
+        both(new AspectList().add(Aspects.METAL, 5).add(Aspects.CRAFT, 3), Blocks.IRON_CHAIN);
+        both(new AspectList().add(Aspects.METAL, 5).add(Aspects.CRAFT, 3), Blocks.COPPER_CHAIN);
         both(new AspectList().add(Aspects.WATER, 5).add(Aspects.CREATURE, 5).add(Aspects.LIFE, 5), Blocks.TURTLE_EGG);
         both(new AspectList().add(Aspects.CREATURE, 10).add(Aspects.ALIEN, 5).add(Aspects.LIFE, 5), Blocks.SNIFFER_EGG);
         both(new AspectList().add(Aspects.ICE, 15).add(Aspects.MAGIC, 5), Blocks.FROSTED_ICE);
@@ -1047,7 +1051,8 @@ public class AspectRegistryProvider extends JsonCodecProvider<AspectList> {
         item(new AspectList().add(Aspects.WATER, 3).add(Aspects.DEATH, 3).add(Aspects.EARTH, 3), Items.DEAD_BUBBLE_CORAL);
         item(new AspectList().add(Aspects.WATER, 3).add(Aspects.DEATH, 3).add(Aspects.EARTH, 3), Items.DEAD_FIRE_CORAL);
         item(new AspectList().add(Aspects.WATER, 3).add(Aspects.DEATH, 3).add(Aspects.EARTH, 3), Items.DEAD_HORN_CORAL);
-        item(new AspectList().add(Aspects.METAL, 5).add(Aspects.MACHINE, 5), Items.CHAIN);
+        item(new AspectList().add(Aspects.METAL, 5).add(Aspects.MACHINE, 5), Items.IRON_CHAIN);
+        item(new AspectList().add(Aspects.METAL, 5).add(Aspects.MACHINE, 5), Items.COPPER_CHAIN);
         item(new AspectList().add(Aspects.METAL, 5).add(Aspects.TRAP, 5), Items.IRON_BARS);
         item(new AspectList().add(Aspects.LIGHT, 3).add(Aspects.PLANT, 1), Items.TORCH);
         item(new AspectList().add(Aspects.LIGHT, 3).add(Aspects.PLANT, 1).add(Aspects.SPIRIT, 3), Items.SOUL_TORCH);
@@ -1467,25 +1472,45 @@ public class AspectRegistryProvider extends JsonCodecProvider<AspectList> {
         for (Item i : item) {
             if (!BuiltInRegistries.ITEM.containsValue(i))
                 continue;
-            ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(i);
-            ResourceLocation loc = ResourceLocation.tryBuild(itemId.getNamespace(), "items/" + itemId.getPath());
+            Identifier itemId = BuiltInRegistries.ITEM.getKey(i);
+            Identifier loc = Identifier.tryBuild(itemId.getNamespace(), "items/" + itemId.getPath());
             unconditional(loc, list);
         }
+    }
+
+    private void item(AspectList list, WeatheringCopperItems items) {
+        items.forEach(i -> {
+            if (BuiltInRegistries.ITEM.containsValue(i)) {
+                Identifier itemId = BuiltInRegistries.ITEM.getKey(i);
+                Identifier loc = Identifier.tryBuild(itemId.getNamespace(), "items/" + itemId.getPath());
+                unconditional(loc, list);
+            }
+        });
     }
 
     private void block(AspectList list, Block... blocks) {
         for (Block b : blocks) {
             if (!BuiltInRegistries.BLOCK.containsValue(b))
                 continue;
-            ResourceLocation blockID = BuiltInRegistries.BLOCK.getKey(b);
-            ResourceLocation loc = ResourceLocation.tryBuild(blockID.getNamespace(), "blocks/" + blockID.getPath());
+            Identifier blockID = BuiltInRegistries.BLOCK.getKey(b);
+            Identifier loc = Identifier.tryBuild(blockID.getNamespace(), "blocks/" + blockID.getPath());
             unconditional(loc, list);
         }
     }
 
+    private void block(AspectList list, WeatheringCopperBlocks blocks) {
+        blocks.forEach(b -> {
+            if (BuiltInRegistries.BLOCK.containsValue(b)) {
+                Identifier blockID = BuiltInRegistries.BLOCK.getKey(b);
+                Identifier loc = Identifier.tryBuild(blockID.getNamespace(), "blocks/" + blockID.getPath());
+                unconditional(loc, list);
+            }
+        });
+    }
+
     private void entity(AspectList list, EntityType<?> type) {
-        ResourceLocation id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
-        unconditional(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entities/" + id.getPath()), list);
+        Identifier id = BuiltInRegistries.ENTITY_TYPE.getKey(type);
+        unconditional(Identifier.fromNamespaceAndPath(id.getNamespace(), "entities/" + id.getPath()), list);
     }
 
     private void both(AspectList list, Block... blocks) {
@@ -1493,17 +1518,22 @@ public class AspectRegistryProvider extends JsonCodecProvider<AspectList> {
         item(list, Arrays.stream(blocks).map(Block::asItem).distinct().toArray(Item[]::new));
     }
 
+    private void both(AspectList list, WeatheringCopperBlocks blocks) {
+        block(list, blocks);
+        item(list, blocks.asList().stream().map(Block::asItem).distinct().toArray(Item[]::new));
+    }
+
     private void both(AspectList list, Item item) {
         item(list, item);
     }
 
     private void itemTag(TagKey<?> tag, AspectList list) {
-        ResourceLocation loc = ResourceLocation.tryBuild(tag.location().getNamespace(), "items/tags/" + tag.location().getPath());
+        Identifier loc = Identifier.tryBuild(tag.location().getNamespace(), "items/tags/" + tag.location().getPath());
         unconditional(loc, list);
     }
 
     private void blockTag(TagKey<?> tag, AspectList list) {
-        ResourceLocation loc = ResourceLocation.tryBuild(tag.location().getNamespace(), "blocks/tags/" + tag.location().getPath());
+        Identifier loc = Identifier.tryBuild(tag.location().getNamespace(), "blocks/tags/" + tag.location().getPath());
         unconditional(loc, list);
     }
 

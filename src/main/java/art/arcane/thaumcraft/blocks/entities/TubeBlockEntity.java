@@ -4,7 +4,6 @@ import art.arcane.thaumcraft.api.ThaumcraftData;
 import art.arcane.thaumcraft.api.aspects.Aspect;
 import art.arcane.thaumcraft.api.capabilities.IEssentiaCapability;
 import art.arcane.thaumcraft.blocks.alchemy.TubeBlock;
-import art.arcane.thaumcraft.client.fx.ThaumcraftFX;
 import art.arcane.thaumcraft.registries.ConfigBlockEntities;
 import art.arcane.thaumcraft.registries.ConfigCapabilities;
 import art.arcane.thaumcraft.registries.ConfigDataRegistries;
@@ -18,14 +17,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.Objects;
 import java.util.Set;
@@ -64,41 +65,38 @@ public class TubeBlockEntity extends SimpleBlockEntity implements IEssentiaCapab
     }
 
     @Override
-    protected void readNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        this.disabledDirections = BitPacker.readFlags(nbt.getByte("directions"), Direction.class, BitPacker.Length.BYTE);
-        this.suctionType = parseAspectKey(nbt.getString("suction_type"));
-        this.suction = nbt.getInt("suction");
-        this.aspect = parseAspectKey(nbt.getString("content_type"));
-        this.amount = nbt.getInt("content_amount");
-        this.facing = nbt.contains("facing") ? Direction.byName(nbt.getString("facing")) : Direction.NORTH;
-        this.venting = Math.max(0, nbt.getInt("venting"));
-        this.ventColor = nbt.contains("vent_color") ? nbt.getInt("vent_color") : DEFAULT_VENT_COLOR;
-        if (this.facing == null) {
-            this.facing = Direction.NORTH;
-        }
+    protected void loadData(ValueInput input) {
+        this.disabledDirections = BitPacker.readFlags(input.getByteOr("directions", (byte)0), Direction.class, BitPacker.Length.BYTE);
+        this.suctionType = parseAspectKey(input.getStringOr("suction_type", ThaumcraftData.Aspects.UNKNOWN.identifier().toString()));
+        this.suction = input.getIntOr("suction", 0);
+        this.aspect = parseAspectKey(input.getStringOr("content_type", ThaumcraftData.Aspects.UNKNOWN.identifier().toString()));
+        this.amount = input.getIntOr("content_amount", 0);
+        this.venting = Math.max(0, input.getIntOr("venting", 0));
+        this.ventColor = input.getIntOr("vent_color", DEFAULT_VENT_COLOR);
+		this.facing = Direction.byName(input.getStringOr("facing", Direction.NORTH.getName()));
     }
 
     @Override
-    protected void writeNbt(CompoundTag nbt, HolderLookup.Provider pRegistries) {
-        nbt.putByte("directions", (byte) BitPacker.encodeFlags(disabledDirections, BitPacker.Length.BYTE));
+    protected void saveData(ValueOutput output) {
+        output.putByte("directions", (byte) BitPacker.encodeFlags(disabledDirections, BitPacker.Length.BYTE));
         if (this.suctionType != null) {
-            nbt.putString("suction_type", this.suctionType.location().toString());
+            output.putString("suction_type", this.suctionType.identifier().toString());
         }
-        nbt.putInt("suction", this.suction);
+        output.putInt("suction", this.suction);
         if (this.aspect != null) {
-            nbt.putString("content_type", this.aspect.location().toString());
+            output.putString("content_type", this.aspect.identifier().toString());
         }
-        nbt.putInt("content_amount", this.amount);
-        nbt.putString("facing", this.facing.getSerializedName());
-        nbt.putInt("venting", this.venting);
-        nbt.putInt("vent_color", this.ventColor);
+        output.putInt("content_amount", this.amount);
+        output.putString("facing", this.facing.getSerializedName());
+        output.putInt("venting", this.venting);
+        output.putInt("vent_color", this.ventColor);
     }
 
     protected ResourceKey<Aspect> parseAspectKey(String key) {
         if (key == null || key.isBlank()) {
             return null;
         }
-        ResourceLocation location = ResourceLocation.tryParse(key);
+        Identifier location = Identifier.tryParse(key);
         return location == null ? null : ResourceKey.create(ThaumcraftData.Registries.ASPECT, location);
     }
 
@@ -209,9 +207,9 @@ public class TubeBlockEntity extends SimpleBlockEntity implements IEssentiaCapab
         if (this.level == null || this.level.isClientSide() || this.transferSoundCooldown > 0) {
             return;
         }
-        this.level.playSound(null, this.worldPosition, ConfigSounds.BUBBLE.value(), SoundSource.BLOCKS, 0.1F, 1.15F + this.level.random.nextFloat() * 0.25F);
-        if (this.level.random.nextInt(80) == 0) {
-            this.level.playSound(null, this.worldPosition, ConfigSounds.CREAK.value(), SoundSource.BLOCKS, 0.55F, 1.0F + this.level.random.nextFloat() * 0.2F);
+        this.level.playSound(null, this.worldPosition, ConfigSounds.BUBBLE.value(), SoundSource.BLOCKS, 0.1F, 1.15F + this.level.getRandom().nextFloat() * 0.25F);
+        if (this.level.getRandom().nextInt(80) == 0) {
+            this.level.playSound(null, this.worldPosition, ConfigSounds.CREAK.value(), SoundSource.BLOCKS, 0.55F, 1.0F + this.level.getRandom().nextFloat() * 0.2F);
         }
         this.transferSoundCooldown = 2;
     }
@@ -220,7 +218,7 @@ public class TubeBlockEntity extends SimpleBlockEntity implements IEssentiaCapab
         if (this.level == null || this.level.isClientSide() || this.ventSoundCooldown > 0) {
             return;
         }
-        this.level.playSound(null, this.worldPosition, ConfigSounds.CREAK.value(), SoundSource.BLOCKS, 0.6F, 0.85F + this.level.random.nextFloat() * 0.25F);
+        this.level.playSound(null, this.worldPosition, ConfigSounds.CREAK.value(), SoundSource.BLOCKS, 0.6F, 0.85F + this.level.getRandom().nextFloat() * 0.25F);
         this.ventSoundCooldown = 10;
     }
 
@@ -228,7 +226,7 @@ public class TubeBlockEntity extends SimpleBlockEntity implements IEssentiaCapab
         if (this.level == null || this.level.isClientSide() || this.venting <= 0 || this.ventSoundCooldown > 0) {
             return;
         }
-        this.level.playSound(null, this.worldPosition, ConfigSounds.CREAK.value(), SoundSource.BLOCKS, 0.45F, 0.95F + this.level.random.nextFloat() * 0.15F);
+        this.level.playSound(null, this.worldPosition, ConfigSounds.CREAK.value(), SoundSource.BLOCKS, 0.45F, 0.95F + this.level.getRandom().nextFloat() * 0.15F);
         this.ventSoundCooldown = 8;
     }
 
@@ -257,7 +255,7 @@ public class TubeBlockEntity extends SimpleBlockEntity implements IEssentiaCapab
         double fx = -Mth.sin(ry / 180.0F * (float) Math.PI) * Mth.cos(rp / 180.0F * (float) Math.PI);
         double fz = Mth.cos(ry / 180.0F * (float) Math.PI) * Mth.cos(rp / 180.0F * (float) Math.PI);
         double fy = -Mth.sin(rp / 180.0F * (float) Math.PI);
-        ThaumcraftFX.drawVentParticles(x, y, z, fx / 5.0, fy / 5.0, fz / 5.0, this.ventColor);
+        //ThaumcraftFX.drawVentParticles(x, y, z, fx / 5.0, fy / 5.0, fz / 5.0, this.ventColor); TODO: Rendering - Particles
     }
 
     protected void determineSuction() {

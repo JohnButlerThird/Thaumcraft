@@ -10,7 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class FXVentParticle extends Particle {
+/*public class FXVentParticle extends Particle {
 
     private static final int GRID_SIZE = 64;
     private float currentScale;
@@ -142,4 +142,4 @@ public class FXVentParticle extends Particle {
     public int getLightColor(float partialTick) {
         return 0xF000F0;
     }
-}
+}*/

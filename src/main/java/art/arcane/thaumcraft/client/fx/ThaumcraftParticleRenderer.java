@@ -2,7 +2,6 @@ package art.arcane.thaumcraft.client.fx;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.MeshData;
 import com.mojang.blaze3d.vertex.Tesselator;
@@ -11,19 +10,17 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.renderer.CoreShaders;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import art.arcane.thaumcraft.Thaumcraft;
-import art.arcane.thaumcraft.client.fx.particles.ThaumcraftParticleRenderType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@EventBusSubscriber(modid = Thaumcraft.MOD_ID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+/*@EventBusSubscriber(modid = Thaumcraft.MOD_ID, value = Dist.CLIENT)
 public class ThaumcraftParticleRenderer {
 
     private static final List<Particle> particles = new ArrayList<>();
@@ -105,4 +102,4 @@ public class ThaumcraftParticleRenderer {
         RenderSystem.disableBlend();
         RenderSystem.defaultBlendFunc();
     }
-}
+}*/

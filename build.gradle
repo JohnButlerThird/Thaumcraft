@@ -1,16 +1,16 @@
 plugins {
     id 'idea'
     id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.75'
-    id 'io.freefair.lombok' version '8.12'
+    id 'net.neoforged.moddev' version '2.0.140'
+    id 'io.freefair.lombok' version '9.2.0'
 }
 
 group = 'art.arcane'
+base { archivesName = project.mod_id }
 version = project.mod_version
 
 java {
-    archivesBaseName = project.mod_id
-    toolchain.languageVersion = JavaLanguageVersion.of(21)
+    toolchain.languageVersion = JavaLanguageVersion.of(25)
 }
 
 repositories {
@@ -35,12 +35,8 @@ repositories {
 }
 
 dependencies {
-    // compile against the JEI API but do not include it at runtime
     compileOnly("mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}")
-    // at runtime, use the full JEI jar for NeoForge
     runtimeOnly("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
-
-    implementation project(":Multiblock")
 
     implementation("curse.maven:terrablender-neoforge-940057:${terrablender_gradle}")
     implementation("curse.maven:baubles-2-1040353:${baubles_gradle}")
@@ -58,6 +54,7 @@ neoForge {
             systemProperty 'forge.logging.console.level', 'debug'
         }
         Client {
+            programArguments.addAll "--quickPlaySingleplayer", "New World (1)"
             client()
         }
         Server {

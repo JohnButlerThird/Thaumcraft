@@ -9,9 +9,10 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.logging.log4j.util.TriConsumer;
 import org.jetbrains.annotations.UnknownNullability;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AspectList implements INBTSerializable<CompoundTag> {
+public class AspectList {
 
     private final HashMap<ResourceKey<Aspect>, Short> aspects;
 
@@ -208,16 +209,18 @@ public class AspectList implements INBTSerializable<CompoundTag> {
             .map(HashMap::new, ResourceKey.streamCodec(ThaumcraftData.Registries.ASPECT), ByteBufCodecs.SHORT)
             .map(AspectList::new, al -> al.aspects);
 
-    @Override
-    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
-        indexedForEach((rl, s, i) -> tag.putShort(rl.location().toString(), s));
-        return tag;
+    public void serialize(ValueOutput output, String key) {
+		ValueOutput.ValueOutputList outputList = output.childrenList(key);
+        indexedForEach((rl, s, i) -> outputList.addChild().putShort(rl.identifier().toString(), s));
     }
 
-    @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserialize(ValueInput input, String key) {
         clear();
-        tag.getAllKeys().forEach(s -> add(ResourceKey.create(ThaumcraftData.Registries.ASPECT, ResourceLocation.tryParse(s)), tag.getShort(s)));
+		input.childrenListOrEmpty(key).forEach(entry -> {
+			entry.keySet().forEach(aspect -> {
+				ResourceKey<Aspect> resourceKey = ResourceKey.create(ThaumcraftData.Registries.ASPECT, Identifier.tryParse(aspect));
+				add(resourceKey, entry.getIntOr(aspect, 1));
+			});
+		});
     }
 }
