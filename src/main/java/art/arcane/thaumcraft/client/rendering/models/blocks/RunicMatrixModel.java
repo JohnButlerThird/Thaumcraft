@@ -45,7 +45,7 @@ public class RunicMatrixModel extends Model<RunicMatrixBER.RenderState> {
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-        PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 16.0F, 0.0F));
+        PartDefinition root = partdefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(8.0F, 8.0F, 8.0F));
 
         createElement(root, "lnw", 4.0F, 4.0F, -4.0F, 90, 0, 0);
         createElement(root, "lne", -4.0F, 4.0F, -4.0F, 90, 90, 0);
